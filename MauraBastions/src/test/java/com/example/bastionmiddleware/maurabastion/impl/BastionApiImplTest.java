@@ -34,7 +34,7 @@ class BastionApiImplTest {
         BastionResponse response = new BastionResponse(1L, "Mara", "D", "Barracks", 3, 2);
 
         when(mapper.toRepositoryDto(any(BastionRequest.class))).thenReturn(new RepositoryBastionDto(1L, "Mara", "D", "Barracks", 3, 2));
-        when(fischlConnector.createBastion(any())).thenReturn(response);
+        when(fischlConnector.createBastion(any(RepositoryBastionDto.class))).thenReturn(response);
 
         BastionResponse result = service.createBastion(request);
 
