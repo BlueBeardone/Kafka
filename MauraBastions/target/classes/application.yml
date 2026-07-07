@@ -1,0 +1,14 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: bastion-middleware
+
+app:
+  data-access:
+    base-url: ${DATA_ACCESS_BASE_URL:http://localhost:9090}
+
+logging:
+  level:
+    com.example.bastionmiddleware: INFO

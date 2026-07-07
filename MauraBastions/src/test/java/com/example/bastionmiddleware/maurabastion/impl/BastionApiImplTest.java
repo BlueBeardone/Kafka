@@ -1,4 +1,4 @@
-package com.example.bastionmiddleware.maurabastion.api.impl;
+package com.example.bastionmiddleware.maurabastion.impl;
 
 import com.example.bastionmiddleware.connector.FischlConnector;
 import com.example.bastionmiddleware.connector.model.RepositoryBastionDto;

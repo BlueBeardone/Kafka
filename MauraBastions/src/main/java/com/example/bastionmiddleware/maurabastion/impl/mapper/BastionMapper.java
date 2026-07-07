@@ -11,14 +11,14 @@ public class BastionMapper {
     public RepositoryBastionDto toRepositoryDto(BastionRequest request) {
         return new RepositoryBastionDto(
                 null,
-                request.ownerName().trim(),
-                request.rank(),
-                request.facilityType(),
-                request.constructionTurns(),
-                request.hirelingsCount());
+                request.getOwnerName().trim(),
+                request.getRank(),
+                request.getFacilityType(),
+                request.getConstructionTurns(),
+                request.getHirelingsCount());
     }
 
     public BastionResponse toResponse(RepositoryBastionDto dto) {
-        return new BastionResponse(dto.id(), dto.ownerName(), dto.rank(), dto.facilityType(), dto.constructionTurns(), dto.hirelingsCount());
+        return new BastionResponse(dto.getId(), dto.getOwnerName(), dto.getRank(), dto.getFacilityType(), dto.getConstructionTurns(), dto.getHirelingsCount());
     }
 }

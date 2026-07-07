@@ -27,9 +27,7 @@ class BastionControllerIntegrationTest {
 
     @Test
     void shouldReturnBadRequestForInvalidPayload() throws Exception {
-        String body = """
-                {"ownerName":"   ","rank":"D","facilityType":"Barracks","constructionTurns":3,"hirelingsCount":2}
-                """;
+        String body = "{\"ownerName\":\"   \",\"rank\":\"D\",\"facilityType\":\"Barracks\",\"constructionTurns\":3,\"hirelingsCount\":2}";
 
         mockMvc.perform(post("/api/v1/bastions")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -42,9 +40,7 @@ class BastionControllerIntegrationTest {
         when(bastionApi.createBastion(any(BastionRequest.class))).thenReturn(
                 new BastionResponse(1L, "Mara", "D", "Barracks", 3, 2));
 
-        String body = """
-                {"ownerName":"Mara","rank":"D","facilityType":"Barracks","constructionTurns":3,"hirelingsCount":2}
-                """;
+        String body = "{\"ownerName\":\"Mara\",\"rank\":\"D\",\"facilityType\":\"Barracks\",\"constructionTurns\":3,\"hirelingsCount\":2}";
 
         mockMvc.perform(post("/api/v1/bastions")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -27,7 +27,7 @@
 
     <modules>
         <module>common</module>
-        <module>Connector</module>
+        <module>Connectors/fischlConnector</module>
         <module>MauraBastions</module>
     </modules>
 </project>

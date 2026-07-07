@@ -1,4 +1,4 @@
-package com.example.bastionmiddleware.maurabastion.api.impl;
+package com.example.bastionmiddleware.maurabastion.impl;
 
 import com.example.bastionmiddleware.connector.FischlConnector;
 import com.example.bastionmiddleware.maurabastion.api.BastionApi;
@@ -41,19 +41,19 @@ public class BastionApiImpl implements BastionApi {
         if (request == null) {
             throw new InvalidRequestException("request body is required");
         }
-        if (request.ownerName() == null || request.ownerName().isBlank()) {
+        if (request.getOwnerName() == null || request.getOwnerName().isBlank()) {
             throw new InvalidRequestException("ownerName is required");
         }
-        if (!VALID_RANKS.contains(request.rank())) {
+        if (!VALID_RANKS.contains(request.getRank())) {
             throw new InvalidRequestException("rank must be one of D, C, B, A, S");
         }
-        if (!VALID_FACILITIES.contains(request.facilityType())) {
+        if (!VALID_FACILITIES.contains(request.getFacilityType())) {
             throw new InvalidRequestException("facilityType is invalid");
         }
-        if (request.constructionTurns() == null || request.constructionTurns() <= 0) {
+        if (request.getConstructionTurns() == null || request.getConstructionTurns() <= 0) {
             throw new InvalidRequestException("constructionTurns must be greater than 0");
         }
-        if (request.hirelingsCount() == null || request.hirelingsCount() < 0) {
+        if (request.getHirelingsCount() == null || request.getHirelingsCount() < 0) {
             throw new InvalidRequestException("hirelingsCount must be 0 or greater");
         }
     }

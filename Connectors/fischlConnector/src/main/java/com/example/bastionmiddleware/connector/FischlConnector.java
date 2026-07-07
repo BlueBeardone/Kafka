@@ -21,7 +21,7 @@ public class FischlConnector {
                 .bodyValue(dto)
                 .retrieve()
                 .bodyToMono(BastionResponse.class)
-                .onErrorResume(ex -> Mono.just(new BastionResponse(1L, dto.ownerName(), dto.rank(), dto.facilityType(), dto.constructionTurns(), dto.hirelingsCount())))
+                .onErrorResume(ex -> Mono.<BastionResponse>just(new BastionResponse(1L, dto.getOwnerName(), dto.getRank(), dto.getFacilityType(), dto.getConstructionTurns(), dto.getHirelingsCount())))
                 .block();
     }
 
@@ -30,7 +30,7 @@ public class FischlConnector {
                 .uri("/api/v1/repository/bastions/{id}", id)
                 .retrieve()
                 .bodyToMono(BastionResponse.class)
-                .onErrorResume(ex -> Mono.just(new BastionResponse(id, "Unavailable", "D", "Barracks", 1, 0)))
+                .onErrorResume(ex -> Mono.<BastionResponse>just(new BastionResponse(id, "Unavailable", "D", "Barracks", 1, 0)))
                 .block();
     }
 }
