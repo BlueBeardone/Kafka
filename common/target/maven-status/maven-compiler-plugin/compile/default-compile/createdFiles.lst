@@ -1,0 +1,3 @@
+za/co/bastion/common/dto/ApiResponse.class
+za/co/bastion/common/dto/Rank.class
+za/co/bastion/common/exception/InvalidRequestException.class
