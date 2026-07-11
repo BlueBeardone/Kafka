@@ -1,29 +1,38 @@
 package za.co.bastion.maurabastion.impl.facilities;
 
-import io.quarkus.test.InjectMock;
-import io.quarkus.test.junit.QuarkusTest;
-import jakarta.inject.Inject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.bastion.common.dto.ApiResponse;
 import za.co.bastion.common.dto.Rank;
 import za.co.bastion.fischl.FischlFacility;
 import za.co.bastion.fischl.facilities.FischlFacilitiesConnector;
 import za.co.bastion.maurabastion.api.facilities.MauraBastionFacilitiesApi;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@QuarkusTest
+@ExtendWith(MockitoExtension.class)
 class MauraBastionFacilitiesApiImplTest {
 
-    @Inject
+    @Mock
+    FischlFacilitiesConnector fischlFacilitiesConnector;
+
     MauraBastionFacilitiesApi facilitiesApi;
 
-    @InjectMock
-    FischlFacilitiesConnector fischlFacilitiesConnector;
+    @BeforeEach
+    void setUp() throws Exception {
+        facilitiesApi = new MauraBastionFacilitiesApiImpl();
+        Field field = MauraBastionFacilitiesApiImpl.class.getDeclaredField("fischlFacilitiesConnector");
+        field.setAccessible(true);
+        field.set(facilitiesApi, fischlFacilitiesConnector);
+    }
 
     @Test
     void createFacility_withValidData_returnsSuccess() throws Exception {

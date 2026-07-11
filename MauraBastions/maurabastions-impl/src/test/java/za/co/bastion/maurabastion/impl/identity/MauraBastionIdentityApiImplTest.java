@@ -1,14 +1,16 @@
 package za.co.bastion.maurabastion.impl.identity;
 
-import io.quarkus.test.InjectMock;
-import io.quarkus.test.junit.QuarkusTest;
-import jakarta.inject.Inject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.bastion.common.dto.ApiResponse;
 import za.co.bastion.fischl.FischlUser;
 import za.co.bastion.fischl.identity.FischlIdentityConnector;
 import za.co.bastion.maurabastion.api.identity.MauraBastionIdentityApi;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,14 +18,21 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-@QuarkusTest
+@ExtendWith(MockitoExtension.class)
 class MauraBastionIdentityApiImplTest {
 
-    @Inject
+    @Mock
+    FischlIdentityConnector fischlIdentityConnector;
+
     MauraBastionIdentityApi identityApi;
 
-    @InjectMock
-    FischlIdentityConnector fischlIdentityConnector;
+    @BeforeEach
+    void setUp() throws Exception {
+        identityApi = new MauraBastionIdentityApiImpl();
+        Field field = MauraBastionIdentityApiImpl.class.getDeclaredField("fischlIdentityConnector");
+        field.setAccessible(true);
+        field.set(identityApi, fischlIdentityConnector);
+    }
 
     @Test
     void createUser_withValidData_returnsSuccess() throws Exception {

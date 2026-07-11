@@ -1,28 +1,37 @@
 package za.co.bastion.maurabastion.impl.newspapers;
 
-import io.quarkus.test.InjectMock;
-import io.quarkus.test.junit.QuarkusTest;
-import jakarta.inject.Inject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.bastion.common.dto.ApiResponse;
 import za.co.bastion.fischl.FischlNewspaper;
 import za.co.bastion.fischl.newspapers.FischlNewspapersConnector;
 import za.co.bastion.maurabastion.api.newspapers.MauraBastionNewspapersApi;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@QuarkusTest
+@ExtendWith(MockitoExtension.class)
 class MauraBastionNewspapersApiImplTest {
 
-    @Inject
+    @Mock
+    FischlNewspapersConnector fischlNewspapersConnector;
+
     MauraBastionNewspapersApi newspapersApi;
 
-    @InjectMock
-    FischlNewspapersConnector fischlNewspapersConnector;
+    @BeforeEach
+    void setUp() throws Exception {
+        newspapersApi = new MauraBastionNewspapersApiImpl();
+        Field field = MauraBastionNewspapersApiImpl.class.getDeclaredField("fischlNewspapersConnector");
+        field.setAccessible(true);
+        field.set(newspapersApi, fischlNewspapersConnector);
+    }
 
     @Test
     void createNewspaper_withValidData_returnsSuccess() throws Exception {

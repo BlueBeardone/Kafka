@@ -1,28 +1,37 @@
 package za.co.bastion.maurabastion.impl.bastion;
 
-import io.quarkus.test.InjectMock;
-import io.quarkus.test.junit.QuarkusTest;
-import jakarta.inject.Inject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.bastion.common.dto.ApiResponse;
 import za.co.bastion.fischl.FischlBastion;
 import za.co.bastion.fischl.bastion.FischlBastionConnector;
 import za.co.bastion.maurabastion.api.bastion.MauraBastionBastionApi;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@QuarkusTest
+@ExtendWith(MockitoExtension.class)
 class MauraBastionBastionApiImplTest {
 
-    @Inject
+    @Mock
+    FischlBastionConnector fischlBastionConnector;
+
     MauraBastionBastionApi bastionApi;
 
-    @InjectMock
-    FischlBastionConnector fischlBastionConnector;
+    @BeforeEach
+    void setUp() throws Exception {
+        bastionApi = new MauraBastionBastionApiImpl();
+        Field field = MauraBastionBastionApiImpl.class.getDeclaredField("fischlBastionConnector");
+        field.setAccessible(true);
+        field.set(bastionApi, fischlBastionConnector);
+    }
 
     @Test
     void createBastion_withValidData_returnsSuccess() throws Exception {
