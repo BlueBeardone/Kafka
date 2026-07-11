@@ -1,3 +1,6 @@
+za/co/bastion/maurabastion/adapter/identity/MauraBastionIdentityRoute.class
 za/co/bastion/maurabastion/adapter/MauraBastionHealthRoute.class
 za/co/bastion/maurabastion/adapter/MauraBastionExceptionMapper.class
-za/co/bastion/maurabastion/adapter/identity/MauraBastionIdentityRoute.class
+za/co/bastion/maurabastion/adapter/facilities/MauraBastionFacilitiesRoute.class
+za/co/bastion/maurabastion/adapter/bastion/MauraBastionBastionRoute.class
+za/co/bastion/maurabastion/adapter/newspapers/MauraBastionNewspapersRoute.class

@@ -22,6 +22,24 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>za.co.bastion.connectors.fischl</groupId>
+            <artifactId>fischl-bastion-impl</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>za.co.bastion.connectors.fischl</groupId>
+            <artifactId>fischl-facilities-impl</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>za.co.bastion.connectors.fischl</groupId>
+            <artifactId>fischl-newspapers-impl</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit5-mockito</artifactId>
             <scope>test</scope>

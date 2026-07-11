@@ -1,2 +1,5 @@
 /Users/barendblom/Personal_Projects/Kafka/maurabastions/maurabastions-api/src/main/java/za/co/bastion/maurabastion/api/MauraBastionHealthApi.java
+/Users/barendblom/Personal_Projects/Kafka/maurabastions/maurabastions-api/src/main/java/za/co/bastion/maurabastion/api/bastion/MauraBastionBastionApi.java
+/Users/barendblom/Personal_Projects/Kafka/maurabastions/maurabastions-api/src/main/java/za/co/bastion/maurabastion/api/facilities/MauraBastionFacilitiesApi.java
 /Users/barendblom/Personal_Projects/Kafka/maurabastions/maurabastions-api/src/main/java/za/co/bastion/maurabastion/api/identity/MauraBastionIdentityApi.java
+/Users/barendblom/Personal_Projects/Kafka/maurabastions/maurabastions-api/src/main/java/za/co/bastion/maurabastion/api/newspapers/MauraBastionNewspapersApi.java

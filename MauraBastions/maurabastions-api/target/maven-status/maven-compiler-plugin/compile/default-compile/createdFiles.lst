@@ -1,3 +1,11 @@
-za/co/bastion/maurabastion/api/identity/MauraBastionIdentityApi.class
 za/co/bastion/maurabastion/api/identity/MauraBastionIdentityApi$User.class
+za/co/bastion/maurabastion/api/newspapers/MauraBastionNewspapersApi$Newspaper.class
+za/co/bastion/maurabastion/api/newspapers/MauraBastionNewspapersApi.class
+za/co/bastion/maurabastion/api/facilities/MauraBastionFacilitiesApi.class
+za/co/bastion/maurabastion/api/identity/MauraBastionIdentityApi.class
+za/co/bastion/maurabastion/api/newspapers/MauraBastionNewspapersApi$Article.class
 za/co/bastion/maurabastion/api/MauraBastionHealthApi.class
+za/co/bastion/maurabastion/api/bastion/MauraBastionBastionApi.class
+za/co/bastion/maurabastion/api/bastion/MauraBastionBastionApi$Facility.class
+za/co/bastion/maurabastion/api/bastion/MauraBastionBastionApi$Bastion.class
+za/co/bastion/maurabastion/api/facilities/MauraBastionFacilitiesApi$Facility.class
