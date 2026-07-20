@@ -82,17 +82,14 @@ public class MauraBastionFacilitiesApiImpl implements MauraBastionFacilitiesApi 
     }
 
     private void validateFacility(Facility facility) {
-        if (facility.getId() == null || facility.getId().isBlank()) {
-            throw new InvalidRequestException("id is required");
-        }
         if (facility.getName() == null || facility.getName().isBlank()) {
             throw new InvalidRequestException("name is required");
         }
+        if (facility.getDescription() == null || facility.getDescription().isBlank()) {
+            throw new InvalidRequestException("description is required");
+        }
         if (facility.getRank() == null) {
             throw new InvalidRequestException("rank is required");
-        }
-        if (facility.getHirelingAmount() == null) {
-            throw new InvalidRequestException("hirelingAmount is required");
         }
     }
 
@@ -101,9 +98,14 @@ public class MauraBastionFacilitiesApiImpl implements MauraBastionFacilitiesApi 
                 .setId(facility.getId())
                 .setName(facility.getName())
                 .setRank(facility.getRank() != null ? facility.getRank().name() : null)
-                .setHirelingAmount(facility.getHirelingAmount())
+                .setMinimumRequiredHirelings(facility.getMinimumRequiredHirelings())
+                .setConstructionTurns(facility.getConstructionTurns())
+                .setCost(facility.getCost())
                 .setDescription(facility.getDescription())
-                .setTable(facility.getTable());
+                .setImgUrl(facility.getImgUrl())
+                .setTable(facility.getTable())
+                .setConstructedTurns(facility.getConstructedTurns())
+                .setBastionId(facility.getBastionId());
     }
 
     private Facility toFacility(FischlFacility fischl) {
@@ -111,8 +113,13 @@ public class MauraBastionFacilitiesApiImpl implements MauraBastionFacilitiesApi 
                 .setId(fischl.getId())
                 .setName(fischl.getName())
                 .setRank(fischl.getRank() != null ? Rank.valueOf(fischl.getRank()) : null)
-                .setHirelingAmount(fischl.getHirelingAmount())
+                .setMinimumRequiredHirelings(fischl.getMinimumRequiredHirelings())
+                .setConstructionTurns(fischl.getConstructionTurns())
+                .setCost(fischl.getCost())
                 .setDescription(fischl.getDescription())
-                .setTable(fischl.getTable());
+                .setImgUrl(fischl.getImgUrl())
+                .setTable(fischl.getTable())
+                .setConstructedTurns(fischl.getConstructedTurns())
+                .setBastionId(fischl.getBastionId());
     }
 }

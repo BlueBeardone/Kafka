@@ -102,9 +102,14 @@ public class MauraBastionBastionApiImpl implements MauraBastionBastionApi {
                             .setId(f.getId())
                             .setName(f.getName())
                             .setRank(f.getRank() != null ? f.getRank().name() : null)
-                            .setHirelingAmount(f.getHirelingAmount())
+                            .setMinimumRequiredHirelings(f.getMinimumRequiredHirelings())
+                            .setConstructionTurns(f.getConstructionTurns())
+                            .setCost(f.getCost())
                             .setDescription(f.getDescription())
+                            .setImgUrl(f.getImgUrl())
                             .setTable(f.getTable())
+                            .setConstructedTurns(f.getConstructedTurns())
+                            .setBastionId(f.getBastionId())
             ).toList();
         }
         return new FischlBastion()
@@ -123,9 +128,14 @@ public class MauraBastionBastionApiImpl implements MauraBastionBastionApi {
                             .setId(f.getId())
                             .setName(f.getName())
                             .setRank(f.getRank() != null ? Rank.valueOf(f.getRank()) : null)
-                            .setHirelingAmount(f.getHirelingAmount())
+                            .setMinimumRequiredHirelings(f.getMinimumRequiredHirelings())
+                            .setConstructionTurns(f.getConstructionTurns())
+                            .setCost(f.getCost())
                             .setDescription(f.getDescription())
+                            .setImgUrl(f.getImgUrl())
                             .setTable(f.getTable())
+                            .setConstructedTurns(f.getConstructedTurns())
+                            .setBastionId(f.getBastionId())
             ).toList();
         }
         return new Bastion()

@@ -1,10 +1,10 @@
 package za.co.bastion.maurabastion.api.facilities;
 
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import za.co.bastion.common.dto.ApiResponse;
+import za.co.bastion.common.dto.FacilityTable;
 import za.co.bastion.common.dto.Rank;
 
 public interface MauraBastionFacilitiesApi {
@@ -21,8 +21,13 @@ public interface MauraBastionFacilitiesApi {
         private String id;
         private String name;
         private Rank rank;
-        private Integer hirelingAmount;
+        private Integer minimumRequiredHirelings;
+        private Integer constructionTurns;
+        private Integer cost;
         private String description;
-        private List<List<String>> table;
+        private String imgUrl;
+        private FacilityTable table;
+        private Integer constructedTurns;
+        private String bastionId;
     }
 }
