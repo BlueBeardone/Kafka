@@ -6,8 +6,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.bastion.common.dto.ApiResponse;
+import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
 import za.co.bastion.fischl.FischlAuthResponse;
+import za.co.bastion.fischl.FischlIdentityException;
 import za.co.bastion.fischl.FischlLoginRequest;
 import za.co.bastion.fischl.FischlRegisterRequest;
 import za.co.bastion.fischl.FischlUser;
@@ -165,6 +167,18 @@ class MauraBastionIdentityApiImplTest {
 
         ApiResponse response = identityApi.updateUser("user-1", user);
         assertTrue(response.isSuccess());
+    }
+
+    @Test
+    void registerUser_whenBackendFails_throwsBackendException() throws Exception {
+        MauraBastionIdentityApi.RegisterRequest request = new MauraBastionIdentityApi.RegisterRequest()
+                .setEmail("test@example.com").setUsername("testuser").setPassword("password123");
+
+        when(fischlIdentityConnector.register(any(FischlRegisterRequest.class)))
+                .thenThrow(new FischlIdentityException().setStatus(409).setMessage("Conflict"));
+
+        BackendException ex = assertThrows(BackendException.class, () -> identityApi.registerUser(request));
+        assertEquals(409, ex.getBackendStatus());
     }
 
     @Test

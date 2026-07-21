@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import za.co.bastion.common.dto.ApiResponse;
+import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
 import za.co.bastion.fischl.FischlAuthResponse;
 import za.co.bastion.fischl.FischlIdentityException;
@@ -49,7 +50,7 @@ public class MauraBastionIdentityApiImpl implements MauraBastionIdentityApi {
             FischlAuthResponse authResponse = fischlIdentityConnector.register(fischlRequest);
             return ApiResponse.success("User registered", toAuthResult(authResponse));
         } catch (FischlIdentityException e) {
-            throw new RuntimeException("Identity backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Identity backend error: " + e.getMessage());
         }
     }
 
@@ -68,7 +69,7 @@ public class MauraBastionIdentityApiImpl implements MauraBastionIdentityApi {
             FischlAuthResponse authResponse = fischlIdentityConnector.login(fischlRequest);
             return ApiResponse.success("User logged in", toAuthResult(authResponse));
         } catch (FischlIdentityException e) {
-            throw new RuntimeException("Identity backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Identity backend error: " + e.getMessage());
         }
     }
 
@@ -82,7 +83,7 @@ public class MauraBastionIdentityApiImpl implements MauraBastionIdentityApi {
             FischlUser user = fischlIdentityConnector.getMe(authHeader);
             return ApiResponse.success("User found", toUser(user));
         } catch (FischlIdentityException e) {
-            throw new RuntimeException("Identity backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Identity backend error: " + e.getMessage());
         }
     }
 
@@ -95,7 +96,7 @@ public class MauraBastionIdentityApiImpl implements MauraBastionIdentityApi {
             FischlUser result = fischlIdentityConnector.read(id);
             return ApiResponse.success("User found", toUser(result));
         } catch (FischlIdentityException e) {
-            throw new RuntimeException("Identity backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Identity backend error: " + e.getMessage());
         }
     }
 
@@ -108,7 +109,7 @@ public class MauraBastionIdentityApiImpl implements MauraBastionIdentityApi {
                     .toList();
             return ApiResponse.success("Users found", users);
         } catch (FischlIdentityException e) {
-            throw new RuntimeException("Identity backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Identity backend error: " + e.getMessage());
         }
     }
 
@@ -126,7 +127,7 @@ public class MauraBastionIdentityApiImpl implements MauraBastionIdentityApi {
             FischlUser result = fischlIdentityConnector.update(id, fischlUser);
             return ApiResponse.success("User updated", toUser(result));
         } catch (FischlIdentityException e) {
-            throw new RuntimeException("Identity backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Identity backend error: " + e.getMessage());
         }
     }
 
@@ -139,7 +140,7 @@ public class MauraBastionIdentityApiImpl implements MauraBastionIdentityApi {
             fischlIdentityConnector.delete(id);
             return ApiResponse.success("User deleted", null);
         } catch (FischlIdentityException e) {
-            throw new RuntimeException("Identity backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Identity backend error: " + e.getMessage());
         }
     }
 

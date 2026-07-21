@@ -1,4 +1,6 @@
 /Users/barendblom/Personal_Projects/Kafka/maurabastions/maurabastions-impl/src/test/java/za/co/bastion/maurabastion/impl/bastion/MauraBastionBastionApiImplTest.java
+/Users/barendblom/Personal_Projects/Kafka/maurabastions/maurabastions-impl/src/test/java/za/co/bastion/maurabastion/impl/defender/MauraBastionDefenderApiImplTest.java
 /Users/barendblom/Personal_Projects/Kafka/maurabastions/maurabastions-impl/src/test/java/za/co/bastion/maurabastion/impl/facilities/MauraBastionFacilitiesApiImplTest.java
+/Users/barendblom/Personal_Projects/Kafka/maurabastions/maurabastions-impl/src/test/java/za/co/bastion/maurabastion/impl/hireling/MauraBastionHirelingApiImplTest.java
 /Users/barendblom/Personal_Projects/Kafka/maurabastions/maurabastions-impl/src/test/java/za/co/bastion/maurabastion/impl/identity/MauraBastionIdentityApiImplTest.java
 /Users/barendblom/Personal_Projects/Kafka/maurabastions/maurabastions-impl/src/test/java/za/co/bastion/maurabastion/impl/newspapers/MauraBastionNewspapersApiImplTest.java

@@ -8,8 +8,10 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.bastion.common.dto.ApiResponse;
+import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
 import za.co.bastion.fischl.FischlArticle;
+import za.co.bastion.fischl.FischlNewspaperException;
 import za.co.bastion.fischl.newspapers.FischlNewspapersConnector;
 import za.co.bastion.maurabastion.api.newspapers.MauraBastionNewspapersApi;
 
@@ -143,6 +145,18 @@ class MauraBastionNewspapersApiImplTest {
 
         ApiResponse response = newspapersApi.getAllNewspaperArticles();
         assertTrue(response.isSuccess());
+    }
+
+    @Test
+    void createNewspaperArticle_whenBackendFails_throwsBackendException() throws Exception {
+        MauraBastionNewspapersApi.NewspaperArticle article = new MauraBastionNewspapersApi.NewspaperArticle()
+                .setTitle("Test").setContent("Content");
+
+        when(fischlNewspapersConnector.create(any(FischlArticle.class)))
+                .thenThrow(new FischlNewspaperException().setStatus(500).setMessage("Server error"));
+
+        BackendException ex = assertThrows(BackendException.class, () -> newspapersApi.createNewspaperArticle(article));
+        assertEquals(500, ex.getBackendStatus());
     }
 
     @Test

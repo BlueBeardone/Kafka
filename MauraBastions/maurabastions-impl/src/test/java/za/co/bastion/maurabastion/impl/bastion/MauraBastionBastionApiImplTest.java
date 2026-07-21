@@ -8,8 +8,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.bastion.common.dto.ApiResponse;
 import za.co.bastion.common.dto.FacilityTable;
 import za.co.bastion.common.dto.Rank;
+import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
 import za.co.bastion.fischl.FischlBastion;
+import za.co.bastion.fischl.FischlBastionException;
 import za.co.bastion.fischl.FischlDefender;
 import za.co.bastion.fischl.FischlFacility;
 import za.co.bastion.fischl.FischlHireling;
@@ -197,6 +199,18 @@ class MauraBastionBastionApiImplTest {
         assertEquals(1, result.getHirelings().size());
         assertEquals("Scout", result.getHirelings().get(0).getName());
         assertEquals("lookout", result.getHirelings().get(0).getRole());
+    }
+
+    @Test
+    void createBastion_whenBackendFails_throwsBackendException() throws Exception {
+        MauraBastionBastionApi.Bastion bastion = new MauraBastionBastionApi.Bastion()
+                .setName("Test").setDescription("A test");
+
+        when(fischlBastionConnector.create(any(FischlBastion.class)))
+                .thenThrow(new FischlBastionException().setStatus(400).setMessage("Bad request"));
+
+        BackendException ex = assertThrows(BackendException.class, () -> bastionApi.createBastion(bastion));
+        assertEquals(400, ex.getBackendStatus());
     }
 
     @Test

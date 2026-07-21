@@ -10,8 +10,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.bastion.common.dto.ApiResponse;
 import za.co.bastion.common.dto.FacilityTable;
 import za.co.bastion.common.dto.Rank;
+import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
 import za.co.bastion.fischl.FischlFacility;
+import za.co.bastion.fischl.FischlFacilityException;
 import za.co.bastion.fischl.facilities.FischlFacilitiesConnector;
 import za.co.bastion.maurabastion.api.facilities.MauraBastionFacilitiesApi;
 
@@ -236,6 +238,18 @@ class MauraBastionFacilitiesApiImplTest {
 
         ApiResponse response = facilitiesApi.getAllFacilities();
         assertTrue(response.isSuccess());
+    }
+
+    @Test
+    void createFacility_whenBackendFails_throwsBackendException() throws Exception {
+        MauraBastionFacilitiesApi.Facility facility = new MauraBastionFacilitiesApi.Facility()
+                .setName("Test").setDescription("desc").setRank(Rank.a);
+
+        when(fischlFacilitiesConnector.create(any(FischlFacility.class)))
+                .thenThrow(new FischlFacilityException().setStatus(404).setMessage("Not found"));
+
+        BackendException ex = assertThrows(BackendException.class, () -> facilitiesApi.createFacility(facility));
+        assertEquals(404, ex.getBackendStatus());
     }
 
     @Test

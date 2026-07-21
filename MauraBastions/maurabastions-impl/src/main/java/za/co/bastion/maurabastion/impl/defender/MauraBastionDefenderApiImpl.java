@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import za.co.bastion.common.dto.ApiResponse;
+import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
 import za.co.bastion.fischl.FischlDefender;
 import za.co.bastion.fischl.FischlDefenderException;
@@ -26,7 +27,7 @@ public class MauraBastionDefenderApiImpl implements MauraBastionDefenderApi {
             FischlDefender result = fischlDefenderConnector.create(toFischlDefender(defender));
             return ApiResponse.success("Defender created", toDefender(result));
         } catch (FischlDefenderException e) {
-            throw new RuntimeException("Defender backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Defender backend error: " + e.getMessage());
         }
     }
 
@@ -39,7 +40,7 @@ public class MauraBastionDefenderApiImpl implements MauraBastionDefenderApi {
             FischlDefender result = fischlDefenderConnector.read(id);
             return ApiResponse.success("Defender found", toDefender(result));
         } catch (FischlDefenderException e) {
-            throw new RuntimeException("Defender backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Defender backend error: " + e.getMessage());
         }
     }
 
@@ -50,7 +51,7 @@ public class MauraBastionDefenderApiImpl implements MauraBastionDefenderApi {
             List<Defender> defenders = results.stream().map(this::toDefender).toList();
             return ApiResponse.success("Defenders found", defenders);
         } catch (FischlDefenderException e) {
-            throw new RuntimeException("Defender backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Defender backend error: " + e.getMessage());
         }
     }
 
@@ -64,7 +65,7 @@ public class MauraBastionDefenderApiImpl implements MauraBastionDefenderApi {
             FischlDefender result = fischlDefenderConnector.update(id, toFischlDefender(defender));
             return ApiResponse.success("Defender updated", toDefender(result));
         } catch (FischlDefenderException e) {
-            throw new RuntimeException("Defender backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Defender backend error: " + e.getMessage());
         }
     }
 
@@ -77,7 +78,7 @@ public class MauraBastionDefenderApiImpl implements MauraBastionDefenderApi {
             fischlDefenderConnector.delete(id);
             return ApiResponse.success("Defender deleted", null);
         } catch (FischlDefenderException e) {
-            throw new RuntimeException("Defender backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Defender backend error: " + e.getMessage());
         }
     }
 

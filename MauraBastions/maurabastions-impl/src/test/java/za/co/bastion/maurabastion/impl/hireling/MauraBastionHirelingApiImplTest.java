@@ -8,8 +8,10 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.bastion.common.dto.ApiResponse;
+import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
 import za.co.bastion.fischl.FischlHireling;
+import za.co.bastion.fischl.FischlHirelingException;
 import za.co.bastion.fischl.hireling.FischlHirelingConnector;
 import za.co.bastion.maurabastion.api.hireling.MauraBastionHirelingApi;
 
@@ -191,6 +193,18 @@ class MauraBastionHirelingApiImplTest {
                 .setName("Guard").setBastionId("b-1");
 
         assertThrows(InvalidRequestException.class, () -> hirelingApi.updateHireling(null, hireling));
+    }
+
+    @Test
+    void createHireling_whenBackendFails_throwsBackendException() throws Exception {
+        MauraBastionHirelingApi.Hireling hireling = new MauraBastionHirelingApi.Hireling()
+                .setName("Guard").setBastionId("b-1");
+
+        when(fischlHirelingConnector.create(any(FischlHireling.class)))
+                .thenThrow(new FischlHirelingException().setStatus(401).setMessage("Unauthorized"));
+
+        BackendException ex = assertThrows(BackendException.class, () -> hirelingApi.createHireling(hireling));
+        assertEquals(401, ex.getBackendStatus());
     }
 
     @Test

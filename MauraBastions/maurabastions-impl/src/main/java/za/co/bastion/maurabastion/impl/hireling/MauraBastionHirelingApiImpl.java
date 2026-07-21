@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import za.co.bastion.common.dto.ApiResponse;
+import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
 import za.co.bastion.fischl.FischlHireling;
 import za.co.bastion.fischl.FischlHirelingException;
@@ -26,7 +27,7 @@ public class MauraBastionHirelingApiImpl implements MauraBastionHirelingApi {
             FischlHireling result = fischlHirelingConnector.create(toFischlHireling(hireling));
             return ApiResponse.success("Hireling created", toHireling(result));
         } catch (FischlHirelingException e) {
-            throw new RuntimeException("Hireling backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Hireling backend error: " + e.getMessage());
         }
     }
 
@@ -39,7 +40,7 @@ public class MauraBastionHirelingApiImpl implements MauraBastionHirelingApi {
             FischlHireling result = fischlHirelingConnector.read(id);
             return ApiResponse.success("Hireling found", toHireling(result));
         } catch (FischlHirelingException e) {
-            throw new RuntimeException("Hireling backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Hireling backend error: " + e.getMessage());
         }
     }
 
@@ -50,7 +51,7 @@ public class MauraBastionHirelingApiImpl implements MauraBastionHirelingApi {
             List<Hireling> hirelings = results.stream().map(this::toHireling).toList();
             return ApiResponse.success("Hirelings found", hirelings);
         } catch (FischlHirelingException e) {
-            throw new RuntimeException("Hireling backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Hireling backend error: " + e.getMessage());
         }
     }
 
@@ -64,7 +65,7 @@ public class MauraBastionHirelingApiImpl implements MauraBastionHirelingApi {
             FischlHireling result = fischlHirelingConnector.update(id, toFischlHireling(hireling));
             return ApiResponse.success("Hireling updated", toHireling(result));
         } catch (FischlHirelingException e) {
-            throw new RuntimeException("Hireling backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Hireling backend error: " + e.getMessage());
         }
     }
 
@@ -77,7 +78,7 @@ public class MauraBastionHirelingApiImpl implements MauraBastionHirelingApi {
             fischlHirelingConnector.delete(id);
             return ApiResponse.success("Hireling deleted", null);
         } catch (FischlHirelingException e) {
-            throw new RuntimeException("Hireling backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Hireling backend error: " + e.getMessage());
         }
     }
 

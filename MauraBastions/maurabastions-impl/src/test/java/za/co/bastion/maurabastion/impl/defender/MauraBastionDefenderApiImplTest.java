@@ -8,8 +8,10 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.bastion.common.dto.ApiResponse;
+import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
 import za.co.bastion.fischl.FischlDefender;
+import za.co.bastion.fischl.FischlDefenderException;
 import za.co.bastion.fischl.defender.FischlDefenderConnector;
 import za.co.bastion.maurabastion.api.defender.MauraBastionDefenderApi;
 
@@ -190,6 +192,18 @@ class MauraBastionDefenderApiImplTest {
                 .setType("knight").setBastionId("b-1");
 
         assertThrows(InvalidRequestException.class, () -> defenderApi.updateDefender(null, defender));
+    }
+
+    @Test
+    void createDefender_whenBackendFails_throwsBackendException() throws Exception {
+        MauraBastionDefenderApi.Defender defender = new MauraBastionDefenderApi.Defender()
+                .setType("knight").setBastionId("b-1");
+
+        when(fischlDefenderConnector.create(any(FischlDefender.class)))
+                .thenThrow(new FischlDefenderException().setStatus(403).setMessage("Forbidden"));
+
+        BackendException ex = assertThrows(BackendException.class, () -> defenderApi.createDefender(defender));
+        assertEquals(403, ex.getBackendStatus());
     }
 
     @Test

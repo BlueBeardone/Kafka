@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import za.co.bastion.common.dto.ApiResponse;
 import za.co.bastion.common.dto.Rank;
+import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
 import za.co.bastion.fischl.*;
 import za.co.bastion.fischl.bastion.FischlBastionConnector;
@@ -27,7 +28,7 @@ public class MauraBastionBastionApiImpl implements MauraBastionBastionApi {
             FischlBastion result = fischlBastionConnector.create(toFischlBastion(bastion));
             return ApiResponse.success("Bastion created", toBastion(result));
         } catch (FischlBastionException e) {
-            throw new RuntimeException("Bastion backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Bastion backend error: " + e.getMessage());
         }
     }
 
@@ -40,7 +41,7 @@ public class MauraBastionBastionApiImpl implements MauraBastionBastionApi {
             FischlBastion result = fischlBastionConnector.read(id);
             return ApiResponse.success("Bastion found", toBastion(result));
         } catch (FischlBastionException e) {
-            throw new RuntimeException("Bastion backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Bastion backend error: " + e.getMessage());
         }
     }
 
@@ -51,7 +52,7 @@ public class MauraBastionBastionApiImpl implements MauraBastionBastionApi {
             List<Bastion> bastions = results.stream().map(this::toBastion).toList();
             return ApiResponse.success("Bastions found", bastions);
         } catch (FischlBastionException e) {
-            throw new RuntimeException("Bastion backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Bastion backend error: " + e.getMessage());
         }
     }
 
@@ -65,7 +66,7 @@ public class MauraBastionBastionApiImpl implements MauraBastionBastionApi {
             FischlBastion result = fischlBastionConnector.update(id, toFischlBastion(bastion));
             return ApiResponse.success("Bastion updated", toBastion(result));
         } catch (FischlBastionException e) {
-            throw new RuntimeException("Bastion backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Bastion backend error: " + e.getMessage());
         }
     }
 
@@ -78,7 +79,7 @@ public class MauraBastionBastionApiImpl implements MauraBastionBastionApi {
             fischlBastionConnector.delete(id);
             return ApiResponse.success("Bastion deleted", null);
         } catch (FischlBastionException e) {
-            throw new RuntimeException("Bastion backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Bastion backend error: " + e.getMessage());
         }
     }
 

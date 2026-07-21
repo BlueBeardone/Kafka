@@ -2,8 +2,12 @@
 /Users/barendblom/Personal_Projects/Kafka/connectors/fischl/fischl-api/src/main/java/za/co/bastion/fischl/FischlAuthResponse.java
 /Users/barendblom/Personal_Projects/Kafka/connectors/fischl/fischl-api/src/main/java/za/co/bastion/fischl/FischlBastion.java
 /Users/barendblom/Personal_Projects/Kafka/connectors/fischl/fischl-api/src/main/java/za/co/bastion/fischl/FischlBastionException.java
+/Users/barendblom/Personal_Projects/Kafka/connectors/fischl/fischl-api/src/main/java/za/co/bastion/fischl/FischlDefender.java
+/Users/barendblom/Personal_Projects/Kafka/connectors/fischl/fischl-api/src/main/java/za/co/bastion/fischl/FischlDefenderException.java
 /Users/barendblom/Personal_Projects/Kafka/connectors/fischl/fischl-api/src/main/java/za/co/bastion/fischl/FischlFacility.java
 /Users/barendblom/Personal_Projects/Kafka/connectors/fischl/fischl-api/src/main/java/za/co/bastion/fischl/FischlFacilityException.java
+/Users/barendblom/Personal_Projects/Kafka/connectors/fischl/fischl-api/src/main/java/za/co/bastion/fischl/FischlHireling.java
+/Users/barendblom/Personal_Projects/Kafka/connectors/fischl/fischl-api/src/main/java/za/co/bastion/fischl/FischlHirelingException.java
 /Users/barendblom/Personal_Projects/Kafka/connectors/fischl/fischl-api/src/main/java/za/co/bastion/fischl/FischlIdentityException.java
 /Users/barendblom/Personal_Projects/Kafka/connectors/fischl/fischl-api/src/main/java/za/co/bastion/fischl/FischlLoginRequest.java
 /Users/barendblom/Personal_Projects/Kafka/connectors/fischl/fischl-api/src/main/java/za/co/bastion/fischl/FischlNewspaperException.java

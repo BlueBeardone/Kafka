@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import za.co.bastion.common.dto.ApiResponse;
 import za.co.bastion.common.dto.Rank;
+import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
 import za.co.bastion.fischl.*;
 import za.co.bastion.fischl.facilities.FischlFacilitiesConnector;
@@ -26,7 +27,7 @@ public class MauraBastionFacilitiesApiImpl implements MauraBastionFacilitiesApi 
             FischlFacility result = fischlFacilitiesConnector.create(toFischlFacility(facility));
             return ApiResponse.success("Facility created", toFacility(result));
         } catch (FischlFacilityException e) {
-            throw new RuntimeException("Facility backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Facility backend error: " + e.getMessage());
         }
     }
 
@@ -39,7 +40,7 @@ public class MauraBastionFacilitiesApiImpl implements MauraBastionFacilitiesApi 
             FischlFacility result = fischlFacilitiesConnector.read(id);
             return ApiResponse.success("Facility found", toFacility(result));
         } catch (FischlFacilityException e) {
-            throw new RuntimeException("Facility backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Facility backend error: " + e.getMessage());
         }
     }
 
@@ -50,7 +51,7 @@ public class MauraBastionFacilitiesApiImpl implements MauraBastionFacilitiesApi 
             List<Facility> facilities = results.stream().map(this::toFacility).toList();
             return ApiResponse.success("Facilities found", facilities);
         } catch (FischlFacilityException e) {
-            throw new RuntimeException("Facility backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Facility backend error: " + e.getMessage());
         }
     }
 
@@ -64,7 +65,7 @@ public class MauraBastionFacilitiesApiImpl implements MauraBastionFacilitiesApi 
             FischlFacility result = fischlFacilitiesConnector.update(id, toFischlFacility(facility));
             return ApiResponse.success("Facility updated", toFacility(result));
         } catch (FischlFacilityException e) {
-            throw new RuntimeException("Facility backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Facility backend error: " + e.getMessage());
         }
     }
 
@@ -77,7 +78,7 @@ public class MauraBastionFacilitiesApiImpl implements MauraBastionFacilitiesApi 
             fischlFacilitiesConnector.delete(id);
             return ApiResponse.success("Facility deleted", null);
         } catch (FischlFacilityException e) {
-            throw new RuntimeException("Facility backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Facility backend error: " + e.getMessage());
         }
     }
 

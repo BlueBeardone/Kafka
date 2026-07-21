@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import za.co.bastion.common.dto.ApiResponse;
+import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
 import za.co.bastion.fischl.FischlArticle;
 import za.co.bastion.fischl.FischlNewspaperException;
@@ -26,7 +27,7 @@ public class MauraBastionNewspapersApiImpl implements MauraBastionNewspapersApi 
             FischlArticle result = fischlNewspapersConnector.create(toFischlArticle(article));
             return ApiResponse.success("Newspaper article created", toNewspaperArticle(result));
         } catch (FischlNewspaperException e) {
-            throw new RuntimeException("Newspaper backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Newspaper backend error: " + e.getMessage());
         }
     }
 
@@ -37,7 +38,7 @@ public class MauraBastionNewspapersApiImpl implements MauraBastionNewspapersApi 
             List<MauraBastionNewspapersApi.NewspaperArticle> articles = results.stream().map(this::toNewspaperArticle).toList();
             return ApiResponse.success("Newspaper articles found", articles);
         } catch (FischlNewspaperException e) {
-            throw new RuntimeException("Newspaper backend error: " + e.getMessage(), e);
+            throw new BackendException(e.getStatus(), "Newspaper backend error: " + e.getMessage());
         }
     }
 
