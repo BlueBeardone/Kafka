@@ -92,6 +92,9 @@ public class MauraBastionFacilitiesApiImpl implements MauraBastionFacilitiesApi 
         if (facility.getRank() == null) {
             throw new InvalidRequestException("rank is required");
         }
+        if (facility.getMinimumRequiredHirelings() != null && facility.getMinimumRequiredHirelings() < 0) {
+            throw new InvalidRequestException("minimumRequiredHirelings must be >= 0");
+        }
     }
 
     private FischlFacility toFischlFacility(Facility facility) {

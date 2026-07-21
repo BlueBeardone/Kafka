@@ -162,6 +162,15 @@ class MauraBastionFacilitiesApiImplTest {
     }
 
     @Test
+    void createFacility_negativeMinimumRequiredHirelings_throwsException() {
+        MauraBastionFacilitiesApi.Facility facility = new MauraBastionFacilitiesApi.Facility()
+                .setId("f-1").setName("Name").setDescription("desc").setRank(Rank.a)
+                .setMinimumRequiredHirelings(-1);
+
+        assertThrows(InvalidRequestException.class, () -> facilitiesApi.createFacility(facility));
+    }
+
+    @Test
     void createFacility_optionalFields_canBeNull() throws Exception {
         MauraBastionFacilitiesApi.Facility facility = new MauraBastionFacilitiesApi.Facility()
                 .setId("f-2").setName("Tower").setDescription("A tower").setRank(Rank.b);
