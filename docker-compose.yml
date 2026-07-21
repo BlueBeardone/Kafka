@@ -9,3 +9,5 @@ services:
       FISCHL_BASTION_URL: http://host.docker.internal:9090
       FISCHL_FACILITIES_URL: http://host.docker.internal:9090
       FISCHL_NEWSPAPERS_URL: http://host.docker.internal:9090
+      FISCHL_DEFENDER_URL: http://host.docker.internal:9090
+      FISCHL_HIRELING_URL: http://host.docker.internal:9090
