@@ -15,35 +15,13 @@ public class MauraBastionNewspapersRoute {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse createNewspaper(MauraBastionNewspapersApi.Newspaper newspaper) {
-        return newspapersApi.createNewspaper(newspaper);
-    }
-
-    @GET
-    @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse getNewspaper(@PathParam("id") String id) {
-        return newspapersApi.getNewspaper(id);
+    public ApiResponse createNewspaperArticle(MauraBastionNewspapersApi.NewspaperArticle article) {
+        return newspapersApi.createNewspaperArticle(article);
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse getAllNewspapers() {
-        return newspapersApi.getAllNewspapers();
-    }
-
-    @PUT
-    @Path("/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse updateNewspaper(@PathParam("id") String id, MauraBastionNewspapersApi.Newspaper newspaper) {
-        return newspapersApi.updateNewspaper(id, newspaper);
-    }
-
-    @DELETE
-    @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse deleteNewspaper(@PathParam("id") String id) {
-        return newspapersApi.deleteNewspaper(id);
+    public ApiResponse getAllNewspaperArticles() {
+        return newspapersApi.getAllNewspaperArticles();
     }
 }

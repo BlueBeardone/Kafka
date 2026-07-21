@@ -5,11 +5,11 @@ import jakarta.inject.Inject;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import za.co.bastion.common.dto.ApiResponse;
 import za.co.bastion.common.exception.InvalidRequestException;
-import za.co.bastion.fischl.*;
+import za.co.bastion.fischl.FischlArticle;
+import za.co.bastion.fischl.FischlNewspaperException;
 import za.co.bastion.fischl.newspapers.FischlNewspapersConnector;
 import za.co.bastion.maurabastion.api.newspapers.MauraBastionNewspapersApi;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @ApplicationScoped
@@ -20,132 +20,49 @@ public class MauraBastionNewspapersApiImpl implements MauraBastionNewspapersApi 
     FischlNewspapersConnector fischlNewspapersConnector;
 
     @Override
-    public ApiResponse createNewspaper(Newspaper newspaper) {
-        validateNewspaper(newspaper);
+    public ApiResponse createNewspaperArticle(MauraBastionNewspapersApi.NewspaperArticle article) {
+        validateNewspaperArticle(article);
         try {
-            FischlNewspaper result = fischlNewspapersConnector.create(toFischlNewspaper(newspaper));
-            return ApiResponse.success("Newspaper created", toNewspaper(result));
+            FischlArticle result = fischlNewspapersConnector.create(toFischlArticle(article));
+            return ApiResponse.success("Newspaper article created", toNewspaperArticle(result));
         } catch (FischlNewspaperException e) {
             throw new RuntimeException("Newspaper backend error: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public ApiResponse getNewspaper(String id) {
-        if (id == null || id.isBlank()) {
-            throw new InvalidRequestException("id is required");
-        }
+    public ApiResponse getAllNewspaperArticles() {
         try {
-            FischlNewspaper result = fischlNewspapersConnector.read(id);
-            return ApiResponse.success("Newspaper found", toNewspaper(result));
+            List<FischlArticle> results = fischlNewspapersConnector.readAll();
+            List<MauraBastionNewspapersApi.NewspaperArticle> articles = results.stream().map(this::toNewspaperArticle).toList();
+            return ApiResponse.success("Newspaper articles found", articles);
         } catch (FischlNewspaperException e) {
             throw new RuntimeException("Newspaper backend error: " + e.getMessage(), e);
         }
     }
 
-    @Override
-    public ApiResponse getAllNewspapers() {
-        try {
-            List<FischlNewspaper> results = fischlNewspapersConnector.readAll();
-            List<Newspaper> newspapers = results.stream().map(this::toNewspaper).toList();
-            return ApiResponse.success("Newspapers found", newspapers);
-        } catch (FischlNewspaperException e) {
-            throw new RuntimeException("Newspaper backend error: " + e.getMessage(), e);
+    private void validateNewspaperArticle(MauraBastionNewspapersApi.NewspaperArticle article) {
+        if (article.getTitle() == null || article.getTitle().isBlank()) {
+            throw new InvalidRequestException("title is required");
+        }
+        if (article.getContent() == null || article.getContent().isBlank()) {
+            throw new InvalidRequestException("content is required");
         }
     }
 
-    @Override
-    public ApiResponse updateNewspaper(String id, Newspaper newspaper) {
-        if (id == null || id.isBlank()) {
-            throw new InvalidRequestException("id is required");
-        }
-        validateNewspaper(newspaper);
-        try {
-            FischlNewspaper result = fischlNewspapersConnector.update(id, toFischlNewspaper(newspaper));
-            return ApiResponse.success("Newspaper updated", toNewspaper(result));
-        } catch (FischlNewspaperException e) {
-            throw new RuntimeException("Newspaper backend error: " + e.getMessage(), e);
-        }
+    private FischlArticle toFischlArticle(MauraBastionNewspapersApi.NewspaperArticle article) {
+        return new FischlArticle()
+                .setTitle(article.getTitle())
+                .setContent(article.getContent())
+                .setImageUrl(article.getImageUrl())
+                .setAuthor(article.getAuthor());
     }
 
-    @Override
-    public ApiResponse deleteNewspaper(String id) {
-        if (id == null || id.isBlank()) {
-            throw new InvalidRequestException("id is required");
-        }
-        try {
-            fischlNewspapersConnector.delete(id);
-            return ApiResponse.success("Newspaper deleted", null);
-        } catch (FischlNewspaperException e) {
-            throw new RuntimeException("Newspaper backend error: " + e.getMessage(), e);
-        }
-    }
-
-    private void validateNewspaper(Newspaper newspaper) {
-        if (newspaper.getNewspaperName() == null || newspaper.getNewspaperName().isBlank()) {
-            throw new InvalidRequestException("newspaperName is required");
-        }
-        if (newspaper.getDate() == null || newspaper.getDate().isBlank()) {
-            throw new InvalidRequestException("date is required");
-        }
-        if (newspaper.getEdition() == null || newspaper.getEdition().isBlank()) {
-            throw new InvalidRequestException("edition is required");
-        }
-    }
-
-    private FischlNewspaper toFischlNewspaper(Newspaper newspaper) {
-        FischlArticle lead = null;
-        if (newspaper.getLeadArticle() != null) {
-            lead = new FischlArticle()
-                    .setTitle(newspaper.getLeadArticle().getTitle())
-                    .setContent(newspaper.getLeadArticle().getContent())
-                    .setImageUrl(newspaper.getLeadArticle().getImageUrl())
-                    .setAuthor(newspaper.getLeadArticle().getAuthor());
-        }
-        List<FischlArticle> others = new ArrayList<>();
-        if (newspaper.getOtherArticles() != null) {
-            others = newspaper.getOtherArticles().stream().map(a ->
-                    new FischlArticle()
-                            .setTitle(a.getTitle())
-                            .setContent(a.getContent())
-                            .setImageUrl(a.getImageUrl())
-                            .setAuthor(a.getAuthor())
-            ).toList();
-        }
-        return new FischlNewspaper()
-                .setId(newspaper.getId())
-                .setNewspaperName(newspaper.getNewspaperName())
-                .setDate(newspaper.getDate())
-                .setEdition(newspaper.getEdition())
-                .setLeadArticle(lead)
-                .setOtherArticles(others);
-    }
-
-    private Newspaper toNewspaper(FischlNewspaper fischl) {
-        Article lead = null;
-        if (fischl.getLeadArticle() != null) {
-            lead = new Article()
-                    .setTitle(fischl.getLeadArticle().getTitle())
-                    .setContent(fischl.getLeadArticle().getContent())
-                    .setImageUrl(fischl.getLeadArticle().getImageUrl())
-                    .setAuthor(fischl.getLeadArticle().getAuthor());
-        }
-        List<Article> others = new ArrayList<>();
-        if (fischl.getOtherArticles() != null) {
-            others = fischl.getOtherArticles().stream().map(a ->
-                    new Article()
-                            .setTitle(a.getTitle())
-                            .setContent(a.getContent())
-                            .setImageUrl(a.getImageUrl())
-                            .setAuthor(a.getAuthor())
-            ).toList();
-        }
-        return new Newspaper()
-                .setId(fischl.getId())
-                .setNewspaperName(fischl.getNewspaperName())
-                .setDate(fischl.getDate())
-                .setEdition(fischl.getEdition())
-                .setLeadArticle(lead)
-                .setOtherArticles(others);
+    private MauraBastionNewspapersApi.NewspaperArticle toNewspaperArticle(FischlArticle fischl) {
+        return new MauraBastionNewspapersApi.NewspaperArticle()
+                .setTitle(fischl.getTitle())
+                .setContent(fischl.getContent())
+                .setImageUrl(fischl.getImageUrl())
+                .setAuthor(fischl.getAuthor());
     }
 }
