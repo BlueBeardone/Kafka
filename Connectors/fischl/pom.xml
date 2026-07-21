@@ -16,5 +16,6 @@
         <module>fischl-bastion-impl</module>
         <module>fischl-facilities-impl</module>
         <module>fischl-newspapers-impl</module>
+        <module>fischl-defender-impl</module>
     </modules>
 </project>
