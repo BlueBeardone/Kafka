@@ -17,5 +17,6 @@
         <module>fischl-facilities-impl</module>
         <module>fischl-newspapers-impl</module>
         <module>fischl-defender-impl</module>
+        <module>fischl-hireling-impl</module>
     </modules>
 </project>
