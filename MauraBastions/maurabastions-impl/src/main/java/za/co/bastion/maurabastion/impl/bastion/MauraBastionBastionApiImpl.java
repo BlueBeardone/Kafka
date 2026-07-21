@@ -83,9 +83,6 @@ public class MauraBastionBastionApiImpl implements MauraBastionBastionApi {
     }
 
     private void validateBastion(Bastion bastion) {
-        if (bastion.getId() == null || bastion.getId().isBlank()) {
-            throw new InvalidRequestException("id is required");
-        }
         if (bastion.getName() == null || bastion.getName().isBlank()) {
             throw new InvalidRequestException("name is required");
         }
@@ -112,12 +109,22 @@ public class MauraBastionBastionApiImpl implements MauraBastionBastionApi {
                             .setBastionId(f.getBastionId())
             ).toList();
         }
+        List<FischlDefender> defenders = new ArrayList<>();
+        if (bastion.getDefenders() != null) {
+            defenders = bastion.getDefenders().stream().map(this::toFischlDefender).toList();
+        }
+        List<FischlHireling> hirelings = new ArrayList<>();
+        if (bastion.getHirelings() != null) {
+            hirelings = bastion.getHirelings().stream().map(this::toFischlHireling).toList();
+        }
         return new FischlBastion()
                 .setId(bastion.getId())
                 .setName(bastion.getName())
                 .setDescription(bastion.getDescription())
                 .setImgUrl(bastion.getImgUrl())
-                .setFacilities(facilities);
+                .setFacilities(facilities)
+                .setDefenders(defenders)
+                .setHirelings(hirelings);
     }
 
     private Bastion toBastion(FischlBastion fischl) {
@@ -138,11 +145,67 @@ public class MauraBastionBastionApiImpl implements MauraBastionBastionApi {
                             .setBastionId(f.getBastionId())
             ).toList();
         }
+        List<Defender> defenders = new ArrayList<>();
+        if (fischl.getDefenders() != null) {
+            defenders = fischl.getDefenders().stream().map(this::toDefender).toList();
+        }
+        List<Hireling> hirelings = new ArrayList<>();
+        if (fischl.getHirelings() != null) {
+            hirelings = fischl.getHirelings().stream().map(this::toHireling).toList();
+        }
         return new Bastion()
                 .setId(fischl.getId())
                 .setName(fischl.getName())
                 .setDescription(fischl.getDescription())
                 .setImgUrl(fischl.getImgUrl())
-                .setFacilities(facilities);
+                .setFacilities(facilities)
+                .setDefenders(defenders)
+                .setHirelings(hirelings);
+    }
+
+    private FischlDefender toFischlDefender(Defender d) {
+        return new FischlDefender()
+                .setId(d.getId())
+                .setName(d.getName())
+                .setDescription(d.getDescription())
+                .setImgUrl(d.getImgUrl())
+                .setType(d.getType())
+                .setBastionId(d.getBastionId())
+                .setAcquisitionStory(d.getAcquisitionStory());
+    }
+
+    private Defender toDefender(FischlDefender d) {
+        return new Defender()
+                .setId(d.getId())
+                .setName(d.getName())
+                .setDescription(d.getDescription())
+                .setImgUrl(d.getImgUrl())
+                .setType(d.getType())
+                .setBastionId(d.getBastionId())
+                .setAcquisitionStory(d.getAcquisitionStory());
+    }
+
+    private FischlHireling toFischlHireling(Hireling h) {
+        return new FischlHireling()
+                .setId(h.getId())
+                .setName(h.getName())
+                .setRole(h.getRole())
+                .setDescription(h.getDescription())
+                .setImgUrl(h.getImgUrl())
+                .setBastionId(h.getBastionId())
+                .setFacilityId(h.getFacilityId())
+                .setAcquisitionStory(h.getAcquisitionStory());
+    }
+
+    private Hireling toHireling(FischlHireling h) {
+        return new Hireling()
+                .setId(h.getId())
+                .setName(h.getName())
+                .setRole(h.getRole())
+                .setDescription(h.getDescription())
+                .setImgUrl(h.getImgUrl())
+                .setBastionId(h.getBastionId())
+                .setFacilityId(h.getFacilityId())
+                .setAcquisitionStory(h.getAcquisitionStory());
     }
 }

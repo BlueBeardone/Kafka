@@ -24,6 +24,35 @@ public interface MauraBastionBastionApi {
         private String description;
         private String imgUrl;
         private List<Facility> facilities;
+        private List<Defender> defenders;
+        private List<Hireling> hirelings;
+    }
+
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    class Defender {
+        private String id;
+        private String name;
+        private String description;
+        private String imgUrl;
+        private String type;
+        private String bastionId;
+        private String acquisitionStory;
+    }
+
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    class Hireling {
+        private String id;
+        private String name;
+        private String role;
+        private String description;
+        private String imgUrl;
+        private String bastionId;
+        private String facilityId;
+        private String acquisitionStory;
     }
 
     @Getter

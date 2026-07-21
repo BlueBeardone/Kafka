@@ -18,4 +18,6 @@ public class FischlBastion {
     private String description;
     private String imgUrl;
     private List<FischlFacility> facilities;
+    private List<FischlDefender> defenders;
+    private List<FischlHireling> hirelings;
 }
