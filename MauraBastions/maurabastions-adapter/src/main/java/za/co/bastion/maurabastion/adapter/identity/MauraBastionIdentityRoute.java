@@ -6,34 +6,51 @@ import jakarta.ws.rs.core.MediaType;
 import za.co.bastion.common.dto.ApiResponse;
 import za.co.bastion.maurabastion.api.identity.MauraBastionIdentityApi;
 
-@Path("/maura/v1/identity/users")
+@Path("/maura/v1/identity")
 public class MauraBastionIdentityRoute {
 
     @Inject
     private MauraBastionIdentityApi identityApi;
 
     @POST
+    @Path("/auth/register")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse createUser(MauraBastionIdentityApi.User user) {
-        return identityApi.createUser(user);
+    public ApiResponse registerUser(MauraBastionIdentityApi.RegisterRequest request) {
+        return identityApi.registerUser(request);
+    }
+
+    @POST
+    @Path("/auth/login")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public ApiResponse loginUser(MauraBastionIdentityApi.LoginRequest request) {
+        return identityApi.loginUser(request);
     }
 
     @GET
-    @Path("/{id}")
+    @Path("/auth/me")
+    @Produces(MediaType.APPLICATION_JSON)
+    public ApiResponse getMe(@HeaderParam("Authorization") String authHeader) {
+        return identityApi.getMe(authHeader);
+    }
+
+    @GET
+    @Path("/users/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public ApiResponse getUser(@PathParam("id") String id) {
         return identityApi.getUser(id);
     }
 
     @GET
+    @Path("/users")
     @Produces(MediaType.APPLICATION_JSON)
     public ApiResponse getAllUsers() {
         return identityApi.getAllUsers();
     }
 
     @PUT
-    @Path("/{id}")
+    @Path("/users/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public ApiResponse updateUser(@PathParam("id") String id, MauraBastionIdentityApi.User user) {
@@ -41,7 +58,7 @@ public class MauraBastionIdentityRoute {
     }
 
     @DELETE
-    @Path("/{id}")
+    @Path("/users/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public ApiResponse deleteUser(@PathParam("id") String id) {
         return identityApi.deleteUser(id);

@@ -5,7 +5,10 @@ import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import za.co.bastion.fischl.CustomHttpClientOptions;
+import za.co.bastion.fischl.FischlAuthResponse;
 import za.co.bastion.fischl.FischlIdentityException;
+import za.co.bastion.fischl.FischlLoginRequest;
+import za.co.bastion.fischl.FischlRegisterRequest;
 import za.co.bastion.fischl.FischlUser;
 
 import java.util.List;
@@ -16,10 +19,22 @@ import java.util.List;
 public interface FischlIdentityConnector {
 
     @POST
-    @Path("/users")
+    @Path("/auth/register")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    FischlUser create(FischlUser user) throws FischlIdentityException;
+    FischlAuthResponse register(FischlRegisterRequest request) throws FischlIdentityException;
+
+    @POST
+    @Path("/auth/login")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    FischlAuthResponse login(FischlLoginRequest request) throws FischlIdentityException;
+
+    @GET
+    @Path("/auth/me")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    FischlUser getMe(@HeaderParam("Authorization") String authHeader) throws FischlIdentityException;
 
     @GET
     @Path("/users/{id}")

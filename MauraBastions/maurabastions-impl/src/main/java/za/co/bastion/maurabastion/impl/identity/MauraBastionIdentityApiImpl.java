@@ -2,10 +2,16 @@ package za.co.bastion.maurabastion.impl.identity;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import za.co.bastion.common.dto.ApiResponse;
 import za.co.bastion.common.exception.InvalidRequestException;
+import za.co.bastion.fischl.FischlAuthResponse;
 import za.co.bastion.fischl.FischlIdentityException;
+import za.co.bastion.fischl.FischlLoginRequest;
+import za.co.bastion.fischl.FischlRegisterRequest;
 import za.co.bastion.fischl.FischlUser;
 import za.co.bastion.fischl.identity.FischlIdentityConnector;
 import za.co.bastion.maurabastion.api.identity.MauraBastionIdentityApi;
@@ -20,18 +26,61 @@ public class MauraBastionIdentityApiImpl implements MauraBastionIdentityApi {
     FischlIdentityConnector fischlIdentityConnector;
 
     @Override
-    public ApiResponse createUser(MauraBastionIdentityApi.User user) {
-        if (user.getId() == null || user.getId().isBlank()) {
-            throw new InvalidRequestException("id is required");
+    public ApiResponse registerUser(MauraBastionIdentityApi.RegisterRequest request) {
+        if (request.getEmail() == null || request.getEmail().isBlank()) {
+            throw new InvalidRequestException("email is required");
         }
-        if (user.getDisplayName() == null || user.getDisplayName().isBlank()) {
-            throw new InvalidRequestException("displayName is required");
+        if (request.getUsername() == null || request.getUsername().isBlank()) {
+            throw new InvalidRequestException("username is required");
+        }
+        if (request.getUsername().length() < 3) {
+            throw new InvalidRequestException("username must be at least 3 characters");
+        }
+        if (request.getPassword() == null || request.getPassword().isBlank()) {
+            throw new InvalidRequestException("password is required");
+        }
+        if (request.getPassword().length() < 8) {
+            throw new InvalidRequestException("password must be at least 8 characters");
         }
 
         try {
-            FischlUser fischlUser = toFischlUser(user);
-            FischlUser result = fischlIdentityConnector.create(fischlUser);
-            return ApiResponse.success("User created", toUser(result));
+            FischlRegisterRequest fischlRequest = new FischlRegisterRequest(
+                    request.getEmail(), request.getUsername(), request.getPassword());
+            FischlAuthResponse authResponse = fischlIdentityConnector.register(fischlRequest);
+            return ApiResponse.success("User registered", toAuthResult(authResponse));
+        } catch (FischlIdentityException e) {
+            throw new RuntimeException("Identity backend error: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public ApiResponse loginUser(MauraBastionIdentityApi.LoginRequest request) {
+        if (request.getEmail() == null || request.getEmail().isBlank()) {
+            throw new InvalidRequestException("email is required");
+        }
+        if (request.getPassword() == null || request.getPassword().isBlank()) {
+            throw new InvalidRequestException("password is required");
+        }
+
+        try {
+            FischlLoginRequest fischlRequest = new FischlLoginRequest(
+                    request.getEmail(), request.getPassword());
+            FischlAuthResponse authResponse = fischlIdentityConnector.login(fischlRequest);
+            return ApiResponse.success("User logged in", toAuthResult(authResponse));
+        } catch (FischlIdentityException e) {
+            throw new RuntimeException("Identity backend error: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public ApiResponse getMe(String authHeader) {
+        if (authHeader == null || authHeader.isBlank()) {
+            throw new InvalidRequestException("Authorization header is required");
+        }
+
+        try {
+            FischlUser user = fischlIdentityConnector.getMe(authHeader);
+            return ApiResponse.success("User found", toUser(user));
         } catch (FischlIdentityException e) {
             throw new RuntimeException("Identity backend error: " + e.getMessage(), e);
         }
@@ -106,5 +155,19 @@ public class MauraBastionIdentityApiImpl implements MauraBastionIdentityApi {
                 .setId(fischlUser.getId())
                 .setDisplayName(fischlUser.getDisplayName())
                 .setBastionId(fischlUser.getBastionId());
+    }
+
+    private Object toAuthResult(FischlAuthResponse authResponse) {
+        return new AuthResult()
+                .setUser(toUser(authResponse.getUser()))
+                .setToken(authResponse.getToken());
+    }
+
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    static class AuthResult {
+        private MauraBastionIdentityApi.User user;
+        private String token;
     }
 }

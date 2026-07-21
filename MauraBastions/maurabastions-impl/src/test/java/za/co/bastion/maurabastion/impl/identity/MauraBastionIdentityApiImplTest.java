@@ -6,6 +6,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.bastion.common.dto.ApiResponse;
+import za.co.bastion.common.exception.InvalidRequestException;
+import za.co.bastion.fischl.FischlAuthResponse;
+import za.co.bastion.fischl.FischlLoginRequest;
+import za.co.bastion.fischl.FischlRegisterRequest;
 import za.co.bastion.fischl.FischlUser;
 import za.co.bastion.fischl.identity.FischlIdentityConnector;
 import za.co.bastion.maurabastion.api.identity.MauraBastionIdentityApi;
@@ -35,23 +39,102 @@ class MauraBastionIdentityApiImplTest {
     }
 
     @Test
-    void createUser_withValidData_returnsSuccess() throws Exception {
-        MauraBastionIdentityApi.User user = new MauraBastionIdentityApi.User()
-                .setId("user-1").setDisplayName("Test User").setBastionId("bastion-1");
+    void registerUser_withValidData_returnsSuccess() throws Exception {
+        MauraBastionIdentityApi.RegisterRequest request = new MauraBastionIdentityApi.RegisterRequest()
+                .setEmail("test@example.com").setUsername("testuser").setPassword("password123");
 
-        when(fischlIdentityConnector.create(any(FischlUser.class)))
-                .thenReturn(new FischlUser().setId("user-1").setDisplayName("Test User"));
+        FischlUser fischlUser = new FischlUser().setId("user-1").setDisplayName("testuser");
+        when(fischlIdentityConnector.register(any(FischlRegisterRequest.class)))
+                .thenReturn(new FischlAuthResponse(fischlUser, "token-123"));
 
-        ApiResponse response = identityApi.createUser(user);
+        ApiResponse response = identityApi.registerUser(request);
         assertTrue(response.isSuccess());
+        assertNotNull(response.getData());
     }
 
     @Test
-    void createUser_withBlankId_throwsException() {
-        MauraBastionIdentityApi.User user = new MauraBastionIdentityApi.User()
-                .setId("").setDisplayName("Test User");
+    void registerUser_withBlankEmail_throwsException() {
+        MauraBastionIdentityApi.RegisterRequest request = new MauraBastionIdentityApi.RegisterRequest()
+                .setEmail("").setUsername("testuser").setPassword("password123");
 
-        assertThrows(RuntimeException.class, () -> identityApi.createUser(user));
+        assertThrows(InvalidRequestException.class, () -> identityApi.registerUser(request));
+    }
+
+    @Test
+    void registerUser_withBlankUsername_throwsException() {
+        MauraBastionIdentityApi.RegisterRequest request = new MauraBastionIdentityApi.RegisterRequest()
+                .setEmail("test@example.com").setUsername("").setPassword("password123");
+
+        assertThrows(InvalidRequestException.class, () -> identityApi.registerUser(request));
+    }
+
+    @Test
+    void registerUser_withShortUsername_throwsException() {
+        MauraBastionIdentityApi.RegisterRequest request = new MauraBastionIdentityApi.RegisterRequest()
+                .setEmail("test@example.com").setUsername("ab").setPassword("password123");
+
+        assertThrows(InvalidRequestException.class, () -> identityApi.registerUser(request));
+    }
+
+    @Test
+    void registerUser_withBlankPassword_throwsException() {
+        MauraBastionIdentityApi.RegisterRequest request = new MauraBastionIdentityApi.RegisterRequest()
+                .setEmail("test@example.com").setUsername("testuser").setPassword("");
+
+        assertThrows(InvalidRequestException.class, () -> identityApi.registerUser(request));
+    }
+
+    @Test
+    void registerUser_withShortPassword_throwsException() {
+        MauraBastionIdentityApi.RegisterRequest request = new MauraBastionIdentityApi.RegisterRequest()
+                .setEmail("test@example.com").setUsername("testuser").setPassword("short");
+
+        assertThrows(InvalidRequestException.class, () -> identityApi.registerUser(request));
+    }
+
+    @Test
+    void loginUser_withValidData_returnsSuccess() throws Exception {
+        MauraBastionIdentityApi.LoginRequest request = new MauraBastionIdentityApi.LoginRequest()
+                .setEmail("test@example.com").setPassword("password123");
+
+        FischlUser fischlUser = new FischlUser().setId("user-1").setDisplayName("testuser");
+        when(fischlIdentityConnector.login(any(FischlLoginRequest.class)))
+                .thenReturn(new FischlAuthResponse(fischlUser, "token-123"));
+
+        ApiResponse response = identityApi.loginUser(request);
+        assertTrue(response.isSuccess());
+        assertNotNull(response.getData());
+    }
+
+    @Test
+    void loginUser_withBlankEmail_throwsException() {
+        MauraBastionIdentityApi.LoginRequest request = new MauraBastionIdentityApi.LoginRequest()
+                .setEmail("").setPassword("password123");
+
+        assertThrows(InvalidRequestException.class, () -> identityApi.loginUser(request));
+    }
+
+    @Test
+    void loginUser_withBlankPassword_throwsException() {
+        MauraBastionIdentityApi.LoginRequest request = new MauraBastionIdentityApi.LoginRequest()
+                .setEmail("test@example.com").setPassword("");
+
+        assertThrows(InvalidRequestException.class, () -> identityApi.loginUser(request));
+    }
+
+    @Test
+    void getMe_withValidToken_returnsSuccess() throws Exception {
+        when(fischlIdentityConnector.getMe("Bearer token-123"))
+                .thenReturn(new FischlUser().setId("user-1").setDisplayName("Test User"));
+
+        ApiResponse response = identityApi.getMe("Bearer token-123");
+        assertTrue(response.isSuccess());
+        assertNotNull(response.getData());
+    }
+
+    @Test
+    void getMe_withBlankAuthHeader_throwsException() {
+        assertThrows(InvalidRequestException.class, () -> identityApi.getMe(""));
     }
 
     @Test

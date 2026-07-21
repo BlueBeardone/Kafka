@@ -6,7 +6,9 @@ import lombok.experimental.Accessors;
 import za.co.bastion.common.dto.ApiResponse;
 
 public interface MauraBastionIdentityApi {
-    ApiResponse createUser(User user);
+    ApiResponse registerUser(RegisterRequest request);
+    ApiResponse loginUser(LoginRequest request);
+    ApiResponse getMe(String authHeader);
     ApiResponse getUser(String id);
     ApiResponse getAllUsers();
     ApiResponse updateUser(String id, User user);
@@ -19,5 +21,22 @@ public interface MauraBastionIdentityApi {
         private String id;
         private String displayName;
         private String bastionId;
+    }
+
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    class RegisterRequest {
+        private String email;
+        private String username;
+        private String password;
+    }
+
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    class LoginRequest {
+        private String email;
+        private String password;
     }
 }

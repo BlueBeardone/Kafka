@@ -3,3 +3,4 @@ za/co/bastion/maurabastion/impl/bastion/MauraBastionBastionApiImpl.class
 za/co/bastion/maurabastion/impl/identity/MauraBastionIdentityApiImpl.class
 za/co/bastion/maurabastion/impl/newspapers/MauraBastionNewspapersApiImpl.class
 za/co/bastion/maurabastion/impl/facilities/MauraBastionFacilitiesApiImpl.class
+za/co/bastion/maurabastion/impl/identity/MauraBastionIdentityApiImpl$AuthResult.class
