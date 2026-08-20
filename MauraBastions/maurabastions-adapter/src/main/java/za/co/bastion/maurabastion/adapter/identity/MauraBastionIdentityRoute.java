@@ -42,13 +42,6 @@ public class MauraBastionIdentityRoute {
         return identityApi.getUser(id);
     }
 
-    @GET
-    @Path("/users")
-    @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse getAllUsers() {
-        return identityApi.getAllUsers();
-    }
-
     @PUT
     @Path("/users/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -57,10 +50,31 @@ public class MauraBastionIdentityRoute {
         return identityApi.updateUser(id, user);
     }
 
-    @DELETE
-    @Path("/users/{id}")
+    @GET
+    @Path("/roles")
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse deleteUser(@PathParam("id") String id) {
-        return identityApi.deleteUser(id);
+    public ApiResponse listRoles(@HeaderParam("Authorization") String authHeader) {
+        return identityApi.listRoles(authHeader);
+    }
+
+    @GET
+    @Path("/roles/{name}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public ApiResponse getRole(@PathParam("name") String name, @HeaderParam("Authorization") String authHeader) {
+        return identityApi.getRole(name, authHeader);
+    }
+
+    @GET
+    @Path("/apps")
+    @Produces(MediaType.APPLICATION_JSON)
+    public ApiResponse listApps(@HeaderParam("Authorization") String authHeader) {
+        return identityApi.listApps(authHeader);
+    }
+
+    @GET
+    @Path("/apps/{slug}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public ApiResponse getApp(@PathParam("slug") String slug, @HeaderParam("Authorization") String authHeader) {
+        return identityApi.getApp(slug, authHeader);
     }
 }

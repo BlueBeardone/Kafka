@@ -1,5 +1,6 @@
 package za.co.bastion.maurabastion.api.identity;
 
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -10,9 +11,13 @@ public interface MauraBastionIdentityApi {
     ApiResponse loginUser(LoginRequest request);
     ApiResponse getMe(String authHeader);
     ApiResponse getUser(String id);
-    ApiResponse getAllUsers();
     ApiResponse updateUser(String id, User user);
-    ApiResponse deleteUser(String id);
+
+    ApiResponse listRoles(String authHeader);
+    ApiResponse getRole(String name, String authHeader);
+
+    ApiResponse listApps(String authHeader);
+    ApiResponse getApp(String slug, String authHeader);
 
     @Getter
     @Setter
@@ -21,6 +26,7 @@ public interface MauraBastionIdentityApi {
         private String id;
         private String displayName;
         private String bastionId;
+        private List<String> roles;
     }
 
     @Getter
@@ -38,5 +44,23 @@ public interface MauraBastionIdentityApi {
     class LoginRequest {
         private String email;
         private String password;
+        private String app;
+    }
+
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    class Role {
+        private String name;
+        private String description;
+    }
+
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    class App {
+        private String slug;
+        private String name;
+        private List<String> allowedRoles;
     }
 }

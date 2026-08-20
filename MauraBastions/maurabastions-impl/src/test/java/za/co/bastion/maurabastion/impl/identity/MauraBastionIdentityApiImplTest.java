@@ -8,10 +8,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.bastion.common.dto.ApiResponse;
 import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
+import za.co.bastion.fischl.FischlApp;
 import za.co.bastion.fischl.FischlAuthResponse;
 import za.co.bastion.fischl.FischlIdentityException;
 import za.co.bastion.fischl.FischlLoginRequest;
 import za.co.bastion.fischl.FischlRegisterRequest;
+import za.co.bastion.fischl.FischlRole;
 import za.co.bastion.fischl.FischlUser;
 import za.co.bastion.fischl.identity.FischlIdentityConnector;
 import za.co.bastion.maurabastion.api.identity.MauraBastionIdentityApi;
@@ -97,7 +99,7 @@ class MauraBastionIdentityApiImplTest {
     @Test
     void loginUser_withValidData_returnsSuccess() throws Exception {
         MauraBastionIdentityApi.LoginRequest request = new MauraBastionIdentityApi.LoginRequest()
-                .setEmail("test@example.com").setPassword("password123");
+                .setEmail("test@example.com").setPassword("password123").setApp("fischl");
 
         FischlUser fischlUser = new FischlUser().setId("user-1").setDisplayName("testuser");
         when(fischlIdentityConnector.login(any(FischlLoginRequest.class)))
@@ -149,15 +151,6 @@ class MauraBastionIdentityApiImplTest {
     }
 
     @Test
-    void getAllUsers_returnsSuccess() throws Exception {
-        when(fischlIdentityConnector.readAll())
-                .thenReturn(List.of(new FischlUser().setId("user-1").setDisplayName("Test User")));
-
-        ApiResponse response = identityApi.getAllUsers();
-        assertTrue(response.isSuccess());
-    }
-
-    @Test
     void updateUser_withValidData_returnsSuccess() throws Exception {
         MauraBastionIdentityApi.User user = new MauraBastionIdentityApi.User()
                 .setId("user-1").setDisplayName("Updated User");
@@ -166,6 +159,54 @@ class MauraBastionIdentityApiImplTest {
                 .thenReturn(new FischlUser().setId("user-1").setDisplayName("Updated User"));
 
         ApiResponse response = identityApi.updateUser("user-1", user);
+        assertTrue(response.isSuccess());
+    }
+
+    @Test
+    void listRoles_returnsSuccess() throws Exception {
+        when(fischlIdentityConnector.listRoles("Bearer token"))
+                .thenReturn(List.of(new FischlRole().setName("admin").setDescription("Admin role")));
+
+        ApiResponse response = identityApi.listRoles("Bearer token");
+        assertTrue(response.isSuccess());
+        assertNotNull(response.getData());
+    }
+
+    @Test
+    void listRoles_withBlankAuthHeader_throwsException() {
+        assertThrows(InvalidRequestException.class, () -> identityApi.listRoles(""));
+    }
+
+    @Test
+    void getRole_returnsSuccess() throws Exception {
+        when(fischlIdentityConnector.getRole("admin", "Bearer token"))
+                .thenReturn(new FischlRole().setName("admin").setDescription("Admin role"));
+
+        ApiResponse response = identityApi.getRole("admin", "Bearer token");
+        assertTrue(response.isSuccess());
+    }
+
+    @Test
+    void listApps_returnsSuccess() throws Exception {
+        when(fischlIdentityConnector.listApps("Bearer token"))
+                .thenReturn(List.of(new FischlApp().setSlug("fischl").setName("Fischl").setAllowedRoles(List.of("user"))));
+
+        ApiResponse response = identityApi.listApps("Bearer token");
+        assertTrue(response.isSuccess());
+        assertNotNull(response.getData());
+    }
+
+    @Test
+    void listApps_withBlankAuthHeader_throwsException() {
+        assertThrows(InvalidRequestException.class, () -> identityApi.listApps(""));
+    }
+
+    @Test
+    void getApp_returnsSuccess() throws Exception {
+        when(fischlIdentityConnector.getApp("fischl", "Bearer token"))
+                .thenReturn(new FischlApp().setSlug("fischl").setName("Fischl"));
+
+        ApiResponse response = identityApi.getApp("fischl", "Bearer token");
         assertTrue(response.isSuccess());
     }
 
@@ -179,13 +220,5 @@ class MauraBastionIdentityApiImplTest {
 
         BackendException ex = assertThrows(BackendException.class, () -> identityApi.registerUser(request));
         assertEquals(409, ex.getBackendStatus());
-    }
-
-    @Test
-    void deleteUser_returnsSuccess() throws Exception {
-        doNothing().when(fischlIdentityConnector).delete("user-1");
-
-        ApiResponse response = identityApi.deleteUser("user-1");
-        assertTrue(response.isSuccess());
     }
 }

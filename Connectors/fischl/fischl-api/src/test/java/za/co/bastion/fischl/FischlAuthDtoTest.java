@@ -2,6 +2,8 @@ package za.co.bastion.fischl;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class FischlAuthDtoTest {
@@ -54,17 +56,20 @@ class FischlAuthDtoTest {
 
         request.setEmail("login@example.com");
         request.setPassword("loginpass");
+        request.setApp("fischl");
 
         assertEquals("login@example.com", request.getEmail());
         assertEquals("loginpass", request.getPassword());
+        assertEquals("fischl", request.getApp());
     }
 
     @Test
     void FischlLoginRequest_allArgsConstructor() {
-        FischlLoginRequest request = new FischlLoginRequest("x@y.com", "mypass");
+        FischlLoginRequest request = new FischlLoginRequest("x@y.com", "mypass", "fischl");
 
         assertEquals("x@y.com", request.getEmail());
         assertEquals("mypass", request.getPassword());
+        assertEquals("fischl", request.getApp());
     }
 
     @Test
@@ -72,16 +77,19 @@ class FischlAuthDtoTest {
         FischlLoginRequest request = new FischlLoginRequest();
         assertNull(request.getEmail());
         assertNull(request.getPassword());
+        assertNull(request.getApp());
     }
 
     @Test
     void FischlLoginRequest_chainSetters() {
         FischlLoginRequest request = new FischlLoginRequest()
                 .setEmail("chain@test.com")
-                .setPassword("chainpass");
+                .setPassword("chainpass")
+                .setApp("fischl");
 
         assertEquals("chain@test.com", request.getEmail());
         assertEquals("chainpass", request.getPassword());
+        assertEquals("fischl", request.getApp());
     }
 
     @Test
@@ -91,7 +99,8 @@ class FischlAuthDtoTest {
         FischlUser user = new FischlUser()
                 .setId("user-1")
                 .setDisplayName("Test User")
-                .setBastionId("bastion-1");
+                .setBastionId("bastion-1")
+                .setRoles(List.of("user"));
         response.setUser(user);
         response.setToken("token-123");
 
@@ -101,7 +110,7 @@ class FischlAuthDtoTest {
 
     @Test
     void FischlAuthResponse_allArgsConstructor() {
-        FischlUser user = new FischlUser("u1", "User", "b1");
+        FischlUser user = new FischlUser("u1", "User", "b1", List.of("user"));
         FischlAuthResponse response = new FischlAuthResponse(user, "tok-1");
 
         assertEquals(user, response.getUser());
@@ -117,7 +126,7 @@ class FischlAuthDtoTest {
 
     @Test
     void FischlAuthResponse_chainSetters() {
-        FischlUser user = new FischlUser("u2", "User2", "b2");
+        FischlUser user = new FischlUser("u2", "User2", "b2", List.of("admin"));
         FischlAuthResponse response = new FischlAuthResponse()
                 .setUser(user)
                 .setToken("tok-2");

@@ -10,4 +10,5 @@ import lombok.experimental.Accessors;
 public class FischlLoginRequest {
     private String email;
     private String password;
+    private String app;
 }

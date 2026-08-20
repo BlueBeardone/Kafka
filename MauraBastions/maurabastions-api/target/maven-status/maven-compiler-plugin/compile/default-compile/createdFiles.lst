@@ -1,4 +1,5 @@
 za/co/bastion/maurabastion/api/hireling/MauraBastionHirelingApi.class
+za/co/bastion/maurabastion/api/identity/MauraBastionIdentityApi$Role.class
 za/co/bastion/maurabastion/api/identity/MauraBastionIdentityApi$User.class
 za/co/bastion/maurabastion/api/identity/MauraBastionIdentityApi$LoginRequest.class
 za/co/bastion/maurabastion/api/facilities/MauraBastionFacilitiesApi.class
@@ -6,6 +7,7 @@ za/co/bastion/maurabastion/api/newspapers/MauraBastionNewspapersApi$NewspaperArt
 za/co/bastion/maurabastion/api/identity/MauraBastionIdentityApi.class
 za/co/bastion/maurabastion/api/bastion/MauraBastionBastionApi$Facility.class
 za/co/bastion/maurabastion/api/hireling/MauraBastionHirelingApi$Hireling.class
+za/co/bastion/maurabastion/api/identity/MauraBastionIdentityApi$App.class
 za/co/bastion/maurabastion/api/bastion/MauraBastionBastionApi$Hireling.class
 za/co/bastion/maurabastion/api/newspapers/MauraBastionNewspapersApi.class
 za/co/bastion/maurabastion/api/defender/MauraBastionDefenderApi.class

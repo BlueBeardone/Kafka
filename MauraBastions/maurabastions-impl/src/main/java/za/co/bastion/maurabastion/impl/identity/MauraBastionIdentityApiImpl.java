@@ -9,10 +9,12 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import za.co.bastion.common.dto.ApiResponse;
 import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
+import za.co.bastion.fischl.FischlApp;
 import za.co.bastion.fischl.FischlAuthResponse;
 import za.co.bastion.fischl.FischlIdentityException;
 import za.co.bastion.fischl.FischlLoginRequest;
 import za.co.bastion.fischl.FischlRegisterRequest;
+import za.co.bastion.fischl.FischlRole;
 import za.co.bastion.fischl.FischlUser;
 import za.co.bastion.fischl.identity.FischlIdentityConnector;
 import za.co.bastion.maurabastion.api.identity.MauraBastionIdentityApi;
@@ -65,7 +67,7 @@ public class MauraBastionIdentityApiImpl implements MauraBastionIdentityApi {
 
         try {
             FischlLoginRequest fischlRequest = new FischlLoginRequest(
-                    request.getEmail(), request.getPassword());
+                    request.getEmail(), request.getPassword(), request.getApp());
             FischlAuthResponse authResponse = fischlIdentityConnector.login(fischlRequest);
             return ApiResponse.success("User logged in", toAuthResult(authResponse));
         } catch (FischlIdentityException e) {
@@ -101,19 +103,6 @@ public class MauraBastionIdentityApiImpl implements MauraBastionIdentityApi {
     }
 
     @Override
-    public ApiResponse getAllUsers() {
-        try {
-            List<FischlUser> result = fischlIdentityConnector.readAll();
-            List<MauraBastionIdentityApi.User> users = result.stream()
-                    .map(this::toUser)
-                    .toList();
-            return ApiResponse.success("Users found", users);
-        } catch (FischlIdentityException e) {
-            throw new BackendException(e.getStatus(), "Identity backend error: " + e.getMessage());
-        }
-    }
-
-    @Override
     public ApiResponse updateUser(String id, MauraBastionIdentityApi.User user) {
         if (id == null || id.isBlank()) {
             throw new InvalidRequestException("id is required");
@@ -132,13 +121,60 @@ public class MauraBastionIdentityApiImpl implements MauraBastionIdentityApi {
     }
 
     @Override
-    public ApiResponse deleteUser(String id) {
-        if (id == null || id.isBlank()) {
-            throw new InvalidRequestException("id is required");
+    public ApiResponse listRoles(String authHeader) {
+        if (authHeader == null || authHeader.isBlank()) {
+            throw new InvalidRequestException("Authorization header is required");
         }
         try {
-            fischlIdentityConnector.delete(id);
-            return ApiResponse.success("User deleted", null);
+            List<FischlRole> results = fischlIdentityConnector.listRoles(authHeader);
+            List<MauraBastionIdentityApi.Role> roles = results.stream().map(this::toRole).toList();
+            return ApiResponse.success("Roles found", roles);
+        } catch (FischlIdentityException e) {
+            throw new BackendException(e.getStatus(), "Identity backend error: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResponse getRole(String name, String authHeader) {
+        if (name == null || name.isBlank()) {
+            throw new InvalidRequestException("role name is required");
+        }
+        if (authHeader == null || authHeader.isBlank()) {
+            throw new InvalidRequestException("Authorization header is required");
+        }
+        try {
+            FischlRole result = fischlIdentityConnector.getRole(name, authHeader);
+            return ApiResponse.success("Role found", toRole(result));
+        } catch (FischlIdentityException e) {
+            throw new BackendException(e.getStatus(), "Identity backend error: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResponse listApps(String authHeader) {
+        if (authHeader == null || authHeader.isBlank()) {
+            throw new InvalidRequestException("Authorization header is required");
+        }
+        try {
+            List<FischlApp> results = fischlIdentityConnector.listApps(authHeader);
+            List<MauraBastionIdentityApi.App> apps = results.stream().map(this::toApp).toList();
+            return ApiResponse.success("Apps found", apps);
+        } catch (FischlIdentityException e) {
+            throw new BackendException(e.getStatus(), "Identity backend error: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResponse getApp(String slug, String authHeader) {
+        if (slug == null || slug.isBlank()) {
+            throw new InvalidRequestException("app slug is required");
+        }
+        if (authHeader == null || authHeader.isBlank()) {
+            throw new InvalidRequestException("Authorization header is required");
+        }
+        try {
+            FischlApp result = fischlIdentityConnector.getApp(slug, authHeader);
+            return ApiResponse.success("App found", toApp(result));
         } catch (FischlIdentityException e) {
             throw new BackendException(e.getStatus(), "Identity backend error: " + e.getMessage());
         }
@@ -148,14 +184,29 @@ public class MauraBastionIdentityApiImpl implements MauraBastionIdentityApi {
         return new FischlUser()
                 .setId(user.getId())
                 .setDisplayName(user.getDisplayName())
-                .setBastionId(user.getBastionId());
+                .setBastionId(user.getBastionId())
+                .setRoles(user.getRoles());
     }
 
     private MauraBastionIdentityApi.User toUser(FischlUser fischlUser) {
         return new MauraBastionIdentityApi.User()
                 .setId(fischlUser.getId())
                 .setDisplayName(fischlUser.getDisplayName())
-                .setBastionId(fischlUser.getBastionId());
+                .setBastionId(fischlUser.getBastionId())
+                .setRoles(fischlUser.getRoles());
+    }
+
+    private MauraBastionIdentityApi.Role toRole(FischlRole fischlRole) {
+        return new MauraBastionIdentityApi.Role()
+                .setName(fischlRole.getName())
+                .setDescription(fischlRole.getDescription());
+    }
+
+    private MauraBastionIdentityApi.App toApp(FischlApp fischlApp) {
+        return new MauraBastionIdentityApi.App()
+                .setSlug(fischlApp.getSlug())
+                .setName(fischlApp.getName())
+                .setAllowedRoles(fischlApp.getAllowedRoles());
     }
 
     private Object toAuthResult(FischlAuthResponse authResponse) {

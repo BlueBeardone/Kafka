@@ -4,12 +4,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
-import za.co.bastion.fischl.CustomHttpClientOptions;
-import za.co.bastion.fischl.FischlAuthResponse;
-import za.co.bastion.fischl.FischlIdentityException;
-import za.co.bastion.fischl.FischlLoginRequest;
-import za.co.bastion.fischl.FischlRegisterRequest;
-import za.co.bastion.fischl.FischlUser;
+import za.co.bastion.fischl.*;
 
 import java.util.List;
 
@@ -42,21 +37,81 @@ public interface FischlIdentityConnector {
     @Produces(MediaType.APPLICATION_JSON)
     FischlUser read(@PathParam("id") String id) throws FischlIdentityException;
 
-    @GET
-    @Path("/users")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    List<FischlUser> readAll() throws FischlIdentityException;
-
-    @PUT
+    @PATCH
     @Path("/users/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     FischlUser update(@PathParam("id") String id, FischlUser user) throws FischlIdentityException;
 
-    @DELETE
-    @Path("/users/{id}")
+    @POST
+    @Path("/users/{id}/roles")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    void delete(@PathParam("id") String id) throws FischlIdentityException;
+    FischlUser addRole(@PathParam("id") String id, @HeaderParam("Authorization") String authHeader, FischlAssignRoleRequest request) throws FischlIdentityException;
+
+    @DELETE
+    @Path("/users/{id}/roles/{name}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    FischlUser removeRole(@PathParam("id") String id, @PathParam("name") String name, @HeaderParam("Authorization") String authHeader) throws FischlIdentityException;
+
+    @GET
+    @Path("/roles")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    List<FischlRole> listRoles(@HeaderParam("Authorization") String authHeader) throws FischlIdentityException;
+
+    @POST
+    @Path("/roles")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    FischlRole createRole(@HeaderParam("Authorization") String authHeader, FischlRole role) throws FischlIdentityException;
+
+    @GET
+    @Path("/roles/{name}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    FischlRole getRole(@PathParam("name") String name, @HeaderParam("Authorization") String authHeader) throws FischlIdentityException;
+
+    @PATCH
+    @Path("/roles/{name}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    FischlRole updateRole(@PathParam("name") String name, @HeaderParam("Authorization") String authHeader, FischlRole role) throws FischlIdentityException;
+
+    @DELETE
+    @Path("/roles/{name}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    void deleteRole(@PathParam("name") String name, @HeaderParam("Authorization") String authHeader) throws FischlIdentityException;
+
+    @GET
+    @Path("/apps")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    List<FischlApp> listApps(@HeaderParam("Authorization") String authHeader) throws FischlIdentityException;
+
+    @POST
+    @Path("/apps")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    FischlApp createApp(@HeaderParam("Authorization") String authHeader, FischlApp app) throws FischlIdentityException;
+
+    @GET
+    @Path("/apps/{slug}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    FischlApp getApp(@PathParam("slug") String slug, @HeaderParam("Authorization") String authHeader) throws FischlIdentityException;
+
+    @PATCH
+    @Path("/apps/{slug}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    FischlApp updateApp(@PathParam("slug") String slug, @HeaderParam("Authorization") String authHeader, FischlApp app) throws FischlIdentityException;
+
+    @DELETE
+    @Path("/apps/{slug}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    void deleteApp(@PathParam("slug") String slug, @HeaderParam("Authorization") String authHeader) throws FischlIdentityException;
 }
