@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: za.co.bastion.fischl.FischlAuthDtoTest
 -------------------------------------------------------------------------------
-Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.010 s -- in za.co.bastion.fischl.FischlAuthDtoTest
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.011 s -- in za.co.bastion.fischl.FischlAuthDtoTest
