@@ -12,6 +12,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @Accessors(chain = true)
 public class FischlArticle {
+    private String id;
     private String title;
     private String content;
     private String imageUrl;

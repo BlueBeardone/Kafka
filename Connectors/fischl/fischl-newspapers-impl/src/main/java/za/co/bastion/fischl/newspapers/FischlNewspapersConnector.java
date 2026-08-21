@@ -24,4 +24,22 @@ public interface FischlNewspapersConnector {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     List<FischlArticle> readAll() throws FischlNewspaperException;
+
+    @GET
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    FischlArticle read(@PathParam("id") String id) throws FischlNewspaperException;
+
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    FischlArticle update(@PathParam("id") String id, FischlArticle article) throws FischlNewspaperException;
+
+    @DELETE
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    void delete(@PathParam("id") String id) throws FischlNewspaperException;
 }
