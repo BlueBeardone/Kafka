@@ -23,6 +23,9 @@ public class TsaritsaIdentityApiImpl implements TsaritsaIdentityApi {
 
     @Override
     public ApiResponse registerUser(RegisterRequest request) {
+        if (request == null) {
+            throw new InvalidRequestException("request is required");
+        }
         if (request.getEmail() == null || request.getEmail().isBlank()) {
             throw new InvalidRequestException("email is required");
         }
@@ -50,6 +53,9 @@ public class TsaritsaIdentityApiImpl implements TsaritsaIdentityApi {
 
     @Override
     public ApiResponse loginUser(LoginRequest request) {
+        if (request == null) {
+            throw new InvalidRequestException("request is required");
+        }
         if (request.getEmail() == null || request.getEmail().isBlank()) {
             throw new InvalidRequestException("email is required");
         }
@@ -94,6 +100,9 @@ public class TsaritsaIdentityApiImpl implements TsaritsaIdentityApi {
     public ApiResponse updateUser(String id, User user) {
         if (id == null || id.isBlank()) {
             throw new InvalidRequestException("id is required");
+        }
+        if (user == null) {
+            throw new InvalidRequestException("user is required");
         }
         if (user.getDisplayName() == null || user.getDisplayName().isBlank()) {
             throw new InvalidRequestException("displayName is required");
@@ -186,6 +195,9 @@ public class TsaritsaIdentityApiImpl implements TsaritsaIdentityApi {
         if (name == null || name.isBlank()) {
             throw new InvalidRequestException("role name is required");
         }
+        if (role == null) {
+            throw new InvalidRequestException("role is required");
+        }
         requireAuth(authHeader);
         try {
             FischlRole result = fischlIdentityConnector.updateRole(name, authHeader, toFischlRole(role));
@@ -253,6 +265,9 @@ public class TsaritsaIdentityApiImpl implements TsaritsaIdentityApi {
     public ApiResponse updateApp(String slug, String authHeader, App app) {
         if (slug == null || slug.isBlank()) {
             throw new InvalidRequestException("app slug is required");
+        }
+        if (app == null) {
+            throw new InvalidRequestException("app is required");
         }
         requireAuth(authHeader);
         try {
