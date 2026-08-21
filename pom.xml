@@ -9,6 +9,7 @@
         <module>common</module>
         <module>connectors</module>
         <module>maurabastions</module>
+        <module>tsaritsa</module>
         <module>assembly</module>
     </modules>
 
