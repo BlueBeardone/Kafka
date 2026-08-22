@@ -7,12 +7,14 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import za.co.bastion.fischl.CustomHttpClientOptions;
 import za.co.bastion.fischl.FischlFacility;
 import za.co.bastion.fischl.FischlFacilityException;
+import za.co.bastion.fischl.FischlEnvelopeBodyReader;
 
 import java.util.List;
 
 @RegisterRestClient(configKey = "fischl-facilities-api")
 @RegisterProvider(FischlFacilitiesExceptionMapper.class)
 @RegisterProvider(CustomHttpClientOptions.class)
+@RegisterProvider(FischlEnvelopeBodyReader.class)
 public interface FischlFacilitiesConnector {
 
     @POST

@@ -11,6 +11,7 @@ import java.util.List;
 @RegisterRestClient(configKey = "fischl-identity-api")
 @RegisterProvider(FischlIdentityExceptionMapper.class)
 @RegisterProvider(CustomHttpClientOptions.class)
+@RegisterProvider(FischlEnvelopeBodyReader.class)
 public interface FischlIdentityConnector {
 
     @POST

@@ -5,6 +5,7 @@ import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import za.co.bastion.fischl.CustomHttpClientOptions;
+import za.co.bastion.fischl.FischlEnvelopeBodyReader;
 import za.co.bastion.fischl.FischlHireling;
 import za.co.bastion.fischl.FischlHirelingException;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @RegisterRestClient(configKey = "fischl-hireling-api")
 @RegisterProvider(FischlHirelingExceptionMapper.class)
 @RegisterProvider(CustomHttpClientOptions.class)
+@RegisterProvider(FischlEnvelopeBodyReader.class)
 public interface FischlHirelingConnector {
 
     @POST

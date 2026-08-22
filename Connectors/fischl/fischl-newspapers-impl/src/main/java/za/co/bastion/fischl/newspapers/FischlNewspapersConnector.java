@@ -6,6 +6,7 @@ import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import za.co.bastion.fischl.CustomHttpClientOptions;
 import za.co.bastion.fischl.FischlArticle;
+import za.co.bastion.fischl.FischlEnvelopeBodyReader;
 import za.co.bastion.fischl.FischlNewspaperException;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 @RegisterRestClient(configKey = "fischl-newspapers-api")
 @RegisterProvider(FischlNewspapersExceptionMapper.class)
 @RegisterProvider(CustomHttpClientOptions.class)
+@RegisterProvider(FischlEnvelopeBodyReader.class)
 public interface FischlNewspapersConnector {
 
     @POST
