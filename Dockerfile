@@ -4,18 +4,24 @@ WORKDIR /usr/src/app
 
 COPY pom.xml .
 COPY common/pom.xml common/pom.xml
-COPY connectors/pom.xml connectors/pom.xml
-COPY connectors/fischl/pom.xml connectors/fischl/pom.xml
-COPY connectors/fischl/fischl-api/pom.xml connectors/fischl/fischl-api/pom.xml
-COPY connectors/fischl/fischl-utilities/pom.xml connectors/fischl/fischl-utilities/pom.xml
-COPY connectors/fischl/fischl-identity-impl/pom.xml connectors/fischl/fischl-identity-impl/pom.xml
-COPY connectors/fischl/fischl-bastion-impl/pom.xml connectors/fischl/fischl-bastion-impl/pom.xml
-COPY connectors/fischl/fischl-facilities-impl/pom.xml connectors/fischl/fischl-facilities-impl/pom.xml
-COPY connectors/fischl/fischl-newspapers-impl/pom.xml connectors/fischl/fischl-newspapers-impl/pom.xml
-COPY maurabastions/pom.xml maurabastions/pom.xml
-COPY maurabastions/maurabastions-api/pom.xml maurabastions/maurabastions-api/pom.xml
-COPY maurabastions/maurabastions-impl/pom.xml maurabastions/maurabastions-impl/pom.xml
-COPY maurabastions/maurabastions-adapter/pom.xml maurabastions/maurabastions-adapter/pom.xml
+COPY Connectors/pom.xml Connectors/pom.xml
+COPY Connectors/fischl/pom.xml Connectors/fischl/pom.xml
+COPY Connectors/fischl/fischl-api/pom.xml Connectors/fischl/fischl-api/pom.xml
+COPY Connectors/fischl/fischl-utilities/pom.xml Connectors/fischl/fischl-utilities/pom.xml
+COPY Connectors/fischl/fischl-identity-impl/pom.xml Connectors/fischl/fischl-identity-impl/pom.xml
+COPY Connectors/fischl/fischl-bastion-impl/pom.xml Connectors/fischl/fischl-bastion-impl/pom.xml
+COPY Connectors/fischl/fischl-facilities-impl/pom.xml Connectors/fischl/fischl-facilities-impl/pom.xml
+COPY Connectors/fischl/fischl-newspapers-impl/pom.xml Connectors/fischl/fischl-newspapers-impl/pom.xml
+COPY Connectors/fischl/fischl-defender-impl/pom.xml Connectors/fischl/fischl-defender-impl/pom.xml
+COPY Connectors/fischl/fischl-hireling-impl/pom.xml Connectors/fischl/fischl-hireling-impl/pom.xml
+COPY MauraBastions/pom.xml MauraBastions/pom.xml
+COPY MauraBastions/maurabastions-api/pom.xml MauraBastions/maurabastions-api/pom.xml
+COPY MauraBastions/maurabastions-impl/pom.xml MauraBastions/maurabastions-impl/pom.xml
+COPY MauraBastions/maurabastions-adapter/pom.xml MauraBastions/maurabastions-adapter/pom.xml
+COPY Tsaritsa/pom.xml Tsaritsa/pom.xml
+COPY Tsaritsa/tsaritsa-api/pom.xml Tsaritsa/tsaritsa-api/pom.xml
+COPY Tsaritsa/tsaritsa-impl/pom.xml Tsaritsa/tsaritsa-impl/pom.xml
+COPY Tsaritsa/tsaritsa-adapter/pom.xml Tsaritsa/tsaritsa-adapter/pom.xml
 COPY assembly/pom.xml assembly/pom.xml
 COPY assembly/application-assembly/pom.xml assembly/application-assembly/pom.xml
 

@@ -7,9 +7,9 @@
     <packaging>pom</packaging>
     <modules>
         <module>common</module>
-        <module>connectors</module>
-        <module>maurabastions</module>
-        <module>tsaritsa</module>
+        <module>Connectors</module>
+        <module>MauraBastions</module>
+        <module>Tsaritsa</module>
         <module>assembly</module>
     </modules>
 
