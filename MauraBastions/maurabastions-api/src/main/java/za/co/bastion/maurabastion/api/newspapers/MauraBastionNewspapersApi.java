@@ -6,8 +6,8 @@ import lombok.experimental.Accessors;
 import za.co.bastion.common.dto.ApiResponse;
 
 public interface MauraBastionNewspapersApi {
-    ApiResponse createNewspaperArticle(NewspaperArticle article);
-    ApiResponse getAllNewspaperArticles();
+    ApiResponse createNewspaperArticle(String authHeader, NewspaperArticle article);
+    ApiResponse getAllNewspaperArticles(String authHeader);
 
     @Getter
     @Setter

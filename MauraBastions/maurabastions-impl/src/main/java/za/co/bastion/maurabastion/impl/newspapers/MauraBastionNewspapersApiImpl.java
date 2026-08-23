@@ -21,10 +21,10 @@ public class MauraBastionNewspapersApiImpl implements MauraBastionNewspapersApi 
     FischlNewspapersConnector fischlNewspapersConnector;
 
     @Override
-    public ApiResponse createNewspaperArticle(MauraBastionNewspapersApi.NewspaperArticle article) {
+    public ApiResponse createNewspaperArticle(String authHeader, MauraBastionNewspapersApi.NewspaperArticle article) {
         validateNewspaperArticle(article);
         try {
-            FischlArticle result = fischlNewspapersConnector.create(toFischlArticle(article));
+            FischlArticle result = fischlNewspapersConnector.create(authHeader, toFischlArticle(article));
             return ApiResponse.success("Newspaper article created", toNewspaperArticle(result));
         } catch (FischlNewspaperException e) {
             throw new BackendException(e.getStatus(), "Newspaper backend error: " + e.getMessage());
@@ -32,9 +32,9 @@ public class MauraBastionNewspapersApiImpl implements MauraBastionNewspapersApi 
     }
 
     @Override
-    public ApiResponse getAllNewspaperArticles() {
+    public ApiResponse getAllNewspaperArticles(String authHeader) {
         try {
-            List<FischlArticle> results = fischlNewspapersConnector.readAll();
+            List<FischlArticle> results = fischlNewspapersConnector.readAll(authHeader);
             List<MauraBastionNewspapersApi.NewspaperArticle> articles = results.stream().map(this::toNewspaperArticle).toList();
             return ApiResponse.success("Newspaper articles found", articles);
         } catch (FischlNewspaperException e) {

@@ -20,12 +20,12 @@ public interface FischlNewspapersConnector {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    FischlArticle create(FischlArticle article) throws FischlNewspaperException;
+    FischlArticle create(@HeaderParam("Authorization") String authHeader, FischlArticle article) throws FischlNewspaperException;
 
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    List<FischlArticle> readAll() throws FischlNewspaperException;
+    List<FischlArticle> readAll(@HeaderParam("Authorization") String authHeader) throws FischlNewspaperException;
 
     @GET
     @Path("/{id}")

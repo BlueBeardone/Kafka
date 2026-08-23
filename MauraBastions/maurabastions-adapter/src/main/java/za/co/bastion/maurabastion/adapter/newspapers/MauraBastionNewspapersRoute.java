@@ -15,13 +15,13 @@ public class MauraBastionNewspapersRoute {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse createNewspaperArticle(MauraBastionNewspapersApi.NewspaperArticle article) {
-        return newspapersApi.createNewspaperArticle(article);
+    public ApiResponse createNewspaperArticle(@HeaderParam("Authorization") String authHeader, MauraBastionNewspapersApi.NewspaperArticle article) {
+        return newspapersApi.createNewspaperArticle(authHeader, article);
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse getAllNewspaperArticles() {
-        return newspapersApi.getAllNewspaperArticles();
+    public ApiResponse getAllNewspaperArticles(@HeaderParam("Authorization") String authHeader) {
+        return newspapersApi.getAllNewspaperArticles(authHeader);
     }
 }
