@@ -1,7 +1,7 @@
-/Users/barendblom/Personal_Projects/Kafka/maurabastions/maurabastions-impl/src/main/java/za/co/bastion/maurabastion/impl/MauraBastionHealthApiImpl.java
-/Users/barendblom/Personal_Projects/Kafka/maurabastions/maurabastions-impl/src/main/java/za/co/bastion/maurabastion/impl/bastion/MauraBastionBastionApiImpl.java
-/Users/barendblom/Personal_Projects/Kafka/maurabastions/maurabastions-impl/src/main/java/za/co/bastion/maurabastion/impl/defender/MauraBastionDefenderApiImpl.java
-/Users/barendblom/Personal_Projects/Kafka/maurabastions/maurabastions-impl/src/main/java/za/co/bastion/maurabastion/impl/facilities/MauraBastionFacilitiesApiImpl.java
-/Users/barendblom/Personal_Projects/Kafka/maurabastions/maurabastions-impl/src/main/java/za/co/bastion/maurabastion/impl/hireling/MauraBastionHirelingApiImpl.java
-/Users/barendblom/Personal_Projects/Kafka/maurabastions/maurabastions-impl/src/main/java/za/co/bastion/maurabastion/impl/identity/MauraBastionIdentityApiImpl.java
-/Users/barendblom/Personal_Projects/Kafka/maurabastions/maurabastions-impl/src/main/java/za/co/bastion/maurabastion/impl/newspapers/MauraBastionNewspapersApiImpl.java
+/Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-impl/src/main/java/za/co/bastion/maurabastion/impl/MauraBastionHealthApiImpl.java
+/Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-impl/src/main/java/za/co/bastion/maurabastion/impl/bastion/MauraBastionBastionApiImpl.java
+/Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-impl/src/main/java/za/co/bastion/maurabastion/impl/defender/MauraBastionDefenderApiImpl.java
+/Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-impl/src/main/java/za/co/bastion/maurabastion/impl/facilities/MauraBastionFacilitiesApiImpl.java
+/Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-impl/src/main/java/za/co/bastion/maurabastion/impl/hireling/MauraBastionHirelingApiImpl.java
+/Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-impl/src/main/java/za/co/bastion/maurabastion/impl/identity/MauraBastionIdentityApiImpl.java
+/Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-impl/src/main/java/za/co/bastion/maurabastion/impl/newspapers/MauraBastionNewspapersApiImpl.java
