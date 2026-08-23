@@ -44,7 +44,6 @@ public interface MauraBastionIdentityApi {
     class LoginRequest {
         private String email;
         private String password;
-        private String app;
     }
 
     @Getter
