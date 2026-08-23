@@ -24,6 +24,8 @@ import java.util.List;
 @ApplicationScoped
 public class MauraBastionIdentityApiImpl implements MauraBastionIdentityApi {
 
+    private static final String APP_NAME = "maurabastions";
+
     @Inject
     @RestClient
     FischlIdentityConnector fischlIdentityConnector;
@@ -67,7 +69,7 @@ public class MauraBastionIdentityApiImpl implements MauraBastionIdentityApi {
 
         try {
             FischlLoginRequest fischlRequest = new FischlLoginRequest(
-                    request.getEmail(), request.getPassword(), request.getApp());
+                    request.getEmail(), request.getPassword(), APP_NAME);
             FischlAuthResponse authResponse = fischlIdentityConnector.login(fischlRequest);
             return ApiResponse.success("User logged in", toAuthResult(authResponse));
         } catch (FischlIdentityException e) {

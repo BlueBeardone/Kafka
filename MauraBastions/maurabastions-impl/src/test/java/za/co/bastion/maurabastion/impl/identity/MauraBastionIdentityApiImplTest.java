@@ -3,6 +3,7 @@ package za.co.bastion.maurabastion.impl.identity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.bastion.common.dto.ApiResponse;
@@ -99,7 +100,7 @@ class MauraBastionIdentityApiImplTest {
     @Test
     void loginUser_withValidData_returnsSuccess() throws Exception {
         MauraBastionIdentityApi.LoginRequest request = new MauraBastionIdentityApi.LoginRequest()
-                .setEmail("test@example.com").setPassword("password123").setApp("fischl");
+                .setEmail("test@example.com").setPassword("password123");
 
         FischlUser fischlUser = new FischlUser().setId("user-1").setDisplayName("testuser");
         when(fischlIdentityConnector.login(any(FischlLoginRequest.class)))
@@ -108,6 +109,10 @@ class MauraBastionIdentityApiImplTest {
         ApiResponse response = identityApi.loginUser(request);
         assertTrue(response.isSuccess());
         assertNotNull(response.getData());
+
+        ArgumentCaptor<FischlLoginRequest> captor = ArgumentCaptor.forClass(FischlLoginRequest.class);
+        verify(fischlIdentityConnector).login(captor.capture());
+        assertEquals("maurabastions", captor.getValue().getApp());
     }
 
     @Test
