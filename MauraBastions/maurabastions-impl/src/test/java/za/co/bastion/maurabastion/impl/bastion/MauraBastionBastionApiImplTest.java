@@ -25,6 +25,8 @@ import org.mockito.ArgumentCaptor;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -77,6 +79,27 @@ class MauraBastionBastionApiImplTest {
     }
 
     @Test
+    void updateBastion_withValidData_returnsSuccess() throws Exception {
+        MauraBastionBastionApi.Bastion bastion = new MauraBastionBastionApi.Bastion()
+                .setName("Test Bastion").setDescription("A test bastion").setUserId("user-1");
+
+        when(fischlBastionConnector.update(anyString(), eq("b-1"), any(FischlBastion.class)))
+                .thenAnswer(invocation -> {
+                    FischlBastion fb = invocation.getArgument(2);
+                    return fb.setId("b-1");
+                });
+
+        ApiResponse response = bastionApi.updateBastion("Bearer token", "b-1", bastion);
+        assertTrue(response.isSuccess());
+
+        ArgumentCaptor<String> authCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<FischlBastion> bastionCaptor = ArgumentCaptor.forClass(FischlBastion.class);
+        verify(fischlBastionConnector).update(authCaptor.capture(), eq("b-1"), bastionCaptor.capture());
+        assertEquals("Bearer token", authCaptor.getValue());
+        assertEquals("user-1", bastionCaptor.getValue().getUserId());
+    }
+
+    @Test
     void createBastion_withBlankName_throwsException() {
         MauraBastionBastionApi.Bastion bastion = new MauraBastionBastionApi.Bastion()
                 .setName("").setDescription("A test");
@@ -107,11 +130,15 @@ class MauraBastionBastionApiImplTest {
                 .setDefenders(List.of(defender))
                 .setHirelings(List.of(hireling));
 
-        when(fischlBastionConnector.readAll(any()))
+        when(fischlBastionConnector.readAll(anyString()))
                 .thenReturn(List.of(fischlBastion));
 
         ApiResponse response = bastionApi.getAllBastions("Bearer token");
         assertTrue(response.isSuccess());
+
+        ArgumentCaptor<String> authCaptor = ArgumentCaptor.forClass(String.class);
+        verify(fischlBastionConnector).readAll(authCaptor.capture());
+        assertEquals("Bearer token", authCaptor.getValue());
 
         @SuppressWarnings("unchecked")
         List<MauraBastionBastionApi.Bastion> bastions = (List<MauraBastionBastionApi.Bastion>) response.getData();
@@ -184,10 +211,14 @@ class MauraBastionBastionApiImplTest {
                 .setDefenders(List.of(defender))
                 .setHirelings(List.of(hireling));
 
-        when(fischlBastionConnector.read("Bearer token", "b-1")).thenReturn(fischlBastion);
+        when(fischlBastionConnector.read(anyString(), eq("b-1"))).thenReturn(fischlBastion);
 
         ApiResponse response = bastionApi.getBastion("Bearer token", "b-1");
         assertTrue(response.isSuccess());
+
+        ArgumentCaptor<String> authCaptor = ArgumentCaptor.forClass(String.class);
+        verify(fischlBastionConnector).read(authCaptor.capture(), eq("b-1"));
+        assertEquals("Bearer token", authCaptor.getValue());
 
         MauraBastionBastionApi.Bastion result = (MauraBastionBastionApi.Bastion) response.getData();
         assertEquals("b-1", result.getId());
@@ -229,9 +260,13 @@ class MauraBastionBastionApiImplTest {
 
     @Test
     void deleteBastion_returnsSuccess() throws Exception {
-        doNothing().when(fischlBastionConnector).delete("Bearer token", "b-1");
+        doNothing().when(fischlBastionConnector).delete(anyString(), eq("b-1"));
 
         ApiResponse response = bastionApi.deleteBastion("Bearer token", "b-1");
         assertTrue(response.isSuccess());
+
+        ArgumentCaptor<String> authCaptor = ArgumentCaptor.forClass(String.class);
+        verify(fischlBastionConnector).delete(authCaptor.capture(), eq("b-1"));
+        assertEquals("Bearer token", authCaptor.getValue());
     }
 }
