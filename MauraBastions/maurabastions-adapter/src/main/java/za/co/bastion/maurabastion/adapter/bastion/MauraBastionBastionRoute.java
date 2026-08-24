@@ -15,35 +15,35 @@ public class MauraBastionBastionRoute {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse createBastion(MauraBastionBastionApi.Bastion bastion) {
-        return bastionApi.createBastion(bastion);
+    public ApiResponse createBastion(@HeaderParam("Authorization") String authHeader, MauraBastionBastionApi.Bastion bastion) {
+        return bastionApi.createBastion(authHeader, bastion);
     }
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse getBastion(@PathParam("id") String id) {
-        return bastionApi.getBastion(id);
+    public ApiResponse getBastion(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id) {
+        return bastionApi.getBastion(authHeader, id);
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse getAllBastions() {
-        return bastionApi.getAllBastions();
+    public ApiResponse getAllBastions(@HeaderParam("Authorization") String authHeader) {
+        return bastionApi.getAllBastions(authHeader);
     }
 
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse updateBastion(@PathParam("id") String id, MauraBastionBastionApi.Bastion bastion) {
-        return bastionApi.updateBastion(id, bastion);
+    public ApiResponse updateBastion(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id, MauraBastionBastionApi.Bastion bastion) {
+        return bastionApi.updateBastion(authHeader, id, bastion);
     }
 
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse deleteBastion(@PathParam("id") String id) {
-        return bastionApi.deleteBastion(id);
+    public ApiResponse deleteBastion(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id) {
+        return bastionApi.deleteBastion(authHeader, id);
     }
 }
