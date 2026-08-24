@@ -3,6 +3,7 @@ package za.co.bastion.tsaritsa.impl.newspapers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.bastion.common.dto.ApiResponse;
@@ -38,17 +39,29 @@ class TsaritsaNewspapersApiImplTest {
         TsaritsaNewspapersApi.NewspaperArticle article = new TsaritsaNewspapersApi.NewspaperArticle()
                 .setTitle("Headline").setContent("Body");
 
-        when(fischlNewspapersConnector.create(any(FischlArticle.class)))
+        when(fischlNewspapersConnector.create(ArgumentMatchers.eq("Bearer abc123"), any(FischlArticle.class)))
                 .thenReturn(new FischlArticle().setId("n-1"));
 
-        ApiResponse response = newspapersApi.createNewspaperArticle(article);
+        ApiResponse response = newspapersApi.createNewspaperArticle("Bearer abc123", article);
         assertTrue(response.isSuccess());
+        verify(fischlNewspapersConnector).create(ArgumentMatchers.eq("Bearer abc123"), any(FischlArticle.class));
     }
 
     @Test
     void createNewspaperArticle_blankTitle_throwsException() {
         assertThrows(InvalidRequestException.class, () ->
-                newspapersApi.createNewspaperArticle(new TsaritsaNewspapersApi.NewspaperArticle().setContent("b")));
+                newspapersApi.createNewspaperArticle("Bearer abc123",
+                        new TsaritsaNewspapersApi.NewspaperArticle().setContent("b")));
+    }
+
+    @Test
+    void getAllNewspaperArticles_forwardsAuthHeaderToConnector() throws Exception {
+        when(fischlNewspapersConnector.readAll(ArgumentMatchers.eq("Bearer abc123")))
+                .thenReturn(java.util.List.of(new FischlArticle().setId("n-1").setTitle("Headline")));
+
+        ApiResponse response = newspapersApi.getAllNewspaperArticles("Bearer abc123");
+        assertTrue(response.isSuccess());
+        verify(fischlNewspapersConnector).readAll("Bearer abc123");
     }
 
     @Test

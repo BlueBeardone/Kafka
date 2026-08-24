@@ -6,9 +6,9 @@ import lombok.experimental.Accessors;
 import za.co.bastion.common.dto.ApiResponse;
 
 public interface TsaritsaNewspapersApi {
-    ApiResponse createNewspaperArticle(NewspaperArticle article);
+    ApiResponse createNewspaperArticle(String authHeader, NewspaperArticle article);
     ApiResponse getNewspaperArticle(String id);
-    ApiResponse getAllNewspaperArticles();
+    ApiResponse getAllNewspaperArticles(String authHeader);
     ApiResponse updateNewspaperArticle(String id, NewspaperArticle article);
     ApiResponse deleteNewspaperArticle(String id);
 
