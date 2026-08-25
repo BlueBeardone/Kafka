@@ -12,7 +12,7 @@ import za.co.bastion.common.exception.InvalidRequestException;
 import za.co.bastion.fischl.FischlApp;
 import za.co.bastion.fischl.FischlAuthResponse;
 import za.co.bastion.fischl.FischlIdentityException;
-import za.co.bastion.fischl.FischlLoginRequest;
+import za.co.bastion.fischl.FischlLoginByUsernameRequest;
 import za.co.bastion.fischl.FischlRegisterRequest;
 import za.co.bastion.fischl.FischlRole;
 import za.co.bastion.fischl.FischlUser;
@@ -100,25 +100,26 @@ class MauraBastionIdentityApiImplTest {
     @Test
     void loginUser_withValidData_returnsSuccess() throws Exception {
         MauraBastionIdentityApi.LoginRequest request = new MauraBastionIdentityApi.LoginRequest()
-                .setEmail("test@example.com").setPassword("password123");
+                .setUsername("testuser").setPassword("password123");
 
         FischlUser fischlUser = new FischlUser().setId("user-1").setDisplayName("testuser");
-        when(fischlIdentityConnector.login(any(FischlLoginRequest.class)))
+        when(fischlIdentityConnector.loginByUsername(any(FischlLoginByUsernameRequest.class)))
                 .thenReturn(new FischlAuthResponse(fischlUser, "token-123"));
 
         ApiResponse response = identityApi.loginUser(request);
         assertTrue(response.isSuccess());
         assertNotNull(response.getData());
 
-        ArgumentCaptor<FischlLoginRequest> captor = ArgumentCaptor.forClass(FischlLoginRequest.class);
-        verify(fischlIdentityConnector).login(captor.capture());
+        ArgumentCaptor<FischlLoginByUsernameRequest> captor = ArgumentCaptor.forClass(FischlLoginByUsernameRequest.class);
+        verify(fischlIdentityConnector).loginByUsername(captor.capture());
         assertEquals("maurabastions", captor.getValue().getApp());
+        assertEquals("testuser", captor.getValue().getUsername());
     }
 
     @Test
-    void loginUser_withBlankEmail_throwsException() {
+    void loginUser_withBlankUsername_throwsException() {
         MauraBastionIdentityApi.LoginRequest request = new MauraBastionIdentityApi.LoginRequest()
-                .setEmail("").setPassword("password123");
+                .setUsername("").setPassword("password123");
 
         assertThrows(InvalidRequestException.class, () -> identityApi.loginUser(request));
     }
@@ -126,7 +127,7 @@ class MauraBastionIdentityApiImplTest {
     @Test
     void loginUser_withBlankPassword_throwsException() {
         MauraBastionIdentityApi.LoginRequest request = new MauraBastionIdentityApi.LoginRequest()
-                .setEmail("test@example.com").setPassword("");
+                .setUsername("testuser").setPassword("");
 
         assertThrows(InvalidRequestException.class, () -> identityApi.loginUser(request));
     }

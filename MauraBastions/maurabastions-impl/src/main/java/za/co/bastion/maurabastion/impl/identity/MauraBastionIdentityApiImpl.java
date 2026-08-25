@@ -12,7 +12,7 @@ import za.co.bastion.common.exception.InvalidRequestException;
 import za.co.bastion.fischl.FischlApp;
 import za.co.bastion.fischl.FischlAuthResponse;
 import za.co.bastion.fischl.FischlIdentityException;
-import za.co.bastion.fischl.FischlLoginRequest;
+import za.co.bastion.fischl.FischlLoginByUsernameRequest;
 import za.co.bastion.fischl.FischlRegisterRequest;
 import za.co.bastion.fischl.FischlRole;
 import za.co.bastion.fischl.FischlUser;
@@ -60,17 +60,17 @@ public class MauraBastionIdentityApiImpl implements MauraBastionIdentityApi {
 
     @Override
     public ApiResponse loginUser(MauraBastionIdentityApi.LoginRequest request) {
-        if (request.getEmail() == null || request.getEmail().isBlank()) {
-            throw new InvalidRequestException("email is required");
+        if (request.getUsername() == null || request.getUsername().isBlank()) {
+            throw new InvalidRequestException("username is required");
         }
         if (request.getPassword() == null || request.getPassword().isBlank()) {
             throw new InvalidRequestException("password is required");
         }
 
         try {
-            FischlLoginRequest fischlRequest = new FischlLoginRequest(
-                    request.getEmail(), request.getPassword(), APP_NAME);
-            FischlAuthResponse authResponse = fischlIdentityConnector.login(fischlRequest);
+            FischlLoginByUsernameRequest fischlRequest = new FischlLoginByUsernameRequest(
+                    request.getUsername(), request.getPassword(), APP_NAME);
+            FischlAuthResponse authResponse = fischlIdentityConnector.loginByUsername(fischlRequest);
             return ApiResponse.success("User logged in", toAuthResult(authResponse));
         } catch (FischlIdentityException e) {
             throw new BackendException(e.getStatus(), "Identity backend error: " + e.getMessage());

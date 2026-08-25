@@ -42,7 +42,7 @@ public interface MauraBastionIdentityApi {
     @Setter
     @Accessors(chain = true)
     class LoginRequest {
-        private String email;
+        private String username;
         private String password;
     }
 
