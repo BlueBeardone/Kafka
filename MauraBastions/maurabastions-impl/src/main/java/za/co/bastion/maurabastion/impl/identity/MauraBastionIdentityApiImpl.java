@@ -186,7 +186,6 @@ public class MauraBastionIdentityApiImpl implements MauraBastionIdentityApi {
         return new FischlUser()
                 .setId(user.getId())
                 .setDisplayName(user.getDisplayName())
-                .setBastionId(user.getBastionId())
                 .setRoles(user.getRoles());
     }
 
@@ -194,7 +193,6 @@ public class MauraBastionIdentityApiImpl implements MauraBastionIdentityApi {
         return new MauraBastionIdentityApi.User()
                 .setId(fischlUser.getId())
                 .setDisplayName(fischlUser.getDisplayName())
-                .setBastionId(fischlUser.getBastionId())
                 .setRoles(fischlUser.getRoles());
     }
 

@@ -302,7 +302,6 @@ public class TsaritsaIdentityApiImpl implements TsaritsaIdentityApi {
         return new FischlUser()
                 .setId(user.getId())
                 .setDisplayName(user.getDisplayName())
-                .setBastionId(user.getBastionId())
                 .setRoles(user.getRoles());
     }
 
@@ -310,7 +309,6 @@ public class TsaritsaIdentityApiImpl implements TsaritsaIdentityApi {
         return new User()
                 .setId(fischlUser.getId())
                 .setDisplayName(fischlUser.getDisplayName())
-                .setBastionId(fischlUser.getBastionId())
                 .setRoles(fischlUser.getRoles());
     }
 
