@@ -22,10 +22,10 @@ public class TsaritsaBastionApiImpl implements TsaritsaBastionApi {
     FischlBastionConnector fischlBastionConnector;
 
     @Override
-    public ApiResponse createBastion(Bastion bastion) {
+    public ApiResponse createBastion(String authHeader, Bastion bastion) {
         validateBastion(bastion);
         try {
-            FischlBastion result = fischlBastionConnector.create(toFischlBastion(bastion));
+            FischlBastion result = fischlBastionConnector.create(authHeader, toFischlBastion(bastion));
             return ApiResponse.success("Bastion created", toBastion(result));
         } catch (FischlBastionException e) {
             throw new BackendException(e.getStatus(), "Bastion backend error: " + e.getMessage());
@@ -33,12 +33,12 @@ public class TsaritsaBastionApiImpl implements TsaritsaBastionApi {
     }
 
     @Override
-    public ApiResponse getBastion(String id) {
+    public ApiResponse getBastion(String authHeader, String id) {
         if (id == null || id.isBlank()) {
             throw new InvalidRequestException("id is required");
         }
         try {
-            FischlBastion result = fischlBastionConnector.read(id);
+            FischlBastion result = fischlBastionConnector.read(authHeader, id);
             return ApiResponse.success("Bastion found", toBastion(result));
         } catch (FischlBastionException e) {
             throw new BackendException(e.getStatus(), "Bastion backend error: " + e.getMessage());
@@ -46,9 +46,9 @@ public class TsaritsaBastionApiImpl implements TsaritsaBastionApi {
     }
 
     @Override
-    public ApiResponse getAllBastions() {
+    public ApiResponse getAllBastions(String authHeader) {
         try {
-            List<FischlBastion> results = fischlBastionConnector.readAll();
+            List<FischlBastion> results = fischlBastionConnector.readAll(authHeader);
             List<Bastion> bastions = results.stream().map(this::toBastion).toList();
             return ApiResponse.success("Bastions found", bastions);
         } catch (FischlBastionException e) {
@@ -57,13 +57,13 @@ public class TsaritsaBastionApiImpl implements TsaritsaBastionApi {
     }
 
     @Override
-    public ApiResponse updateBastion(String id, Bastion bastion) {
+    public ApiResponse updateBastion(String authHeader, String id, Bastion bastion) {
         if (id == null || id.isBlank()) {
             throw new InvalidRequestException("id is required");
         }
         validateBastion(bastion);
         try {
-            FischlBastion result = fischlBastionConnector.update(id, toFischlBastion(bastion));
+            FischlBastion result = fischlBastionConnector.update(authHeader, id, toFischlBastion(bastion));
             return ApiResponse.success("Bastion updated", toBastion(result));
         } catch (FischlBastionException e) {
             throw new BackendException(e.getStatus(), "Bastion backend error: " + e.getMessage());
@@ -71,12 +71,12 @@ public class TsaritsaBastionApiImpl implements TsaritsaBastionApi {
     }
 
     @Override
-    public ApiResponse deleteBastion(String id) {
+    public ApiResponse deleteBastion(String authHeader, String id) {
         if (id == null || id.isBlank()) {
             throw new InvalidRequestException("id is required");
         }
         try {
-            fischlBastionConnector.delete(id);
+            fischlBastionConnector.delete(authHeader, id);
             return ApiResponse.success("Bastion deleted", null);
         } catch (FischlBastionException e) {
             throw new BackendException(e.getStatus(), "Bastion backend error: " + e.getMessage());
