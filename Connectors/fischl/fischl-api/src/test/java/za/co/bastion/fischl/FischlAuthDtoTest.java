@@ -99,7 +99,6 @@ class FischlAuthDtoTest {
         FischlUser user = new FischlUser()
                 .setId("user-1")
                 .setDisplayName("Test User")
-                .setBastionId("bastion-1")
                 .setRoles(List.of("user"));
         response.setUser(user);
         response.setToken("token-123");
@@ -110,7 +109,7 @@ class FischlAuthDtoTest {
 
     @Test
     void FischlAuthResponse_allArgsConstructor() {
-        FischlUser user = new FischlUser("u1", "User", "b1", List.of("user"));
+        FischlUser user = new FischlUser("u1", "User", List.of("user"));
         FischlAuthResponse response = new FischlAuthResponse(user, "tok-1");
 
         assertEquals(user, response.getUser());
@@ -126,7 +125,7 @@ class FischlAuthDtoTest {
 
     @Test
     void FischlAuthResponse_chainSetters() {
-        FischlUser user = new FischlUser("u2", "User2", "b2", List.of("admin"));
+        FischlUser user = new FischlUser("u2", "User2", List.of("admin"));
         FischlAuthResponse response = new FischlAuthResponse()
                 .setUser(user)
                 .setToken("tok-2");

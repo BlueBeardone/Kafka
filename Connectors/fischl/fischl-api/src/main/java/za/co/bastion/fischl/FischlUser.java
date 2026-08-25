@@ -16,6 +16,5 @@ import java.util.List;
 public class FischlUser {
     private String id;
     private String displayName;
-    private String bastionId;
     private List<String> roles;
 }
