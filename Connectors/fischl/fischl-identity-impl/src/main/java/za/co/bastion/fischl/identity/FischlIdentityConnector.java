@@ -26,6 +26,12 @@ public interface FischlIdentityConnector {
     @Produces(MediaType.APPLICATION_JSON)
     FischlAuthResponse login(FischlLoginRequest request) throws FischlIdentityException;
 
+    @POST
+    @Path("/auth/login/username")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    FischlAuthResponse loginByUsername(FischlLoginByUsernameRequest request) throws FischlIdentityException;
+
     @GET
     @Path("/auth/me")
     @Consumes(MediaType.APPLICATION_JSON)
