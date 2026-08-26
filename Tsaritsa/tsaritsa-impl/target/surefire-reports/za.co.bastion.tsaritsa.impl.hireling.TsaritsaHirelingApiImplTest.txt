@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: za.co.bastion.tsaritsa.impl.hireling.TsaritsaHirelingApiImplTest
 -------------------------------------------------------------------------------
-Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.023 s -- in za.co.bastion.tsaritsa.impl.hireling.TsaritsaHirelingApiImplTest
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.025 s -- in za.co.bastion.tsaritsa.impl.hireling.TsaritsaHirelingApiImplTest

@@ -9,6 +9,7 @@ za/co/bastion/fischl/FischlArticle.class
 za/co/bastion/fischl/FischlFacility.class
 za/co/bastion/fischl/FischlBastion.class
 za/co/bastion/fischl/FischlFacilityException.class
+za/co/bastion/fischl/FischlLoginByUsernameRequest.class
 za/co/bastion/fischl/FischlNewspaperException.class
 za/co/bastion/fischl/FischlDefenderException.class
 za/co/bastion/fischl/FischlApp.class
