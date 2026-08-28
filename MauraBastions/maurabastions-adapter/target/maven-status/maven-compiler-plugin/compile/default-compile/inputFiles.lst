@@ -1,0 +1,8 @@
+/Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-adapter/src/main/java/za/co/bastion/maurabastion/adapter/MauraBastionExceptionMapper.java
+/Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-adapter/src/main/java/za/co/bastion/maurabastion/adapter/MauraBastionHealthRoute.java
+/Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-adapter/src/main/java/za/co/bastion/maurabastion/adapter/bastion/MauraBastionBastionRoute.java
+/Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-adapter/src/main/java/za/co/bastion/maurabastion/adapter/defender/MauraBastionDefenderRoute.java
+/Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-adapter/src/main/java/za/co/bastion/maurabastion/adapter/facilities/MauraBastionFacilitiesRoute.java
+/Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-adapter/src/main/java/za/co/bastion/maurabastion/adapter/hireling/MauraBastionHirelingRoute.java
+/Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-adapter/src/main/java/za/co/bastion/maurabastion/adapter/identity/MauraBastionIdentityRoute.java
+/Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-adapter/src/main/java/za/co/bastion/maurabastion/adapter/newspapers/MauraBastionNewspapersRoute.java

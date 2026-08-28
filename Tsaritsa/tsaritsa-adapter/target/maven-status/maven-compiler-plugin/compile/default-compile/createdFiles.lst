@@ -1,0 +1,8 @@
+za/co/bastion/tsaritsa/adapter/facilities/TsaritsaFacilitiesRoute.class
+za/co/bastion/tsaritsa/adapter/newspapers/TsaritsaNewspapersRoute.class
+za/co/bastion/tsaritsa/adapter/defender/TsaritsaDefenderRoute.class
+za/co/bastion/tsaritsa/adapter/TsaritsaHealthRoute.class
+za/co/bastion/tsaritsa/adapter/identity/TsaritsaIdentityRoute.class
+za/co/bastion/tsaritsa/adapter/bastion/TsaritsaBastionRoute.class
+za/co/bastion/tsaritsa/adapter/hireling/TsaritsaHirelingRoute.class
+za/co/bastion/tsaritsa/adapter/TsaritsaExceptionMapper.class

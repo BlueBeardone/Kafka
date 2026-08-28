@@ -1,0 +1,8 @@
+/Users/barendblom/Personal_Projects/Kafka/Tsaritsa/tsaritsa-adapter/src/main/java/za/co/bastion/tsaritsa/adapter/TsaritsaExceptionMapper.java
+/Users/barendblom/Personal_Projects/Kafka/Tsaritsa/tsaritsa-adapter/src/main/java/za/co/bastion/tsaritsa/adapter/TsaritsaHealthRoute.java
+/Users/barendblom/Personal_Projects/Kafka/Tsaritsa/tsaritsa-adapter/src/main/java/za/co/bastion/tsaritsa/adapter/bastion/TsaritsaBastionRoute.java
+/Users/barendblom/Personal_Projects/Kafka/Tsaritsa/tsaritsa-adapter/src/main/java/za/co/bastion/tsaritsa/adapter/defender/TsaritsaDefenderRoute.java
+/Users/barendblom/Personal_Projects/Kafka/Tsaritsa/tsaritsa-adapter/src/main/java/za/co/bastion/tsaritsa/adapter/facilities/TsaritsaFacilitiesRoute.java
+/Users/barendblom/Personal_Projects/Kafka/Tsaritsa/tsaritsa-adapter/src/main/java/za/co/bastion/tsaritsa/adapter/hireling/TsaritsaHirelingRoute.java
+/Users/barendblom/Personal_Projects/Kafka/Tsaritsa/tsaritsa-adapter/src/main/java/za/co/bastion/tsaritsa/adapter/identity/TsaritsaIdentityRoute.java
+/Users/barendblom/Personal_Projects/Kafka/Tsaritsa/tsaritsa-adapter/src/main/java/za/co/bastion/tsaritsa/adapter/newspapers/TsaritsaNewspapersRoute.java
