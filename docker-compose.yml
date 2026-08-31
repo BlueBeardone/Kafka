@@ -7,7 +7,7 @@ services:
     environment:
       FISCHL_IDENTITY_URL: http://host.docker.internal:3001
       FISCHL_BASTION_URL: http://host.docker.internal:3002
-      FISCHL_FACILITIES_URL: http://host.docker.internal:9090
+      FISCHL_FACILITIES_URL: http://host.docker.internal:3002
       FISCHL_NEWSPAPERS_URL: http://host.docker.internal:3003
-      FISCHL_DEFENDER_URL: http://host.docker.internal:9090
-      FISCHL_HIRELING_URL: http://host.docker.internal:9090
+      FISCHL_DEFENDER_URL: http://host.docker.internal:3002
+      FISCHL_HIRELING_URL: http://host.docker.internal:3002
