@@ -3,9 +3,7 @@ za/co/bastion/tsaritsa/api/identity/TsaritsaIdentityApi$User.class
 za/co/bastion/tsaritsa/api/identity/TsaritsaIdentityApi$Role.class
 za/co/bastion/tsaritsa/api/hireling/TsaritsaHirelingApi$Hireling.class
 za/co/bastion/tsaritsa/api/identity/TsaritsaIdentityApi$AssignRoleRequest.class
-za/co/bastion/tsaritsa/api/newspapers/TsaritsaNewspapersApi.class
 za/co/bastion/tsaritsa/api/bastion/TsaritsaBastionApi$Facility.class
-za/co/bastion/tsaritsa/api/newspapers/TsaritsaNewspapersApi$NewspaperArticle.class
 za/co/bastion/tsaritsa/api/hireling/TsaritsaHirelingApi.class
 za/co/bastion/tsaritsa/api/identity/TsaritsaIdentityApi$App.class
 za/co/bastion/tsaritsa/api/bastion/TsaritsaBastionApi$Bastion.class

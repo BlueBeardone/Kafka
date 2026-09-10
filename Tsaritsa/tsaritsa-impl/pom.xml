@@ -35,12 +35,6 @@
         </dependency>
         <dependency>
             <groupId>za.co.bastion.connectors.fischl</groupId>
-            <artifactId>fischl-newspapers-impl</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>za.co.bastion.connectors.fischl</groupId>
             <artifactId>fischl-defender-impl</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>

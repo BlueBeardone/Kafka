@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.042" tests="17" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.056" tests="17" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="26"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -13,7 +13,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="ZA"/>
     <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk/26.0.1/libexec/openjdk.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="/Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-impl/target/surefire/surefirebooter-20260825074213578_9.jar /Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-impl/target/surefire 2026-08-25T07-41-52_720-jvmRun1 surefire-20260825074213578_7tmp surefire_2-20260825074213578_8tmp"/>
+    <property name="sun.java.command" value="/Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-impl/target/surefire/surefirebooter-20260910075723851_9.jar /Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-impl/target/surefire 2026-09-10T07-57-13_460-jvmRun1 surefire-20260910075723851_7tmp surefire_2-20260910075723851_8tmp"/>
     <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="jdk.debug" value="release"/>
     <property name="maven.home" value="/opt/homebrew/Cellar/maven/3.9.16/libexec"/>
@@ -31,14 +31,14 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="apple.awt.application.name" value="ForkedBooter"/>
-    <property name="surefire.real.class.path" value="/Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-impl/target/surefire/surefirebooter-20260825074213578_9.jar"/>
+    <property name="surefire.real.class.path" value="/Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-impl/target/surefire/surefirebooter-20260910075723851_9.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.runtime.version" value="26.0.1"/>
     <property name="user.name" value="barendblom"/>
     <property name="stdout.encoding" value="UTF-8"/>
     <property name="path.separator" value=":"/>
-    <property name="os.version" value="26.5.2"/>
+    <property name="os.version" value="26.6.2"/>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="file.encoding" value="UTF-8"/>
     <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
@@ -63,21 +63,21 @@
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.class.version" value="70.0"/>
   </properties>
-  <testcase name="createDefender_optionalFields_canBeNull" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.019"/>
-  <testcase name="updateDefender_nullId_throwsException" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.001"/>
-  <testcase name="getDefender_nullId_throwsException" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.001"/>
+  <testcase name="createDefender_optionalFields_canBeNull" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.027"/>
+  <testcase name="updateDefender_nullId_throwsException" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.002"/>
+  <testcase name="getDefender_nullId_throwsException" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.002"/>
   <testcase name="deleteDefender_returnsSuccess" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.001"/>
-  <testcase name="createDefender_whenBackendFails_throwsBackendException" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.001"/>
+  <testcase name="createDefender_whenBackendFails_throwsBackendException" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.002"/>
   <testcase name="createDefender_blankBastionId_throwsException" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.001"/>
   <testcase name="createDefender_mapsToFischlDefenderCorrectly" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.001"/>
-  <testcase name="createDefender_mapsDefenderFromFischlCorrectly" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.001"/>
-  <testcase name="getAllDefenders_returnsSuccess" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.005"/>
+  <testcase name="createDefender_mapsDefenderFromFischlCorrectly" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.0"/>
+  <testcase name="getAllDefenders_returnsSuccess" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.002"/>
   <testcase name="updateDefender_returnsSuccess" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.001"/>
   <testcase name="getDefender_blankId_throwsException" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.001"/>
-  <testcase name="createDefender_blankType_throwsException" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.001"/>
+  <testcase name="createDefender_blankType_throwsException" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.005"/>
   <testcase name="createDefender_withValidData_returnsSuccess" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.001"/>
-  <testcase name="createDefender_nullBastionId_throwsException" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.001"/>
-  <testcase name="getDefender_returnsSuccess" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.001"/>
-  <testcase name="createDefender_nullType_throwsException" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.003"/>
+  <testcase name="createDefender_nullBastionId_throwsException" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.0"/>
+  <testcase name="getDefender_returnsSuccess" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.003"/>
+  <testcase name="createDefender_nullType_throwsException" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.001"/>
   <testcase name="deleteDefender_nullId_throwsException" classname="za.co.bastion.maurabastion.impl.defender.MauraBastionDefenderApiImplTest" time="0.0"/>
 </testsuite>

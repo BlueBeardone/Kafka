@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: za.co.bastion.tsaritsa.impl.bastion.TsaritsaBastionApiImplTest
 -------------------------------------------------------------------------------
-Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.548 s -- in za.co.bastion.tsaritsa.impl.bastion.TsaritsaBastionApiImplTest
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.555 s -- in za.co.bastion.tsaritsa.impl.bastion.TsaritsaBastionApiImplTest

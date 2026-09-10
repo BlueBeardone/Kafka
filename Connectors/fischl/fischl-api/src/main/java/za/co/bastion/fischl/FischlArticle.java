@@ -17,4 +17,5 @@ public class FischlArticle {
     private String content;
     private String imageUrl;
     private String author;
+    private String bastionId;
 }
