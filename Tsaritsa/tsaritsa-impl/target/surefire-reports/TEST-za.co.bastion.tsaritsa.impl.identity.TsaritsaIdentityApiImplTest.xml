@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.057" tests="13" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.053" tests="13" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="26"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -13,7 +13,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="ZA"/>
     <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk/26.0.1/libexec/openjdk.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="/Users/barendblom/Personal_Projects/Kafka/Tsaritsa/tsaritsa-impl/target/surefire/surefirebooter-20260910075729078_13.jar /Users/barendblom/Personal_Projects/Kafka/Tsaritsa/tsaritsa-impl/target/surefire 2026-09-10T07-57-13_460-jvmRun1 surefire-20260910075729078_11tmp surefire_3-20260910075729078_12tmp"/>
+    <property name="sun.java.command" value="/Users/barendblom/Personal_Projects/Kafka/Tsaritsa/tsaritsa-impl/target/surefire/surefirebooter-20260910082341506_13.jar /Users/barendblom/Personal_Projects/Kafka/Tsaritsa/tsaritsa-impl/target/surefire 2026-09-10T08-23-26_502-jvmRun1 surefire-20260910082341506_11tmp surefire_3-20260910082341506_12tmp"/>
     <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="jdk.debug" value="release"/>
     <property name="maven.home" value="/opt/homebrew/Cellar/maven/3.9.16/libexec"/>
@@ -31,7 +31,7 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="apple.awt.application.name" value="ForkedBooter"/>
-    <property name="surefire.real.class.path" value="/Users/barendblom/Personal_Projects/Kafka/Tsaritsa/tsaritsa-impl/target/surefire/surefirebooter-20260910075729078_13.jar"/>
+    <property name="surefire.real.class.path" value="/Users/barendblom/Personal_Projects/Kafka/Tsaritsa/tsaritsa-impl/target/surefire/surefirebooter-20260910082341506_13.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.runtime.version" value="26.0.1"/>
@@ -63,17 +63,17 @@
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.class.version" value="70.0"/>
   </properties>
-  <testcase name="updateRole_returnsSuccess" classname="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.038"/>
+  <testcase name="updateRole_returnsSuccess" classname="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.032"/>
   <testcase name="updateRole_nullName_throwsException" classname="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.001"/>
-  <testcase name="removeRole_delegates" classname="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.001"/>
+  <testcase name="removeRole_delegates" classname="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.002"/>
   <testcase name="createRole_mapsToFischlCorrectly" classname="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.001"/>
-  <testcase name="createApp_delegates" classname="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.005"/>
-  <testcase name="deleteRole_blankName_throwsException" classname="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.001"/>
-  <testcase name="addRole_delegates" classname="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.002"/>
-  <testcase name="createRole_blankName_throwsException" classname="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.0"/>
-  <testcase name="deleteRole_delegates" classname="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.0"/>
+  <testcase name="createApp_delegates" classname="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.002"/>
+  <testcase name="deleteRole_blankName_throwsException" classname="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.0"/>
+  <testcase name="addRole_delegates" classname="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.001"/>
+  <testcase name="createRole_blankName_throwsException" classname="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.001"/>
+  <testcase name="deleteRole_delegates" classname="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.001"/>
   <testcase name="deleteApp_delegates" classname="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.001"/>
   <testcase name="updateApp_delegates" classname="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.001"/>
-  <testcase name="getApp_mapsResult" classname="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.0"/>
-  <testcase name="createRole_returnsSuccess" classname="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.0"/>
+  <testcase name="getApp_mapsResult" classname="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.002"/>
+  <testcase name="createRole_returnsSuccess" classname="za.co.bastion.tsaritsa.impl.identity.TsaritsaIdentityApiImplTest" time="0.002"/>
 </testsuite>

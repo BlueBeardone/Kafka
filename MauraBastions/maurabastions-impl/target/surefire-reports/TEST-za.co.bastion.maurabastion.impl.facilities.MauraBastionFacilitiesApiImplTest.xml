@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.043" tests="17" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.052" tests="17" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="26"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -13,7 +13,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="ZA"/>
     <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk/26.0.1/libexec/openjdk.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="/Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-impl/target/surefire/surefirebooter-20260910075723851_9.jar /Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-impl/target/surefire 2026-09-10T07-57-13_460-jvmRun1 surefire-20260910075723851_7tmp surefire_2-20260910075723851_8tmp"/>
+    <property name="sun.java.command" value="/Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-impl/target/surefire/surefirebooter-20260910082337630_9.jar /Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-impl/target/surefire 2026-09-10T08-23-26_502-jvmRun1 surefire-20260910082337630_7tmp surefire_2-20260910082337630_8tmp"/>
     <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="jdk.debug" value="release"/>
     <property name="maven.home" value="/opt/homebrew/Cellar/maven/3.9.16/libexec"/>
@@ -31,7 +31,7 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="apple.awt.application.name" value="ForkedBooter"/>
-    <property name="surefire.real.class.path" value="/Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-impl/target/surefire/surefirebooter-20260910075723851_9.jar"/>
+    <property name="surefire.real.class.path" value="/Users/barendblom/Personal_Projects/Kafka/MauraBastions/maurabastions-impl/target/surefire/surefirebooter-20260910082337630_9.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.runtime.version" value="26.0.1"/>
@@ -63,21 +63,21 @@
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.class.version" value="70.0"/>
   </properties>
-  <testcase name="createFacility_mapsFacilityFromFischlCorrectly" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.023"/>
+  <testcase name="createFacility_mapsFacilityFromFischlCorrectly" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.031"/>
   <testcase name="createFacility_negativeMinimumRequiredHirelings_throwsException" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.001"/>
-  <testcase name="createFacility_missingName_throwsException" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.001"/>
+  <testcase name="createFacility_missingName_throwsException" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.002"/>
   <testcase name="createFacility_rankMapsToLowerCaseString" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.001"/>
-  <testcase name="deleteFacility_returnsSuccess" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.0"/>
-  <testcase name="createFacility_whenBackendFails_throwsBackendException" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.0"/>
-  <testcase name="createFacility_missingDescription_throwsException" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.0"/>
+  <testcase name="deleteFacility_returnsSuccess" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.001"/>
+  <testcase name="createFacility_whenBackendFails_throwsBackendException" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.004"/>
+  <testcase name="createFacility_missingDescription_throwsException" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.001"/>
   <testcase name="createFacility_nullName_throwsException" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.001"/>
-  <testcase name="createFacility_withBlankId_doesNotThrow" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.003"/>
+  <testcase name="createFacility_withBlankId_doesNotThrow" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.001"/>
   <testcase name="createFacility_optionalFields_canBeNull" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.0"/>
-  <testcase name="createFacility_missingRank_throwsException" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.0"/>
+  <testcase name="createFacility_missingRank_throwsException" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.001"/>
   <testcase name="getAllFacilities_returnsSuccess" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.001"/>
   <testcase name="createFacility_nullRankString_returnsNullRank" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.001"/>
   <testcase name="createFacility_withValidData_returnsSuccess" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.0"/>
   <testcase name="createFacility_mapsToFischlFacilityCorrectly" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.001"/>
   <testcase name="createFacility_stringRankMapsToRankEnum" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.001"/>
-  <testcase name="createFacility_nullDescription_throwsException" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.001"/>
+  <testcase name="createFacility_nullDescription_throwsException" classname="za.co.bastion.maurabastion.impl.facilities.MauraBastionFacilitiesApiImplTest" time="0.0"/>
 </testsuite>
