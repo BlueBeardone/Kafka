@@ -1,5 +1,6 @@
 package za.co.bastion.maurabastion.impl.identity;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -215,6 +216,7 @@ public class MauraBastionIdentityApiImpl implements MauraBastionIdentityApi {
                 .setToken(authResponse.getToken());
     }
 
+    @RegisterForReflection
     @Getter
     @Setter
     @Accessors(chain = true)
