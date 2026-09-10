@@ -1,5 +1,13 @@
-FROM maven:3.9.8 AS build
+# Native build — compiles to a standalone GraalVM/Mandrel binary (no JVM at runtime).
+# For the JVM-based image, see Dockerfile.jvm.
+FROM maven:3.9.8 AS maven
 
+FROM quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-21 AS build
+
+COPY --from=maven /usr/share/maven /opt/maven
+ENV PATH="/opt/maven/bin:${PATH}"
+
+USER root
 WORKDIR /usr/src/app
 
 COPY pom.xml .
@@ -28,20 +36,19 @@ COPY assembly/application-assembly/pom.xml assembly/application-assembly/pom.xml
 RUN mvn dependency:go-offline -T 1C -q
 
 COPY . .
-RUN mvn install -T 1C -DskipTests
+RUN mvn package -Dnative -DskipTests \
+    -Dquarkus.native.native-image-xmx=6g \
+    -Dquarkus.native.additional-build-args=-J-XX:ParallelGCThreads=1,-J-XX:CICompilerCount=2
 
-FROM registry.access.redhat.com/ubi8/openjdk-21:1.20
+FROM quay.io/quarkus/quarkus-micro-image:2.0
 
-ENV LANGUAGE='en_US:en'
+WORKDIR /work/
 
-COPY --from=build --chown=185 /usr/src/app/assembly/application-assembly/target/quarkus-app/lib/ /deployments/lib/
-COPY --from=build --chown=185 /usr/src/app/assembly/application-assembly/target/quarkus-app/*.jar /deployments/
-COPY --from=build --chown=185 /usr/src/app/assembly/application-assembly/target/quarkus-app/app/ /deployments/app/
-COPY --from=build --chown=185 /usr/src/app/assembly/application-assembly/target/quarkus-app/quarkus/ /deployments/quarkus/
+RUN chown 1001 /work && chmod "g+rwX" /work && chown 1001:root /work
+
+COPY --from=build --chown=1001:root /usr/src/app/assembly/application-assembly/target/*-runner /work/application
 
 EXPOSE 8080
-USER 185
-ENV JAVA_OPTS_APPEND="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager -XX:MaxRAMPercentage=50 -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=64m -Xss1024k"
-ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
+USER 1001
 
-ENTRYPOINT [ "/opt/jboss/container/java/run/run-java.sh" ]
+ENTRYPOINT ["/work/application", "-Dquarkus.http.host=0.0.0.0"]
