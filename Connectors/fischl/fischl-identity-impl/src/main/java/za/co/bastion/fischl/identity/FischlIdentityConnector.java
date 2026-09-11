@@ -5,6 +5,7 @@ import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import za.co.bastion.fischl.*;
+import za.co.bastion.fischl.FischlRenewedTokenFilter;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @RegisterProvider(FischlIdentityExceptionMapper.class)
 @RegisterProvider(CustomHttpClientOptions.class)
 @RegisterProvider(FischlEnvelopeBodyReader.class)
+@RegisterProvider(FischlRenewedTokenFilter.class)
 public interface FischlIdentityConnector {
 
     @POST

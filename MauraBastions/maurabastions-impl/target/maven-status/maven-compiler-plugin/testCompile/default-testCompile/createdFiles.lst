@@ -1,6 +1,12 @@
 za/co/bastion/maurabastion/impl/facilities/MauraBastionFacilitiesApiImplTest.class
 za/co/bastion/maurabastion/impl/identity/MauraBastionIdentityApiImplTest.class
+za/co/bastion/maurabastion/impl/discord/DiscordWebhookSenderTest.class
+za/co/bastion/maurabastion/impl/discord/BastionTurnMessageFormatterTest.class
+za/co/bastion/maurabastion/impl/defender/MauraBastionDefenderApiImplTest.class
+za/co/bastion/maurabastion/impl/discord/MauraBastionDiscordApiImplTest.class
+za/co/bastion/maurabastion/impl/discord/DiscordWebhookSenderTest$1.class
+za/co/bastion/maurabastion/impl/discord/DiscordWebhookSenderTest$3.class
 za/co/bastion/maurabastion/impl/bastion/MauraBastionBastionApiImplTest.class
 za/co/bastion/maurabastion/impl/hireling/MauraBastionHirelingApiImplTest.class
-za/co/bastion/maurabastion/impl/defender/MauraBastionDefenderApiImplTest.class
 za/co/bastion/maurabastion/impl/newspapers/MauraBastionNewspapersApiImplTest.class
+za/co/bastion/maurabastion/impl/discord/DiscordWebhookSenderTest$2.class

@@ -8,6 +8,7 @@ import za.co.bastion.fischl.CustomHttpClientOptions;
 import za.co.bastion.fischl.FischlFacility;
 import za.co.bastion.fischl.FischlFacilityException;
 import za.co.bastion.fischl.FischlEnvelopeBodyReader;
+import za.co.bastion.fischl.FischlRenewedTokenFilter;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ import java.util.List;
 @RegisterProvider(FischlFacilitiesExceptionMapper.class)
 @RegisterProvider(CustomHttpClientOptions.class)
 @RegisterProvider(FischlEnvelopeBodyReader.class)
+@RegisterProvider(FischlRenewedTokenFilter.class)
 public interface FischlFacilitiesConnector {
 
     @POST
