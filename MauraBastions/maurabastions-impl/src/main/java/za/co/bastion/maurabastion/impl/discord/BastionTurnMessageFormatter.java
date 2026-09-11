@@ -1,13 +1,18 @@
 package za.co.bastion.maurabastion.impl.discord;
 
+import za.co.bastion.fischl.FischlUser;
 import za.co.bastion.maurabastion.api.discord.MauraBastionDiscordApi;
 
 public class BastionTurnMessageFormatter {
 
-    public String format(MauraBastionDiscordApi.BastionTurnResult result) {
+    public String format(MauraBastionDiscordApi.BastionTurnResult result, FischlUser user) {
         StringBuilder sb = new StringBuilder();
-        sb.append("**Bastion: ").append(result.getBastionName()).append("** (")
-                .append(result.getBastionId()).append(")\n");
+        sb.append("**Bastion: ").append(result.getBastionName()).append("**");
+        String displayName = user == null ? null : user.getDisplayName();
+        if (displayName != null && !displayName.isBlank()) {
+            sb.append(" (").append(displayName).append(")");
+        }
+        sb.append("\n");
         sb.append("Quest: ").append(result.getQuest());
 
         MauraBastionDiscordApi.BastionTurnAdvancedFacility facility = result.getAdvancedFacility();

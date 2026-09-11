@@ -1,10 +1,12 @@
 package za.co.bastion.maurabastion.impl.discord;
 
 import org.junit.jupiter.api.Test;
+import za.co.bastion.fischl.FischlUser;
 import za.co.bastion.maurabastion.api.discord.MauraBastionDiscordApi;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BastionTurnMessageFormatterTest {
 
@@ -26,12 +28,16 @@ class BastionTurnMessageFormatterTest {
                         .setRolledRow("12 - Rare goods"));
     }
 
+    private FischlUser user(String displayName) {
+        return new FischlUser().setDisplayName(displayName);
+    }
+
     @Test
-    void format_withAllSections_includesEverything() {
-        String message = formatter.format(fullResult());
+    void format_withDisplayName_showsNameNotBastionId() {
+        String message = formatter.format(fullResult(), user("Steve"));
 
         assertEquals("""
-                **Bastion: Ravencrest** (b-1)
+                **Bastion: Ravencrest** (Steve)
                 Quest: Fortify the walls
 
                 **Facility advanced:** Smithy → Master Smithy (turn 3/5)
@@ -41,10 +47,28 @@ class BastionTurnMessageFormatterTest {
     }
 
     @Test
+    void format_withBlankDisplayName_omitsParenthetical() {
+        MauraBastionDiscordApi.BastionTurnResult result = fullResult().setEvent(null);
+
+        String message = formatter.format(result, user("   "));
+
+        assertFalse(message.contains("b-1"));
+        assertTrue(message.startsWith("**Bastion: Ravencrest**\n"));
+    }
+
+    @Test
+    void format_withNullUser_omitsParenthetical() {
+        String message = formatter.format(fullResult(), null);
+
+        assertFalse(message.contains("b-1"));
+        assertTrue(message.startsWith("**Bastion: Ravencrest**\n"));
+    }
+
+    @Test
     void format_withoutFacility_omitsFacilitySection() {
         MauraBastionDiscordApi.BastionTurnResult result = fullResult().setAdvancedFacility(null);
 
-        String message = formatter.format(result);
+        String message = formatter.format(result, user("Steve"));
 
         assertFalse(message.contains("Facility advanced"));
         assertFalse(message.contains("Smithy"));
@@ -54,7 +78,7 @@ class BastionTurnMessageFormatterTest {
     void format_withoutEvent_omitsEventSection() {
         MauraBastionDiscordApi.BastionTurnResult result = fullResult().setEvent(null);
 
-        String message = formatter.format(result);
+        String message = formatter.format(result, user("Steve"));
 
         assertFalse(message.contains("Event:"));
         assertFalse(message.contains("Rolled:"));
@@ -68,7 +92,7 @@ class BastionTurnMessageFormatterTest {
                         .setDescription("A merchant passes by.")
                         .setRolledRow(null));
 
-        String message = formatter.format(result);
+        String message = formatter.format(result, user("Steve"));
 
         assertFalse(message.contains("Rolled:"));
     }
@@ -81,7 +105,7 @@ class BastionTurnMessageFormatterTest {
                 .setQuest("Train hirelings");
 
         assertEquals("""
-                **Bastion: Duskhaven** (b-2)
-                Quest: Train hirelings""", formatter.format(result));
+                **Bastion: Duskhaven** (Steve)
+                Quest: Train hirelings""", formatter.format(result, user("Steve")));
     }
 }

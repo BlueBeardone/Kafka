@@ -7,6 +7,7 @@ import za.co.bastion.common.dto.ApiResponse;
 import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
 import za.co.bastion.fischl.FischlIdentityException;
+import za.co.bastion.fischl.FischlUser;
 import za.co.bastion.fischl.identity.FischlIdentityConnector;
 import za.co.bastion.maurabastion.api.discord.MauraBastionDiscordApi;
 
@@ -24,7 +25,7 @@ public class MauraBastionDiscordApiImpl implements MauraBastionDiscordApi {
 
     @Override
     public ApiResponse sendMessage(String authHeader, String message) {
-        requireAuth(authHeader);
+        authenticatedUser(authHeader);
         requireMessage(message);
         webhookSender.send(DiscordWebhookSender.Channel.GENERAL, message);
         return ApiResponse.success("Message sent", null);
@@ -32,17 +33,17 @@ public class MauraBastionDiscordApiImpl implements MauraBastionDiscordApi {
 
     @Override
     public ApiResponse sendIndividualBastionTurn(String authHeader, BastionTurnResult result) {
-        requireAuth(authHeader);
+        FischlUser user = authenticatedUser(authHeader);
         if (result == null) {
             throw new InvalidRequestException("result is required");
         }
-        webhookSender.send(DiscordWebhookSender.Channel.INDIVIDUAL_BASTION_TURN, FORMATTER.format(result));
+        webhookSender.send(DiscordWebhookSender.Channel.INDIVIDUAL_BASTION_TURN, FORMATTER.format(result, user));
         return ApiResponse.success("Message sent", null);
     }
 
     @Override
     public ApiResponse sendBastionCreated(String authHeader, String message) {
-        requireAuth(authHeader);
+        authenticatedUser(authHeader);
         requireMessage(message);
         webhookSender.send(DiscordWebhookSender.Channel.BASTION_CREATION, message);
         return ApiResponse.success("Message sent", null);
@@ -50,7 +51,7 @@ public class MauraBastionDiscordApiImpl implements MauraBastionDiscordApi {
 
     @Override
     public ApiResponse sendFacilityBuilt(String authHeader, String message) {
-        requireAuth(authHeader);
+        authenticatedUser(authHeader);
         requireMessage(message);
         webhookSender.send(DiscordWebhookSender.Channel.FACILITY_BUILT, message);
         return ApiResponse.success("Message sent", null);
@@ -58,7 +59,7 @@ public class MauraBastionDiscordApiImpl implements MauraBastionDiscordApi {
 
     @Override
     public ApiResponse sendFacilityRankUp(String authHeader, String message) {
-        requireAuth(authHeader);
+        authenticatedUser(authHeader);
         requireMessage(message);
         webhookSender.send(DiscordWebhookSender.Channel.FACILITY_RANK_UP, message);
         return ApiResponse.success("Message sent", null);
@@ -66,7 +67,7 @@ public class MauraBastionDiscordApiImpl implements MauraBastionDiscordApi {
 
     @Override
     public ApiResponse sendBranchUpgradePurchased(String authHeader, String message) {
-        requireAuth(authHeader);
+        authenticatedUser(authHeader);
         requireMessage(message);
         webhookSender.send(DiscordWebhookSender.Channel.BRANCH_UPGRADE, message);
         return ApiResponse.success("Message sent", null);
@@ -74,7 +75,7 @@ public class MauraBastionDiscordApiImpl implements MauraBastionDiscordApi {
 
     @Override
     public ApiResponse sendHirelingHired(String authHeader, String message) {
-        requireAuth(authHeader);
+        authenticatedUser(authHeader);
         requireMessage(message);
         webhookSender.send(DiscordWebhookSender.Channel.HIRELING_HIRED, message);
         return ApiResponse.success("Message sent", null);
@@ -82,18 +83,18 @@ public class MauraBastionDiscordApiImpl implements MauraBastionDiscordApi {
 
     @Override
     public ApiResponse sendDefenderAcquired(String authHeader, String message) {
-        requireAuth(authHeader);
+        authenticatedUser(authHeader);
         requireMessage(message);
         webhookSender.send(DiscordWebhookSender.Channel.DEFENDER_ACQUIRED, message);
         return ApiResponse.success("Message sent", null);
     }
 
-    private void requireAuth(String authHeader) {
+    private FischlUser authenticatedUser(String authHeader) {
         if (authHeader == null || authHeader.isBlank()) {
             throw new BackendException(401, "Authorization header is required");
         }
         try {
-            fischlIdentityConnector.getMe(authHeader);
+            return fischlIdentityConnector.getMe(authHeader);
         } catch (FischlIdentityException e) {
             throw new BackendException(e.getStatus(), "Discord auth error: " + e.getMessage());
         }

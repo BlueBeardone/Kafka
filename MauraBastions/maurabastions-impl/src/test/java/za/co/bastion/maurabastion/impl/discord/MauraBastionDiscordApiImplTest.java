@@ -34,7 +34,8 @@ class MauraBastionDiscordApiImplTest {
         discordApi = new MauraBastionDiscordApiImpl();
         setField(discordApi, "webhookSender", webhookSender);
         setField(discordApi, "fischlIdentityConnector", fischlIdentityConnector);
-        lenient().when(fischlIdentityConnector.getMe(anyString())).thenReturn(new FischlUser());
+        lenient().when(fischlIdentityConnector.getMe(anyString()))
+                .thenReturn(new FischlUser().setDisplayName("Steve"));
     }
 
     private static void setField(Object target, String name, Object value) throws Exception {
@@ -60,7 +61,7 @@ class MauraBastionDiscordApiImplTest {
     }
 
     @Test
-    void sendIndividualBastionTurn_formatsResultAndSendsToTurnChannel() {
+    void sendIndividualBastionTurn_formatsResultWithDisplayName() {
         MauraBastionDiscordApi.BastionTurnResult result = new MauraBastionDiscordApi.BastionTurnResult()
                 .setBastionId("b-1")
                 .setBastionName("Ravencrest")
@@ -70,7 +71,21 @@ class MauraBastionDiscordApiImplTest {
 
         assertTrue(response.isSuccess());
         verify(webhookSender).send(DiscordWebhookSender.Channel.INDIVIDUAL_BASTION_TURN,
-                "**Bastion: Ravencrest** (b-1)\nQuest: Fortify the walls");
+                "**Bastion: Ravencrest** (Steve)\nQuest: Fortify the walls");
+    }
+
+    @Test
+    void sendIndividualBastionTurn_blankDisplayName_omitsParenthetical() throws Exception {
+        when(fischlIdentityConnector.getMe(anyString())).thenReturn(new FischlUser());
+        MauraBastionDiscordApi.BastionTurnResult result = new MauraBastionDiscordApi.BastionTurnResult()
+                .setBastionId("b-1")
+                .setBastionName("Ravencrest")
+                .setQuest("Fortify the walls");
+
+        discordApi.sendIndividualBastionTurn("Bearer token", result);
+
+        verify(webhookSender).send(DiscordWebhookSender.Channel.INDIVIDUAL_BASTION_TURN,
+                "**Bastion: Ravencrest**\nQuest: Fortify the walls");
     }
 
     @Test
