@@ -48,7 +48,7 @@ public class TsaritsaBastionApiImpl implements TsaritsaBastionApi {
     @Override
     public ApiResponse getAllBastions(String authHeader) {
         try {
-            List<FischlBastion> results = fischlBastionConnector.readAll(authHeader);
+            List<FischlBastion> results = fischlBastionConnector.readAll(authHeader, null);
             List<Bastion> bastions = results.stream().map(this::toBastion).toList();
             return ApiResponse.success("Bastions found", bastions);
         } catch (FischlBastionException e) {

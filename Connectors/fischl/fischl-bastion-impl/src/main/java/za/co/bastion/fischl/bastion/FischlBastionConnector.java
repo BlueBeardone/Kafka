@@ -35,7 +35,7 @@ public interface FischlBastionConnector {
     @Path("/bastions")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    List<FischlBastion> readAll(@HeaderParam("Authorization") String authHeader) throws FischlBastionException;
+    List<FischlBastion> readAll(@HeaderParam("Authorization") String authHeader, @QueryParam("all") Boolean all) throws FischlBastionException;
 
     @PUT
     @Path("/bastions/{id}")

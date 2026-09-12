@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="za.co.bastion.common.ApiResponseTest" time="0.023" tests="3" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="za.co.bastion.common.ApiResponseTest" time="0.048" tests="3" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="26"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -13,7 +13,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="ZA"/>
     <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk/26.0.1/libexec/openjdk.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="/Users/barendblom/Personal_Projects/Kafka/common/target/surefire/surefirebooter-20260911161322202_3.jar /Users/barendblom/Personal_Projects/Kafka/common/target/surefire 2026-09-11T16-13-22_140-jvmRun1 surefire-20260911161322202_1tmp surefire_0-20260911161322202_2tmp"/>
+    <property name="sun.java.command" value="/Users/barendblom/Personal_Projects/Kafka/common/target/surefire/surefirebooter-20260912155206907_3.jar /Users/barendblom/Personal_Projects/Kafka/common/target/surefire 2026-09-12T15-52-06_853-jvmRun1 surefire-20260912155206907_1tmp surefire_0-20260912155206907_2tmp"/>
     <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="jdk.debug" value="release"/>
     <property name="maven.home" value="/opt/homebrew/Cellar/maven/3.9.16/libexec"/>
@@ -31,7 +31,7 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="apple.awt.application.name" value="ForkedBooter"/>
-    <property name="surefire.real.class.path" value="/Users/barendblom/Personal_Projects/Kafka/common/target/surefire/surefirebooter-20260911161322202_3.jar"/>
+    <property name="surefire.real.class.path" value="/Users/barendblom/Personal_Projects/Kafka/common/target/surefire/surefirebooter-20260912155206907_3.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.runtime.version" value="26.0.1"/>
@@ -63,7 +63,7 @@
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.class.version" value="70.0"/>
   </properties>
-  <testcase name="renewedToken_isNullByDefault" classname="za.co.bastion.common.ApiResponseTest" time="0.009"/>
-  <testcase name="fiveArgConstructor_setsRenewedToken" classname="za.co.bastion.common.ApiResponseTest" time="0.001"/>
-  <testcase name="withRenewedToken_returnsCopyWithToken_andLeavesOriginalUntouched" classname="za.co.bastion.common.ApiResponseTest" time="0.0"/>
+  <testcase name="renewedToken_isNullByDefault" classname="za.co.bastion.common.ApiResponseTest" time="0.02"/>
+  <testcase name="fiveArgConstructor_setsRenewedToken" classname="za.co.bastion.common.ApiResponseTest" time="0.002"/>
+  <testcase name="withRenewedToken_returnsCopyWithToken_andLeavesOriginalUntouched" classname="za.co.bastion.common.ApiResponseTest" time="0.001"/>
 </testsuite>

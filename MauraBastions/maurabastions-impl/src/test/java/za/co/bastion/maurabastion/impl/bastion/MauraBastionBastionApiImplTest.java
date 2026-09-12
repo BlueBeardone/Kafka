@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -130,14 +131,14 @@ class MauraBastionBastionApiImplTest {
                 .setDefenders(List.of(defender))
                 .setHirelings(List.of(hireling));
 
-        when(fischlBastionConnector.readAll(anyString()))
+        when(fischlBastionConnector.readAll(anyString(), isNull()))
                 .thenReturn(List.of(fischlBastion));
 
-        ApiResponse response = bastionApi.getAllBastions("Bearer token");
+        ApiResponse response = bastionApi.getAllBastions("Bearer token", null);
         assertTrue(response.isSuccess());
 
         ArgumentCaptor<String> authCaptor = ArgumentCaptor.forClass(String.class);
-        verify(fischlBastionConnector).readAll(authCaptor.capture());
+        verify(fischlBastionConnector).readAll(authCaptor.capture(), isNull());
         assertEquals("Bearer token", authCaptor.getValue());
 
         @SuppressWarnings("unchecked")
@@ -162,6 +163,17 @@ class MauraBastionBastionApiImplTest {
         assertEquals("b-1", result.getHirelings().get(0).getBastionId());
         assertEquals("f-1", result.getHirelings().get(0).getFacilityId());
         assertEquals("hired in town", result.getHirelings().get(0).getAcquisitionStory());
+    }
+
+    @Test
+    void getAllBastions_withAllTrue_forwardsAllFlag() throws Exception {
+        when(fischlBastionConnector.readAll(anyString(), eq(Boolean.TRUE)))
+                .thenReturn(List.of());
+
+        ApiResponse response = bastionApi.getAllBastions("Bearer token", Boolean.TRUE);
+        assertTrue(response.isSuccess());
+
+        verify(fischlBastionConnector).readAll("Bearer token", Boolean.TRUE);
     }
 
     @Test

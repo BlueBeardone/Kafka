@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: za.co.bastion.maurabastion.impl.discord.BastionTurnMessageFormatterTest
 -------------------------------------------------------------------------------
-Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 s -- in za.co.bastion.maurabastion.impl.discord.BastionTurnMessageFormatterTest
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.013 s -- in za.co.bastion.maurabastion.impl.discord.BastionTurnMessageFormatterTest

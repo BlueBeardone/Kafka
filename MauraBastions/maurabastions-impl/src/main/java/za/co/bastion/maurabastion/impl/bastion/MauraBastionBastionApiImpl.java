@@ -46,9 +46,9 @@ public class MauraBastionBastionApiImpl implements MauraBastionBastionApi {
     }
 
     @Override
-    public ApiResponse getAllBastions(String authHeader) {
+    public ApiResponse getAllBastions(String authHeader, Boolean all) {
         try {
-            List<FischlBastion> results = fischlBastionConnector.readAll(authHeader);
+            List<FischlBastion> results = fischlBastionConnector.readAll(authHeader, all);
             List<Bastion> bastions = results.stream().map(this::toBastion).toList();
             return ApiResponse.success("Bastions found", bastions);
         } catch (FischlBastionException e) {
