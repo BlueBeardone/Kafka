@@ -86,7 +86,7 @@ public class MauraBastionHirelingApiImpl implements MauraBastionHirelingApi {
         if (hireling.getName() == null || hireling.getName().isBlank()) {
             throw new InvalidRequestException("name is required");
         }
-        if (hireling.getBastionId() == null || hireling.getBastionId().isBlank()) {
+        if (hireling.getBastionId() == null) {
             throw new InvalidRequestException("bastionId is required");
         }
     }

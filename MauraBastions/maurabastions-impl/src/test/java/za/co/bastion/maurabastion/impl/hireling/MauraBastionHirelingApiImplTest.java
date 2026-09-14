@@ -128,11 +128,16 @@ class MauraBastionHirelingApiImplTest {
     }
 
     @Test
-    void createHireling_blankBastionId_throwsException() {
+    void createHireling_blankBastionId_passesThroughToBackend() throws Exception {
         MauraBastionHirelingApi.Hireling hireling = new MauraBastionHirelingApi.Hireling()
                 .setId("h-1").setName("Guard").setBastionId("");
 
-        assertThrows(InvalidRequestException.class, () -> hirelingApi.createHireling(hireling));
+        when(fischlHirelingConnector.create(fischlCaptor.capture()))
+                .thenReturn(new FischlHireling().setId("h-1").setName("Guard"));
+
+        ApiResponse response = hirelingApi.createHireling(hireling);
+        assertTrue(response.isSuccess());
+        assertEquals("", fischlCaptor.getValue().getBastionId());
     }
 
     @Test
