@@ -70,6 +70,15 @@ public class MauraBastionDiscordRoute {
     }
 
     @POST
+    @Path("/facility-removed")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public ApiResponse sendFacilityRemoved(@HeaderParam("Authorization") String authHeader,
+                                           MauraBastionDiscordApi.DiscordMessageRequest request) {
+        return discordApi.sendFacilityRemoved(authHeader, request.getMessage());
+    }
+
+    @POST
     @Path("/hireling-hired")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

@@ -12,6 +12,7 @@ public interface MauraBastionDiscordApi {
     ApiResponse sendFacilityBuilt(String authHeader, String message);
     ApiResponse sendFacilityRankUp(String authHeader, String message);
     ApiResponse sendBranchUpgradePurchased(String authHeader, String message);
+    ApiResponse sendFacilityRemoved(String authHeader, String message);
     ApiResponse sendHirelingHired(String authHeader, String message);
     ApiResponse sendDefenderAcquired(String authHeader, String message);
 

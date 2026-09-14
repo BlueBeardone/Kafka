@@ -115,6 +115,12 @@ class MauraBastionDiscordApiImplTest {
     }
 
     @Test
+    void sendFacilityRemoved_sendsToFacilityRemovedChannel() {
+        discordApi.sendFacilityRemoved("Bearer token", "facility removed");
+        verify(webhookSender).send(DiscordWebhookSender.Channel.FACILITY_REMOVED, "facility removed");
+    }
+
+    @Test
     void sendHirelingHired_sendsToHirelingHiredChannel() {
         discordApi.sendHirelingHired("Bearer token", "hired");
         verify(webhookSender).send(DiscordWebhookSender.Channel.HIRELING_HIRED, "hired");

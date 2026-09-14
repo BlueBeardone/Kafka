@@ -74,6 +74,14 @@ public class MauraBastionDiscordApiImpl implements MauraBastionDiscordApi {
     }
 
     @Override
+    public ApiResponse sendFacilityRemoved(String authHeader, String message) {
+        authenticatedUser(authHeader);
+        requireMessage(message);
+        webhookSender.send(DiscordWebhookSender.Channel.FACILITY_REMOVED, message);
+        return ApiResponse.success("Message sent", null);
+    }
+
+    @Override
     public ApiResponse sendHirelingHired(String authHeader, String message) {
         authenticatedUser(authHeader);
         requireMessage(message);
