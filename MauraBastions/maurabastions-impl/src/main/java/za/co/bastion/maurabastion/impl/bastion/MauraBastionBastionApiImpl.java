@@ -8,7 +8,6 @@ import za.co.bastion.common.dto.Rank;
 import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
 import za.co.bastion.fischl.*;
-import za.co.bastion.fischl.FischlBastionPage;
 import za.co.bastion.fischl.bastion.FischlBastionConnector;
 import za.co.bastion.maurabastion.api.bastion.MauraBastionBastionApi;
 
