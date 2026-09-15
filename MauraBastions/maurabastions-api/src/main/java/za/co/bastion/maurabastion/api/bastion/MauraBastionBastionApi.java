@@ -1,5 +1,6 @@
 package za.co.bastion.maurabastion.api.bastion;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -74,6 +75,7 @@ public interface MauraBastionBastionApi {
         private String bastionId;
     }
 
+    @RegisterForReflection
     @Getter
     @Setter
     @Accessors(chain = true)
