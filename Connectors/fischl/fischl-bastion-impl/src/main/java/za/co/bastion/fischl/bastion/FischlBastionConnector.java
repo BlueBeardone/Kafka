@@ -7,6 +7,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import za.co.bastion.fischl.CustomHttpClientOptions;
 import za.co.bastion.fischl.FischlBastion;
 import za.co.bastion.fischl.FischlBastionException;
+import za.co.bastion.fischl.FischlBastionPage;
 import za.co.bastion.fischl.FischlEnvelopeBodyReader;
 import za.co.bastion.fischl.FischlRenewedTokenFilter;
 
@@ -36,6 +37,14 @@ public interface FischlBastionConnector {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     List<FischlBastion> readAll(@HeaderParam("Authorization") String authHeader, @QueryParam("all") Boolean all) throws FischlBastionException;
+
+    @GET
+    @Path("/bastions/browse")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    FischlBastionPage readPage(@HeaderParam("Authorization") String authHeader,
+                               @QueryParam("page") Integer page,
+                               @QueryParam("limit") Integer limit) throws FischlBastionException;
 
     @PUT
     @Path("/bastions/{id}")

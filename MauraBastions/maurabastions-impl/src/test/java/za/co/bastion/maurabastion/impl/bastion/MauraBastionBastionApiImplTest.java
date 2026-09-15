@@ -12,6 +12,7 @@ import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
 import za.co.bastion.fischl.FischlBastion;
 import za.co.bastion.fischl.FischlBastionException;
+import za.co.bastion.fischl.FischlBastionPage;
 import za.co.bastion.fischl.FischlDefender;
 import za.co.bastion.fischl.FischlFacility;
 import za.co.bastion.fischl.FischlHireling;
@@ -25,6 +26,7 @@ import org.mockito.ArgumentCaptor;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
@@ -280,5 +282,66 @@ class MauraBastionBastionApiImplTest {
         ArgumentCaptor<String> authCaptor = ArgumentCaptor.forClass(String.class);
         verify(fischlBastionConnector).delete(authCaptor.capture(), eq("b-1"));
         assertEquals("Bearer token", authCaptor.getValue());
+    }
+
+    @Test
+    void browseBastions_withValidParams_returnsMappedPage() throws Exception {
+        FischlBastionPage result = new FischlBastionPage()
+                .setBastions(List.of(new FischlBastion().setId("b-1").setName("B").setDescription("D").setUserId("other-user")))
+                .setPage(1).setLimit(20).setTotal(57).setHasMore(true);
+
+        when(fischlBastionConnector.readPage("Bearer token", 1, 20)).thenReturn(result);
+
+        ApiResponse response = bastionApi.browseBastions("Bearer token", 1, 20);
+
+        assertTrue(response.isSuccess());
+        MauraBastionBastionApi.BastionPage page = (MauraBastionBastionApi.BastionPage) response.getData();
+        assertEquals(1, page.getBastions().size());
+        assertEquals("b-1", page.getBastions().get(0).getId());
+        assertEquals("other-user", page.getBastions().get(0).getUserId());
+        assertEquals(1, page.getPage());
+        assertEquals(20, page.getLimit());
+        assertEquals(57, page.getTotal());
+        assertTrue(page.isHasMore());
+    }
+
+    @Test
+    void browseBastions_withNullBastionList_returnsEmptyPage() throws Exception {
+        when(fischlBastionConnector.readPage(anyString(), anyInt(), anyInt()))
+                .thenReturn(new FischlBastionPage().setPage(1).setLimit(20).setTotal(0).setHasMore(false));
+
+        ApiResponse response = bastionApi.browseBastions("Bearer token", 1, 20);
+
+        assertTrue(response.isSuccess());
+        MauraBastionBastionApi.BastionPage page = (MauraBastionBastionApi.BastionPage) response.getData();
+        assertTrue(page.getBastions().isEmpty());
+        assertFalse(page.isHasMore());
+    }
+
+    @Test
+    void browseBastions_nullPage_throwsInvalidRequest() {
+        assertThrows(InvalidRequestException.class,
+                () -> bastionApi.browseBastions("Bearer token", null, 20));
+    }
+
+    @Test
+    void browseBastions_zeroPage_throwsInvalidRequest() {
+        assertThrows(InvalidRequestException.class,
+                () -> bastionApi.browseBastions("Bearer token", 0, 20));
+    }
+
+    @Test
+    void browseBastions_limitOver50_throwsInvalidRequest() {
+        assertThrows(InvalidRequestException.class,
+                () -> bastionApi.browseBastions("Bearer token", 1, 51));
+    }
+
+    @Test
+    void browseBastions_fischlError_mapsToBackendException() throws Exception {
+        when(fischlBastionConnector.readPage(anyString(), anyInt(), anyInt()))
+                .thenThrow(new FischlBastionException().setStatus(502).setMessage("browse boom"));
+
+        assertThrows(BackendException.class,
+                () -> bastionApi.browseBastions("Bearer token", 1, 20));
     }
 }

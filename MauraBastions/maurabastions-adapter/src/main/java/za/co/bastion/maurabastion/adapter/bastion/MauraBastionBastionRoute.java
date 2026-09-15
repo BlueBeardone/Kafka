@@ -32,6 +32,15 @@ public class MauraBastionBastionRoute {
         return bastionApi.getAllBastions(authHeader, all);
     }
 
+    @GET
+    @Path("/browse")
+    @Produces(MediaType.APPLICATION_JSON)
+    public ApiResponse browseBastions(@HeaderParam("Authorization") String authHeader,
+                                      @QueryParam("page") Integer page,
+                                      @QueryParam("limit") Integer limit) {
+        return bastionApi.browseBastions(authHeader, page, limit);
+    }
+
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)

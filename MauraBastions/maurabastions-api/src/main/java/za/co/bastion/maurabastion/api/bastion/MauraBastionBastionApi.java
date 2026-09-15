@@ -12,6 +12,7 @@ public interface MauraBastionBastionApi {
     ApiResponse createBastion(String authHeader, Bastion bastion);
     ApiResponse getBastion(String authHeader, String id);
     ApiResponse getAllBastions(String authHeader, Boolean all);
+    ApiResponse browseBastions(String authHeader, Integer page, Integer limit);
     ApiResponse updateBastion(String authHeader, String id, Bastion bastion);
     ApiResponse deleteBastion(String authHeader, String id);
 
@@ -71,5 +72,16 @@ public interface MauraBastionBastionApi {
         private FacilityTable table;
         private Integer constructedTurns;
         private String bastionId;
+    }
+
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    class BastionPage {
+        private List<Bastion> bastions;
+        private int page;
+        private int limit;
+        private long total;
+        private boolean hasMore;
     }
 }

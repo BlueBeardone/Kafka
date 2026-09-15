@@ -8,6 +8,7 @@ import za.co.bastion.common.dto.Rank;
 import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
 import za.co.bastion.fischl.*;
+import za.co.bastion.fischl.FischlBastionPage;
 import za.co.bastion.fischl.bastion.FischlBastionConnector;
 import za.co.bastion.maurabastion.api.bastion.MauraBastionBastionApi;
 
@@ -51,6 +52,31 @@ public class MauraBastionBastionApiImpl implements MauraBastionBastionApi {
             List<FischlBastion> results = fischlBastionConnector.readAll(authHeader, all);
             List<Bastion> bastions = results.stream().map(this::toBastion).toList();
             return ApiResponse.success("Bastions found", bastions);
+        } catch (FischlBastionException e) {
+            throw new BackendException(e.getStatus(), "Bastion backend error: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResponse browseBastions(String authHeader, Integer page, Integer limit) {
+        if (page == null || page < 1) {
+            throw new InvalidRequestException("page must be >= 1");
+        }
+        if (limit == null || limit < 1 || limit > 50) {
+            throw new InvalidRequestException("limit must be between 1 and 50");
+        }
+        try {
+            FischlBastionPage result = fischlBastionConnector.readPage(authHeader, page, limit);
+            List<Bastion> bastions = result.getBastions() == null
+                    ? List.<Bastion>of()
+                    : result.getBastions().stream().map(this::toBastion).toList();
+            BastionPage bastionPage = new BastionPage()
+                    .setBastions(bastions)
+                    .setPage(result.getPage())
+                    .setLimit(result.getLimit())
+                    .setTotal(result.getTotal())
+                    .setHasMore(result.isHasMore());
+            return ApiResponse.success("Bastions found", bastionPage);
         } catch (FischlBastionException e) {
             throw new BackendException(e.getStatus(), "Bastion backend error: " + e.getMessage());
         }
