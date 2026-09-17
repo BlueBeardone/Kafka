@@ -154,6 +154,48 @@ class MauraBastionDiscordApiImplTest {
     }
 
     @Test
+    void sendFacilityBuilt_withBastionId_alsoEditsInitialMessage() throws Exception {
+        when(fischlBastionConnector.read(anyString(), eq("b-1")))
+                .thenReturn(new FischlBastion().setId("b-1").setName("Ravencrest")
+                        .setDescription("A keep.").setDiscordThreadId("t-1"));
+
+        discordApi.sendFacilityBuilt("Bearer token",
+                new MauraBastionDiscordApi.DiscordMessageRequest().setMessage("Built!").setBastionId("b-1"));
+
+        verify(webhookSender).editPost(eq(DiscordWebhookSender.Channel.BASTION_CREATION), eq("t-1"),
+                contains("Ravencrest"));
+    }
+
+    @Test
+    void sendFacilityBuilt_whenEditFails_eventStillSucceeds() throws Exception {
+        when(fischlBastionConnector.read(anyString(), eq("b-1")))
+                .thenReturn(new FischlBastion().setId("b-1").setName("Ravencrest").setDiscordThreadId("t-1"));
+        doThrow(new BackendException(502, "Discord webhook error: HTTP 404"))
+                .when(webhookSender).editPost(any(), eq("t-1"), anyString());
+
+        ApiResponse response = discordApi.sendFacilityBuilt("Bearer token",
+                new MauraBastionDiscordApi.DiscordMessageRequest().setMessage("Built!").setBastionId("b-1"));
+
+        assertTrue(response.isSuccess());
+    }
+
+    @Test
+    void sendIndividualBastionTurn_doesNotEditInitialMessage() throws Exception {
+        MauraBastionDiscordApi.BastionTurnResult result = new MauraBastionDiscordApi.BastionTurnResult()
+                .setBastionId("b-1")
+                .setBastionName("Ravencrest")
+                .setQuest("Fortify the walls");
+        when(fischlBastionConnector.read(anyString(), eq("b-1")))
+                .thenReturn(new FischlBastion().setId("b-1").setName("Ravencrest").setDiscordThreadId("t-1"));
+
+        discordApi.sendIndividualBastionTurn("Bearer token", result);
+
+        verify(webhookSender).send(DiscordWebhookSender.Channel.INDIVIDUAL_BASTION_TURN,
+                "**Bastion: Ravencrest** (Steve)\nQuest: Fortify the walls");
+        verify(webhookSender, never()).editPost(any(), anyString(), anyString());
+    }
+
+    @Test
     void sendFacilityBuilt_withoutBastionId_skipsThreadPost() throws Exception {
         discordApi.sendFacilityBuilt("Bearer token",
                 new MauraBastionDiscordApi.DiscordMessageRequest().setMessage("Built!"));

@@ -122,6 +122,19 @@ public class DiscordWebhookSender {
         }
     }
 
+    public void editPost(Channel channel, String messageId, String content) {
+        try {
+            DiscordWebhookPayload payload = embedPayload(channel, content);
+            connectorFor(channel, urlFor(channel)).edit(messageId, payload);
+        } catch (BackendException e) {
+            throw e;
+        } catch (WebApplicationException e) {
+            throw new BackendException(502, "Discord webhook error: HTTP " + e.getResponse().getStatus());
+        } catch (RuntimeException e) {
+            throw new BackendException(502, "Discord webhook error: " + e.getMessage());
+        }
+    }
+
     DiscordWebhookPayload embedPayload(Channel channel, String message) {
         String description = message;
         String imageUrl = null;

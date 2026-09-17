@@ -30,11 +30,18 @@ public class MauraBastionBastionApiImpl implements MauraBastionBastionApi {
         validateBastion(bastion);
         try {
             FischlBastion result = fischlBastionConnector.create(authHeader, toFischlBastion(bastion));
+            MauraBastionBastionApi.Bastion created = BastionMapper.toBastion(result);
             try {
-                String content = BastionCreationMessageBuilder.build(toBastion(result));
+                String content = BastionCreationMessageBuilder.build(created);
                 String threadId = webhookSender.createPost(
                         DiscordWebhookSender.Channel.BASTION_CREATION, result.getName(), content);
                 fischlBastionConnector.update(authHeader, result.getId(), result.setDiscordThreadId(threadId));
+                if (created.getFacilities() != null) {
+                    for (MauraBastionBastionApi.Facility facility : created.getFacilities()) {
+                        webhookSender.sendToThread(DiscordWebhookSender.Channel.BASTION_CREATION,
+                                threadId, BastionConstructionMessageBuilder.build(created, facility));
+                    }
+                }
             } catch (BackendException e) {
                 compensateDelete(authHeader, result.getId());
                 throw e;
@@ -42,7 +49,7 @@ public class MauraBastionBastionApiImpl implements MauraBastionBastionApi {
                 compensateDelete(authHeader, result.getId());
                 throw new BackendException(e.getStatus(), "Bastion backend error: " + e.getMessage());
             }
-            return ApiResponse.success("Bastion created", toBastion(result));
+            return ApiResponse.success("Bastion created", created);
         } catch (FischlBastionException e) {
             throw new BackendException(e.getStatus(), "Bastion backend error: " + e.getMessage());
         }
@@ -144,124 +151,10 @@ public class MauraBastionBastionApiImpl implements MauraBastionBastionApi {
     }
 
     private FischlBastion toFischlBastion(Bastion bastion) {
-        List<FischlFacility> facilities = new ArrayList<>();
-        if (bastion.getFacilities() != null) {
-            facilities = bastion.getFacilities().stream().map(f ->
-                    new FischlFacility()
-                            .setId(f.getId())
-                            .setName(f.getName())
-                            .setRank(f.getRank() != null ? f.getRank().name() : null)
-                            .setMinimumRequiredHirelings(f.getMinimumRequiredHirelings())
-                            .setConstructionTurns(f.getConstructionTurns())
-                            .setCost(f.getCost())
-                            .setDescription(f.getDescription())
-                            .setImgUrl(f.getImgUrl())
-                            .setTable(f.getTable())
-                            .setConstructedTurns(f.getConstructedTurns())
-                            .setBastionId(f.getBastionId())
-            ).toList();
-        }
-        List<FischlDefender> defenders = new ArrayList<>();
-        if (bastion.getDefenders() != null) {
-            defenders = bastion.getDefenders().stream().map(this::toFischlDefender).toList();
-        }
-        List<FischlHireling> hirelings = new ArrayList<>();
-        if (bastion.getHirelings() != null) {
-            hirelings = bastion.getHirelings().stream().map(this::toFischlHireling).toList();
-        }
-        return new FischlBastion()
-                .setId(bastion.getId())
-                .setUserId(bastion.getUserId())
-                .setName(bastion.getName())
-                .setDescription(bastion.getDescription())
-                .setImgUrl(bastion.getImgUrl())
-                .setDiscordThreadId(bastion.getDiscordThreadId())
-                .setFacilities(facilities)
-                .setDefenders(defenders)
-                .setHirelings(hirelings);
+        return BastionMapper.toFischlBastion(bastion);
     }
 
     private Bastion toBastion(FischlBastion fischl) {
-        List<Facility> facilities = new ArrayList<>();
-        if (fischl.getFacilities() != null) {
-            facilities = fischl.getFacilities().stream().map(f ->
-                    new Facility()
-                            .setId(f.getId())
-                            .setName(f.getName())
-                            .setRank(f.getRank() != null ? Rank.valueOf(f.getRank()) : null)
-                            .setMinimumRequiredHirelings(f.getMinimumRequiredHirelings())
-                            .setConstructionTurns(f.getConstructionTurns())
-                            .setCost(f.getCost())
-                            .setDescription(f.getDescription())
-                            .setImgUrl(f.getImgUrl())
-                            .setTable(f.getTable())
-                            .setConstructedTurns(f.getConstructedTurns())
-                            .setBastionId(f.getBastionId())
-            ).toList();
-        }
-        List<Defender> defenders = new ArrayList<>();
-        if (fischl.getDefenders() != null) {
-            defenders = fischl.getDefenders().stream().map(this::toDefender).toList();
-        }
-        List<Hireling> hirelings = new ArrayList<>();
-        if (fischl.getHirelings() != null) {
-            hirelings = fischl.getHirelings().stream().map(this::toHireling).toList();
-        }
-        return new Bastion()
-                .setId(fischl.getId())
-                .setUserId(fischl.getUserId())
-                .setName(fischl.getName())
-                .setDescription(fischl.getDescription())
-                .setImgUrl(fischl.getImgUrl())
-                .setDiscordThreadId(fischl.getDiscordThreadId())
-                .setFacilities(facilities)
-                .setDefenders(defenders)
-                .setHirelings(hirelings);
-    }
-
-    private FischlDefender toFischlDefender(Defender d) {
-        return new FischlDefender()
-                .setId(d.getId())
-                .setName(d.getName())
-                .setDescription(d.getDescription())
-                .setImgUrl(d.getImgUrl())
-                .setType(d.getType())
-                .setBastionId(d.getBastionId())
-                .setAcquisitionStory(d.getAcquisitionStory());
-    }
-
-    private Defender toDefender(FischlDefender d) {
-        return new Defender()
-                .setId(d.getId())
-                .setName(d.getName())
-                .setDescription(d.getDescription())
-                .setImgUrl(d.getImgUrl())
-                .setType(d.getType())
-                .setBastionId(d.getBastionId())
-                .setAcquisitionStory(d.getAcquisitionStory());
-    }
-
-    private FischlHireling toFischlHireling(Hireling h) {
-        return new FischlHireling()
-                .setId(h.getId())
-                .setName(h.getName())
-                .setRole(h.getRole())
-                .setDescription(h.getDescription())
-                .setImgUrl(h.getImgUrl())
-                .setBastionId(h.getBastionId())
-                .setFacilityId(h.getFacilityId())
-                .setAcquisitionStory(h.getAcquisitionStory());
-    }
-
-    private Hireling toHireling(FischlHireling h) {
-        return new Hireling()
-                .setId(h.getId())
-                .setName(h.getName())
-                .setRole(h.getRole())
-                .setDescription(h.getDescription())
-                .setImgUrl(h.getImgUrl())
-                .setBastionId(h.getBastionId())
-                .setFacilityId(h.getFacilityId())
-                .setAcquisitionStory(h.getAcquisitionStory());
+        return BastionMapper.toBastion(fischl);
     }
 }

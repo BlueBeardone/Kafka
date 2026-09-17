@@ -313,4 +313,40 @@ class DiscordWebhookSenderTest {
         assertDoesNotThrow(() -> sender.sendToThread(
                 DiscordWebhookSender.Channel.BASTION_CREATION, "t-1", "hello"));
     }
+
+    @Test
+    void editPost_sendsPatchWithMessageId() {
+        DiscordWebhookConnector connector = mock(DiscordWebhookConnector.class);
+        ArgumentCaptor<DiscordWebhookPayload> captor = ArgumentCaptor.forClass(DiscordWebhookPayload.class);
+        sender = new DiscordWebhookSender() {
+            @Override
+            DiscordWebhookConnector connectorFor(DiscordWebhookSender.Channel channel, String url) {
+                return connector;
+            }
+        };
+
+        sender.editPost(DiscordWebhookSender.Channel.BASTION_CREATION, "t-1", "updated form");
+
+        verify(connector).edit(eq("t-1"), captor.capture());
+        assertEquals(1, captor.getValue().getEmbeds().size());
+        assertEquals(0xE8B23A, captor.getValue().getEmbeds().get(0).getColor());
+    }
+
+    @Test
+    void editPost_whenDiscordErrors_throwsBackendException502() {
+        sender = new DiscordWebhookSender() {
+            @Override
+            DiscordWebhookConnector connectorFor(DiscordWebhookSender.Channel channel, String url) {
+                DiscordWebhookConnector mock = mock(DiscordWebhookConnector.class);
+                doThrow(new WebApplicationException(Response.status(404).build()))
+                        .when(mock).edit(any(), any());
+                return mock;
+            }
+        };
+
+        BackendException e = assertThrows(BackendException.class, () -> sender.editPost(
+                DiscordWebhookSender.Channel.BASTION_CREATION, "t-1", "updated form"));
+
+        assertEquals(502, e.getBackendStatus());
+    }
 }

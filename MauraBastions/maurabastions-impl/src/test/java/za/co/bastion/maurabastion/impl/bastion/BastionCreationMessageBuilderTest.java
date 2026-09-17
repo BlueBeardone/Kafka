@@ -31,11 +31,18 @@ class BastionCreationMessageBuilderTest {
                 **Facilities:**
                 • Kitchen — d
 
-                **Defenders:**
-                • Ser Aldric — Guard
+                **Defenders:** 1
 
-                **Hirelings:**
-                • Marta — Cook""", message);
+                **Hirelings:** 1""", message);
+    }
+
+    @Test
+    void build_showsZeroCounts_whenListsEmpty() {
+        MauraBastionBastionApi.Bastion bastion = new MauraBastionBastionApi.Bastion()
+                .setName("Ravencrest").setDescription("A keep.");
+
+        assertEquals("🏰 **Ravencrest** has been founded!\n\nA keep.\n\n**Defenders:** 0\n\n**Hirelings:** 0",
+                BastionCreationMessageBuilder.build(bastion));
     }
 
     @Test
@@ -43,7 +50,8 @@ class BastionCreationMessageBuilderTest {
         MauraBastionBastionApi.Bastion bastion = new MauraBastionBastionApi.Bastion()
                 .setName("Ravencrest").setDescription("  ");
 
-        assertEquals("🏰 **Ravencrest** has been founded!", BastionCreationMessageBuilder.build(bastion));
+        assertEquals("🏰 **Ravencrest** has been founded!\n\n**Defenders:** 0\n\n**Hirelings:** 0",
+                BastionCreationMessageBuilder.build(bastion));
     }
 
     @Test
@@ -54,6 +62,6 @@ class BastionCreationMessageBuilderTest {
 
         String message = BastionCreationMessageBuilder.build(bastion);
 
-        assertEquals("🏰 **Ravencrest** has been founded!\n\nA keep.\n\nhttps://example.test/ravencrest.png", message);
+        assertEquals("🏰 **Ravencrest** has been founded!\n\nA keep.\n\n**Defenders:** 0\n\n**Hirelings:** 0\n\nhttps://example.test/ravencrest.png", message);
     }
 }

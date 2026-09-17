@@ -383,7 +383,8 @@ class MauraBastionBastionApiImplTest {
                 .setName("Ravencrest").setDescription("A keep on the hill.");
 
         when(fischlBastionConnector.create(any(), any(FischlBastion.class)))
-                .thenReturn(new FischlBastion().setId("b-1").setName("Ravencrest").setDescription("A keep on the hill."));
+                .thenReturn(new FischlBastion().setId("b-1").setName("Ravencrest").setDescription("A keep on the hill.")
+                        .setFacilities(List.of(new FischlFacility().setName("Kitchen").setRank("d"))));
         when(webhookSender.createPost(eq(DiscordWebhookSender.Channel.BASTION_CREATION), eq("Ravencrest"), anyString()))
                 .thenReturn("t-1");
         when(fischlBastionConnector.update(anyString(), eq("b-1"), any(FischlBastion.class)))
@@ -394,6 +395,8 @@ class MauraBastionBastionApiImplTest {
         assertTrue(response.isSuccess());
         verify(webhookSender).createPost(eq(DiscordWebhookSender.Channel.BASTION_CREATION),
                 eq("Ravencrest"), contains("A keep on the hill."));
+        verify(webhookSender, times(1)).sendToThread(eq(DiscordWebhookSender.Channel.BASTION_CREATION),
+                eq("t-1"), contains("has started construction on **Kitchen**"));
         ArgumentCaptor<FischlBastion> saved = ArgumentCaptor.forClass(FischlBastion.class);
         verify(fischlBastionConnector).update(eq("Bearer token"), eq("b-1"), saved.capture());
         assertEquals("t-1", saved.getValue().getDiscordThreadId());

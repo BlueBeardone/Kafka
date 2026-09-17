@@ -19,10 +19,8 @@ public final class BastionCreationMessageBuilder {
         }
         appendSection(sb, "Facilities", bastion.getFacilities(),
                 f -> f.getName() + detail(f.getRank() == null ? null : f.getRank().name()));
-        appendSection(sb, "Defenders", bastion.getDefenders(),
-                d -> d.getName() + detail(d.getType()));
-        appendSection(sb, "Hirelings", bastion.getHirelings(),
-                h -> h.getName() + detail(h.getRole()));
+        appendCount(sb, "Defenders", bastion.getDefenders());
+        appendCount(sb, "Hirelings", bastion.getHirelings());
         String imgUrl = blankToNull(bastion.getImgUrl());
         if (imgUrl != null) {
             appendBlock(sb, imgUrl);
@@ -31,7 +29,7 @@ public final class BastionCreationMessageBuilder {
     }
 
     private static <T> void appendSection(StringBuilder sb, String title, List<T> items,
-                                          Function<T, String> describe) {
+                                           Function<T, String> describe) {
         if (items == null || items.isEmpty()) {
             return;
         }
@@ -39,6 +37,10 @@ public final class BastionCreationMessageBuilder {
         for (var item : items) {
             sb.append("\n• ").append(describe.apply(item));
         }
+    }
+
+    private static void appendCount(StringBuilder sb, String title, java.util.Collection<?> items) {
+        sb.append("\n\n**").append(title).append(":** ").append(items == null ? 0 : items.size());
     }
 
     private static void appendBlock(StringBuilder sb, String block) {

@@ -1,6 +1,9 @@
 package za.co.bastion.maurabastion.impl.discord;
 
+import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 /**
@@ -17,4 +20,8 @@ public interface DiscordWebhookConnector {
 
     @POST
     void sendToThread(@QueryParam("thread_id") String threadId, DiscordWebhookPayload payload);
+
+    @PATCH
+    @Path("messages/{messageId}")
+    void edit(@PathParam("messageId") String messageId, DiscordWebhookPayload payload);
 }

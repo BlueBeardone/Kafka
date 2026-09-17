@@ -13,6 +13,8 @@ import za.co.bastion.fischl.FischlUser;
 import za.co.bastion.fischl.bastion.FischlBastionConnector;
 import za.co.bastion.fischl.identity.FischlIdentityConnector;
 import za.co.bastion.maurabastion.api.discord.MauraBastionDiscordApi;
+import za.co.bastion.maurabastion.impl.bastion.BastionCreationMessageBuilder;
+import za.co.bastion.maurabastion.impl.bastion.BastionMapper;
 
 @ApplicationScoped
 public class MauraBastionDiscordApiImpl implements MauraBastionDiscordApi {
@@ -63,7 +65,7 @@ public class MauraBastionDiscordApiImpl implements MauraBastionDiscordApi {
         authenticatedUser(authHeader);
         String message = requireMessage(request);
         webhookSender.send(DiscordWebhookSender.Channel.FACILITY_BUILT, message);
-        tryThreadPost(authHeader, request == null ? null : request.getBastionId(), message);
+        tryThreadPost(authHeader, request == null ? null : request.getBastionId(), message, true);
         return ApiResponse.success("Message sent", null);
     }
 
@@ -72,7 +74,7 @@ public class MauraBastionDiscordApiImpl implements MauraBastionDiscordApi {
         authenticatedUser(authHeader);
         String message = requireMessage(request);
         webhookSender.send(DiscordWebhookSender.Channel.FACILITY_RANK_UP, message);
-        tryThreadPost(authHeader, request == null ? null : request.getBastionId(), message);
+        tryThreadPost(authHeader, request == null ? null : request.getBastionId(), message, true);
         return ApiResponse.success("Message sent", null);
     }
 
@@ -90,7 +92,7 @@ public class MauraBastionDiscordApiImpl implements MauraBastionDiscordApi {
         authenticatedUser(authHeader);
         String message = requireMessage(request);
         webhookSender.send(DiscordWebhookSender.Channel.FACILITY_REMOVED, message);
-        tryThreadPost(authHeader, request == null ? null : request.getBastionId(), message);
+        tryThreadPost(authHeader, request == null ? null : request.getBastionId(), message, true);
         return ApiResponse.success("Message sent", null);
     }
 
@@ -99,7 +101,7 @@ public class MauraBastionDiscordApiImpl implements MauraBastionDiscordApi {
         authenticatedUser(authHeader);
         String message = requireMessage(request);
         webhookSender.send(DiscordWebhookSender.Channel.HIRELING_HIRED, message);
-        tryThreadPost(authHeader, request == null ? null : request.getBastionId(), message);
+        tryThreadPost(authHeader, request == null ? null : request.getBastionId(), message, true);
         return ApiResponse.success("Message sent", null);
     }
 
@@ -108,7 +110,7 @@ public class MauraBastionDiscordApiImpl implements MauraBastionDiscordApi {
         authenticatedUser(authHeader);
         String message = requireMessage(request);
         webhookSender.send(DiscordWebhookSender.Channel.DEFENDER_ACQUIRED, message);
-        tryThreadPost(authHeader, request == null ? null : request.getBastionId(), message);
+        tryThreadPost(authHeader, request == null ? null : request.getBastionId(), message, true);
         return ApiResponse.success("Message sent", null);
     }
 
@@ -138,6 +140,10 @@ public class MauraBastionDiscordApiImpl implements MauraBastionDiscordApi {
     }
 
     private void tryThreadPost(String authHeader, String bastionId, String message) {
+        tryThreadPost(authHeader, bastionId, message, false);
+    }
+
+    private void tryThreadPost(String authHeader, String bastionId, String message, boolean updateForm) {
         if (bastionId == null || bastionId.isBlank()) {
             return;
         }
@@ -148,6 +154,10 @@ public class MauraBastionDiscordApiImpl implements MauraBastionDiscordApi {
                 return;
             }
             webhookSender.sendToThread(DiscordWebhookSender.Channel.BASTION_CREATION, threadId, message);
+            if (updateForm) {
+                String form = BastionCreationMessageBuilder.build(BastionMapper.toBastion(bastion));
+                webhookSender.editPost(DiscordWebhookSender.Channel.BASTION_CREATION, threadId, form);
+            }
         } catch (RuntimeException ignored) {
             // best effort: a missing/deleted thread must never fail the event
         } catch (FischlBastionException ignored) {
