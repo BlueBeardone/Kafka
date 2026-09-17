@@ -9,12 +9,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.bastion.common.dto.ApiResponse;
 import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
+import za.co.bastion.fischl.FischlBastion;
+import za.co.bastion.fischl.FischlBastionException;
 import za.co.bastion.fischl.FischlIdentityException;
 import za.co.bastion.fischl.FischlUser;
+import za.co.bastion.fischl.bastion.FischlBastionConnector;
 import za.co.bastion.fischl.identity.FischlIdentityConnector;
 import za.co.bastion.maurabastion.api.discord.MauraBastionDiscordApi;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -27,6 +31,9 @@ class MauraBastionDiscordApiImplTest {
     @Mock
     DiscordWebhookSender webhookSender;
 
+    @Mock
+    FischlBastionConnector fischlBastionConnector;
+
     MauraBastionDiscordApi discordApi;
 
     @BeforeEach
@@ -34,6 +41,7 @@ class MauraBastionDiscordApiImplTest {
         discordApi = new MauraBastionDiscordApiImpl();
         setField(discordApi, "webhookSender", webhookSender);
         setField(discordApi, "fischlIdentityConnector", fischlIdentityConnector);
+        setField(discordApi, "fischlBastionConnector", fischlBastionConnector);
         lenient().when(fischlIdentityConnector.getMe(anyString()))
                 .thenReturn(new FischlUser().setDisplayName("Steve"));
     }
@@ -98,38 +106,99 @@ class MauraBastionDiscordApiImplTest {
 
     @Test
     void sendFacilityBuilt_sendsToFacilityBuiltChannel() {
-        discordApi.sendFacilityBuilt("Bearer token", "facility built");
+        discordApi.sendFacilityBuilt("Bearer token", new MauraBastionDiscordApi.DiscordMessageRequest().setMessage("facility built"));
         verify(webhookSender).send(DiscordWebhookSender.Channel.FACILITY_BUILT, "facility built");
     }
 
     @Test
     void sendFacilityRankUp_sendsToFacilityRankUpChannel() {
-        discordApi.sendFacilityRankUp("Bearer token", "rank up");
+        discordApi.sendFacilityRankUp("Bearer token", new MauraBastionDiscordApi.DiscordMessageRequest().setMessage("rank up"));
         verify(webhookSender).send(DiscordWebhookSender.Channel.FACILITY_RANK_UP, "rank up");
     }
 
     @Test
     void sendBranchUpgradePurchased_sendsToBranchUpgradeChannel() {
-        discordApi.sendBranchUpgradePurchased("Bearer token", "upgrade");
+        discordApi.sendBranchUpgradePurchased("Bearer token", new MauraBastionDiscordApi.DiscordMessageRequest().setMessage("upgrade"));
         verify(webhookSender).send(DiscordWebhookSender.Channel.BRANCH_UPGRADE, "upgrade");
     }
 
     @Test
     void sendFacilityRemoved_sendsToFacilityRemovedChannel() {
-        discordApi.sendFacilityRemoved("Bearer token", "facility removed");
+        discordApi.sendFacilityRemoved("Bearer token", new MauraBastionDiscordApi.DiscordMessageRequest().setMessage("facility removed"));
         verify(webhookSender).send(DiscordWebhookSender.Channel.FACILITY_REMOVED, "facility removed");
     }
 
     @Test
     void sendHirelingHired_sendsToHirelingHiredChannel() {
-        discordApi.sendHirelingHired("Bearer token", "hired");
+        discordApi.sendHirelingHired("Bearer token", new MauraBastionDiscordApi.DiscordMessageRequest().setMessage("hired"));
         verify(webhookSender).send(DiscordWebhookSender.Channel.HIRELING_HIRED, "hired");
     }
 
     @Test
     void sendDefenderAcquired_sendsToDefenderAcquiredChannel() {
-        discordApi.sendDefenderAcquired("Bearer token", "defender");
+        discordApi.sendDefenderAcquired("Bearer token", new MauraBastionDiscordApi.DiscordMessageRequest().setMessage("defender"));
         verify(webhookSender).send(DiscordWebhookSender.Channel.DEFENDER_ACQUIRED, "defender");
+    }
+
+    @Test
+    void sendFacilityBuilt_withBastionId_alsoPostsIntoThread() throws Exception {
+        when(fischlBastionConnector.read(anyString(), eq("b-1")))
+                .thenReturn(new FischlBastion().setId("b-1").setDiscordThreadId("t-1"));
+
+        ApiResponse response = discordApi.sendFacilityBuilt("Bearer token",
+                new MauraBastionDiscordApi.DiscordMessageRequest().setMessage("Built!").setBastionId("b-1"));
+
+        assertTrue(response.isSuccess());
+        verify(webhookSender).send(DiscordWebhookSender.Channel.FACILITY_BUILT, "Built!");
+        verify(webhookSender).sendToThread(DiscordWebhookSender.Channel.BASTION_CREATION, "t-1", "Built!");
+    }
+
+    @Test
+    void sendFacilityBuilt_withoutBastionId_skipsThreadPost() throws Exception {
+        discordApi.sendFacilityBuilt("Bearer token",
+                new MauraBastionDiscordApi.DiscordMessageRequest().setMessage("Built!"));
+
+        verify(webhookSender).send(DiscordWebhookSender.Channel.FACILITY_BUILT, "Built!");
+        verify(fischlBastionConnector, never()).read(anyString(), anyString());
+        verify(webhookSender, never()).sendToThread(any(), anyString(), anyString());
+    }
+
+    @Test
+    void sendFacilityBuilt_whenBastionHasNoThread_channelSendOnly() throws Exception {
+        when(fischlBastionConnector.read(anyString(), eq("b-1")))
+                .thenReturn(new FischlBastion().setId("b-1").setName("Ravencrest"));
+
+        discordApi.sendFacilityBuilt("Bearer token",
+                new MauraBastionDiscordApi.DiscordMessageRequest().setMessage("Built!").setBastionId("b-1"));
+
+        verify(webhookSender, never()).sendToThread(any(), anyString(), anyString());
+    }
+
+    @Test
+    void sendFacilityBuilt_whenThreadDeleted_channelSendStillSucceeds() throws Exception {
+        when(fischlBastionConnector.read(anyString(), eq("b-1")))
+                .thenReturn(new FischlBastion().setId("b-1").setDiscordThreadId("t-1"));
+        doThrow(new BackendException(502, "Discord webhook error: HTTP 404"))
+                .when(webhookSender).sendToThread(any(), eq("t-1"), anyString());
+
+        ApiResponse response = discordApi.sendFacilityBuilt("Bearer token",
+                new MauraBastionDiscordApi.DiscordMessageRequest().setMessage("Built!").setBastionId("b-1"));
+
+        assertTrue(response.isSuccess());
+        verify(webhookSender).send(DiscordWebhookSender.Channel.FACILITY_BUILT, "Built!");
+    }
+
+    @Test
+    void sendFacilityBuilt_whenBastionReadFails_channelSendStillSucceeds() throws Exception {
+        when(fischlBastionConnector.read(anyString(), eq("b-1")))
+                .thenThrow(new FischlBastionException().setStatus(404).setMessage("not found"));
+
+        ApiResponse response = discordApi.sendFacilityBuilt("Bearer token",
+                new MauraBastionDiscordApi.DiscordMessageRequest().setMessage("Built!").setBastionId("b-1"));
+
+        assertTrue(response.isSuccess());
+        verify(webhookSender).send(DiscordWebhookSender.Channel.FACILITY_BUILT, "Built!");
+        verify(webhookSender, never()).sendToThread(any(), anyString(), anyString());
     }
 
     @Test
@@ -138,7 +207,8 @@ class MauraBastionDiscordApiImplTest {
                 .when(webhookSender).send(any(), anyString());
 
         assertThrows(BackendException.class,
-                () -> discordApi.sendFacilityBuilt("Bearer token", "facility built"));
+                () -> discordApi.sendFacilityBuilt("Bearer token",
+                        new MauraBastionDiscordApi.DiscordMessageRequest().setMessage("facility built")));
     }
 
     @Test

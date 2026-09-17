@@ -45,4 +45,16 @@ class DiscordWebhookPayloadTest {
 
         assertFalse(embed.has("image"));
     }
+
+    @Test
+    void threadName_serializesAsThreadName_andOmittedWhenNull() throws Exception {
+        JsonNode withName = mapper.readTree(mapper.writeValueAsString(
+                new DiscordWebhookPayload().setThreadName("Ravencrest")));
+
+        assertEquals("Ravencrest", withName.get("thread_name").asText());
+
+        JsonNode withoutName = mapper.readTree(mapper.writeValueAsString(new DiscordWebhookPayload("hi")));
+
+        assertFalse(withoutName.has("thread_name"));
+    }
 }

@@ -1,6 +1,7 @@
 package za.co.bastion.maurabastion.impl.discord;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,6 +20,8 @@ import java.util.List;
 public class DiscordWebhookPayload {
     private String content;
     private List<Embed> embeds;
+    @JsonProperty("thread_name")
+    private String threadName;
 
     public DiscordWebhookPayload() {
     }

@@ -6,8 +6,11 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import za.co.bastion.common.dto.ApiResponse;
 import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
+import za.co.bastion.fischl.FischlBastion;
+import za.co.bastion.fischl.FischlBastionException;
 import za.co.bastion.fischl.FischlIdentityException;
 import za.co.bastion.fischl.FischlUser;
+import za.co.bastion.fischl.bastion.FischlBastionConnector;
 import za.co.bastion.fischl.identity.FischlIdentityConnector;
 import za.co.bastion.maurabastion.api.discord.MauraBastionDiscordApi;
 
@@ -23,6 +26,10 @@ public class MauraBastionDiscordApiImpl implements MauraBastionDiscordApi {
     @RestClient
     FischlIdentityConnector fischlIdentityConnector;
 
+    @Inject
+    @RestClient
+    FischlBastionConnector fischlBastionConnector;
+
     @Override
     public ApiResponse sendMessage(String authHeader, String message) {
         authenticatedUser(authHeader);
@@ -37,7 +44,9 @@ public class MauraBastionDiscordApiImpl implements MauraBastionDiscordApi {
         if (result == null) {
             throw new InvalidRequestException("result is required");
         }
-        webhookSender.send(DiscordWebhookSender.Channel.INDIVIDUAL_BASTION_TURN, FORMATTER.format(result, user));
+        String message = FORMATTER.format(result, user);
+        webhookSender.send(DiscordWebhookSender.Channel.INDIVIDUAL_BASTION_TURN, message);
+        tryThreadPost(authHeader, result.getBastionId(), message);
         return ApiResponse.success("Message sent", null);
     }
 
@@ -50,50 +59,56 @@ public class MauraBastionDiscordApiImpl implements MauraBastionDiscordApi {
     }
 
     @Override
-    public ApiResponse sendFacilityBuilt(String authHeader, String message) {
+    public ApiResponse sendFacilityBuilt(String authHeader, DiscordMessageRequest request) {
         authenticatedUser(authHeader);
-        requireMessage(message);
+        String message = requireMessage(request);
         webhookSender.send(DiscordWebhookSender.Channel.FACILITY_BUILT, message);
+        tryThreadPost(authHeader, request == null ? null : request.getBastionId(), message);
         return ApiResponse.success("Message sent", null);
     }
 
     @Override
-    public ApiResponse sendFacilityRankUp(String authHeader, String message) {
+    public ApiResponse sendFacilityRankUp(String authHeader, DiscordMessageRequest request) {
         authenticatedUser(authHeader);
-        requireMessage(message);
+        String message = requireMessage(request);
         webhookSender.send(DiscordWebhookSender.Channel.FACILITY_RANK_UP, message);
+        tryThreadPost(authHeader, request == null ? null : request.getBastionId(), message);
         return ApiResponse.success("Message sent", null);
     }
 
     @Override
-    public ApiResponse sendBranchUpgradePurchased(String authHeader, String message) {
+    public ApiResponse sendBranchUpgradePurchased(String authHeader, DiscordMessageRequest request) {
         authenticatedUser(authHeader);
-        requireMessage(message);
+        String message = requireMessage(request);
         webhookSender.send(DiscordWebhookSender.Channel.BRANCH_UPGRADE, message);
+        tryThreadPost(authHeader, request == null ? null : request.getBastionId(), message);
         return ApiResponse.success("Message sent", null);
     }
 
     @Override
-    public ApiResponse sendFacilityRemoved(String authHeader, String message) {
+    public ApiResponse sendFacilityRemoved(String authHeader, DiscordMessageRequest request) {
         authenticatedUser(authHeader);
-        requireMessage(message);
+        String message = requireMessage(request);
         webhookSender.send(DiscordWebhookSender.Channel.FACILITY_REMOVED, message);
+        tryThreadPost(authHeader, request == null ? null : request.getBastionId(), message);
         return ApiResponse.success("Message sent", null);
     }
 
     @Override
-    public ApiResponse sendHirelingHired(String authHeader, String message) {
+    public ApiResponse sendHirelingHired(String authHeader, DiscordMessageRequest request) {
         authenticatedUser(authHeader);
-        requireMessage(message);
+        String message = requireMessage(request);
         webhookSender.send(DiscordWebhookSender.Channel.HIRELING_HIRED, message);
+        tryThreadPost(authHeader, request == null ? null : request.getBastionId(), message);
         return ApiResponse.success("Message sent", null);
     }
 
     @Override
-    public ApiResponse sendDefenderAcquired(String authHeader, String message) {
+    public ApiResponse sendDefenderAcquired(String authHeader, DiscordMessageRequest request) {
         authenticatedUser(authHeader);
-        requireMessage(message);
+        String message = requireMessage(request);
         webhookSender.send(DiscordWebhookSender.Channel.DEFENDER_ACQUIRED, message);
+        tryThreadPost(authHeader, request == null ? null : request.getBastionId(), message);
         return ApiResponse.success("Message sent", null);
     }
 
@@ -111,6 +126,32 @@ public class MauraBastionDiscordApiImpl implements MauraBastionDiscordApi {
     private void requireMessage(String message) {
         if (message == null || message.isBlank()) {
             throw new InvalidRequestException("message is required");
+        }
+    }
+
+    private String requireMessage(DiscordMessageRequest request) {
+        String message = request == null ? null : request.getMessage();
+        if (message == null || message.isBlank()) {
+            throw new InvalidRequestException("message is required");
+        }
+        return message;
+    }
+
+    private void tryThreadPost(String authHeader, String bastionId, String message) {
+        if (bastionId == null || bastionId.isBlank()) {
+            return;
+        }
+        try {
+            FischlBastion bastion = fischlBastionConnector.read(authHeader, bastionId);
+            String threadId = bastion == null ? null : bastion.getDiscordThreadId();
+            if (threadId == null || threadId.isBlank()) {
+                return;
+            }
+            webhookSender.sendToThread(DiscordWebhookSender.Channel.BASTION_CREATION, threadId, message);
+        } catch (RuntimeException ignored) {
+            // best effort: a missing/deleted thread must never fail the event
+        } catch (FischlBastionException ignored) {
+            // best effort: a missing/deleted thread must never fail the event
         }
     }
 }

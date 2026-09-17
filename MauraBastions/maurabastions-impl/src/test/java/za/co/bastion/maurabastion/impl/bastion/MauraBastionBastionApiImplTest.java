@@ -18,9 +18,11 @@ import za.co.bastion.fischl.FischlFacility;
 import za.co.bastion.fischl.FischlHireling;
 import za.co.bastion.fischl.bastion.FischlBastionConnector;
 import za.co.bastion.maurabastion.api.bastion.MauraBastionBastionApi;
+import za.co.bastion.maurabastion.impl.discord.DiscordWebhookSender;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.mockito.ArgumentCaptor;
 
@@ -38,14 +40,22 @@ class MauraBastionBastionApiImplTest {
     @Mock
     FischlBastionConnector fischlBastionConnector;
 
+    @Mock
+    DiscordWebhookSender webhookSender;
+
     MauraBastionBastionApi bastionApi;
 
     @BeforeEach
     void setUp() throws Exception {
         bastionApi = new MauraBastionBastionApiImpl();
-        Field field = MauraBastionBastionApiImpl.class.getDeclaredField("fischlBastionConnector");
+        inject("fischlBastionConnector", fischlBastionConnector);
+        inject("webhookSender", webhookSender);
+    }
+
+    private void inject(String fieldName, Object value) throws Exception {
+        Field field = MauraBastionBastionApiImpl.class.getDeclaredField(fieldName);
         field.setAccessible(true);
-        field.set(bastionApi, fischlBastionConnector);
+        field.set(bastionApi, value);
     }
 
     @Test
@@ -343,5 +353,80 @@ class MauraBastionBastionApiImplTest {
 
         assertThrows(BackendException.class,
                 () -> bastionApi.browseBastions("Bearer token", 1, 20));
+    }
+
+    @Test
+    void discordThreadId_roundTripsThroughMapping() throws Exception {
+        MauraBastionBastionApi.Bastion bastion = new MauraBastionBastionApi.Bastion()
+                .setName("Test Bastion").setDescription("A test bastion")
+                .setDiscordThreadId("1234567890");
+
+        AtomicReference<String> createdThreadId = new AtomicReference<>();
+        when(fischlBastionConnector.create(any(), any(FischlBastion.class)))
+                .thenAnswer(invocation -> {
+                    createdThreadId.set(((FischlBastion) invocation.getArgument(1)).getDiscordThreadId());
+                    return invocation.getArgument(1);
+                });
+        when(webhookSender.createPost(any(), anyString(), anyString())).thenReturn("t-1");
+        when(fischlBastionConnector.update(anyString(), isNull(), any(FischlBastion.class)))
+                .thenAnswer(inv -> inv.getArgument(2));
+
+        ApiResponse response = bastionApi.createBastion("Bearer token", bastion);
+
+        assertTrue(response.isSuccess());
+        assertEquals("1234567890", createdThreadId.get());
+    }
+
+    @Test
+    void createBastion_success_createsForumPostAndSavesThreadId() throws Exception {
+        MauraBastionBastionApi.Bastion bastion = new MauraBastionBastionApi.Bastion()
+                .setName("Ravencrest").setDescription("A keep on the hill.");
+
+        when(fischlBastionConnector.create(any(), any(FischlBastion.class)))
+                .thenReturn(new FischlBastion().setId("b-1").setName("Ravencrest").setDescription("A keep on the hill."));
+        when(webhookSender.createPost(eq(DiscordWebhookSender.Channel.BASTION_CREATION), eq("Ravencrest"), anyString()))
+                .thenReturn("t-1");
+        when(fischlBastionConnector.update(anyString(), eq("b-1"), any(FischlBastion.class)))
+                .thenAnswer(inv -> inv.getArgument(2));
+
+        ApiResponse response = bastionApi.createBastion("Bearer token", bastion);
+
+        assertTrue(response.isSuccess());
+        verify(webhookSender).createPost(eq(DiscordWebhookSender.Channel.BASTION_CREATION),
+                eq("Ravencrest"), contains("A keep on the hill."));
+        ArgumentCaptor<FischlBastion> saved = ArgumentCaptor.forClass(FischlBastion.class);
+        verify(fischlBastionConnector).update(eq("Bearer token"), eq("b-1"), saved.capture());
+        assertEquals("t-1", saved.getValue().getDiscordThreadId());
+    }
+
+    @Test
+    void createBastion_whenForumPostFails_deletesBastionAndRethrows() throws Exception {
+        MauraBastionBastionApi.Bastion bastion = new MauraBastionBastionApi.Bastion()
+                .setName("Test").setDescription("A test");
+        when(fischlBastionConnector.create(any(), any(FischlBastion.class)))
+                .thenReturn(new FischlBastion().setId("b-1").setName("Test").setDescription("A test"));
+        when(webhookSender.createPost(any(), anyString(), anyString()))
+                .thenThrow(new BackendException(502, "Discord webhook error: HTTP 400"));
+
+        BackendException e = assertThrows(BackendException.class,
+                () -> bastionApi.createBastion("Bearer token", bastion));
+
+        assertEquals(502, e.getBackendStatus());
+        verify(fischlBastionConnector).delete(anyString(), eq("b-1"));
+    }
+
+    @Test
+    void createBastion_whenThreadIdSaveFails_deletesBastionAndRethrows() throws Exception {
+        MauraBastionBastionApi.Bastion bastion = new MauraBastionBastionApi.Bastion()
+                .setName("Test").setDescription("A test");
+        when(fischlBastionConnector.create(any(), any(FischlBastion.class)))
+                .thenReturn(new FischlBastion().setId("b-1").setName("Test").setDescription("A test"));
+        when(webhookSender.createPost(any(), anyString(), anyString())).thenReturn("t-1");
+        when(fischlBastionConnector.update(anyString(), eq("b-1"), any(FischlBastion.class)))
+                .thenThrow(new FischlBastionException().setStatus(500).setMessage("db down"));
+
+        assertThrows(BackendException.class, () -> bastionApi.createBastion("Bearer token", bastion));
+
+        verify(fischlBastionConnector).delete(anyString(), eq("b-1"));
     }
 }

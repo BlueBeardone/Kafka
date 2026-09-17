@@ -26,6 +26,7 @@ public interface MauraBastionBastionApi {
         private String name;
         private String description;
         private String imgUrl;
+        private String discordThreadId;
         private List<Facility> facilities;
         private List<Defender> defenders;
         private List<Hireling> hirelings;

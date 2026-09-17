@@ -17,6 +17,7 @@ public class FischlBastion {
     private String name;
     private String description;
     private String imgUrl;
+    private String discordThreadId;
     private String userId;
     private List<FischlFacility> facilities;
     private List<FischlDefender> defenders;

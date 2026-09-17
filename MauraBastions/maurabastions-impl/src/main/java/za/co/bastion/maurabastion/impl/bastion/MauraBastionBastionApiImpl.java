@@ -10,6 +10,7 @@ import za.co.bastion.common.exception.InvalidRequestException;
 import za.co.bastion.fischl.*;
 import za.co.bastion.fischl.bastion.FischlBastionConnector;
 import za.co.bastion.maurabastion.api.bastion.MauraBastionBastionApi;
+import za.co.bastion.maurabastion.impl.discord.DiscordWebhookSender;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,14 +22,39 @@ public class MauraBastionBastionApiImpl implements MauraBastionBastionApi {
     @RestClient
     FischlBastionConnector fischlBastionConnector;
 
+    @Inject
+    DiscordWebhookSender webhookSender;
+
     @Override
     public ApiResponse createBastion(String authHeader, Bastion bastion) {
         validateBastion(bastion);
         try {
             FischlBastion result = fischlBastionConnector.create(authHeader, toFischlBastion(bastion));
+            try {
+                String content = BastionCreationMessageBuilder.build(toBastion(result));
+                String threadId = webhookSender.createPost(
+                        DiscordWebhookSender.Channel.BASTION_CREATION, result.getName(), content);
+                fischlBastionConnector.update(authHeader, result.getId(), result.setDiscordThreadId(threadId));
+            } catch (BackendException e) {
+                compensateDelete(authHeader, result.getId());
+                throw e;
+            } catch (FischlBastionException e) {
+                compensateDelete(authHeader, result.getId());
+                throw new BackendException(e.getStatus(), "Bastion backend error: " + e.getMessage());
+            }
             return ApiResponse.success("Bastion created", toBastion(result));
         } catch (FischlBastionException e) {
             throw new BackendException(e.getStatus(), "Bastion backend error: " + e.getMessage());
+        }
+    }
+
+    private void compensateDelete(String authHeader, String id) {
+        try {
+            fischlBastionConnector.delete(authHeader, id);
+        } catch (RuntimeException ignored) {
+            // best effort compensation; rethrow the original failure regardless
+        } catch (FischlBastionException ignored) {
+            // best effort compensation; rethrow the original failure regardless
         }
     }
 
@@ -149,6 +175,7 @@ public class MauraBastionBastionApiImpl implements MauraBastionBastionApi {
                 .setName(bastion.getName())
                 .setDescription(bastion.getDescription())
                 .setImgUrl(bastion.getImgUrl())
+                .setDiscordThreadId(bastion.getDiscordThreadId())
                 .setFacilities(facilities)
                 .setDefenders(defenders)
                 .setHirelings(hirelings);
@@ -186,6 +213,7 @@ public class MauraBastionBastionApiImpl implements MauraBastionBastionApi {
                 .setName(fischl.getName())
                 .setDescription(fischl.getDescription())
                 .setImgUrl(fischl.getImgUrl())
+                .setDiscordThreadId(fischl.getDiscordThreadId())
                 .setFacilities(facilities)
                 .setDefenders(defenders)
                 .setHirelings(hirelings);

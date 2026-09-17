@@ -84,6 +84,32 @@ public class DiscordWebhookSender {
         }
     }
 
+    public String createPost(Channel channel, String threadName, String content) {
+        try {
+            DiscordWebhookPayload payload = embedPayload(channel, content).setThreadName(threadName);
+            DiscordWebhookMessage message = connectorFor(channel, urlFor(channel)).sendAndWait(true, payload);
+            if (message == null || message.thread() == null || message.thread().id() == null) {
+                throw new BackendException(502, "Discord webhook error: response missing thread id");
+            }
+            return message.thread().id();
+        } catch (BackendException e) {
+            throw e;
+        } catch (WebApplicationException e) {
+            throw new BackendException(502, "Discord webhook error: HTTP " + e.getResponse().getStatus());
+        } catch (RuntimeException e) {
+            throw new BackendException(502, "Discord webhook error: " + e.getMessage());
+        }
+    }
+
+    public void sendToThread(Channel channel, String threadId, String content) {
+        try {
+            DiscordWebhookPayload payload = embedPayload(channel, content);
+            connectorFor(channel, urlFor(channel)).sendToThread(threadId, payload);
+        } catch (RuntimeException ignored) {
+            // best effort: posting into a bastion's thread must never fail the caller
+        }
+    }
+
     DiscordWebhookPayload embedPayload(Channel channel, String message) {
         String description = message;
         String imageUrl = null;

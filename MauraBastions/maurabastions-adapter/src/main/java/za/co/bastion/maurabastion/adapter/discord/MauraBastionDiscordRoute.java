@@ -48,7 +48,7 @@ public class MauraBastionDiscordRoute {
     @Produces(MediaType.APPLICATION_JSON)
     public ApiResponse sendFacilityBuilt(@HeaderParam("Authorization") String authHeader,
                                          MauraBastionDiscordApi.DiscordMessageRequest request) {
-        return discordApi.sendFacilityBuilt(authHeader, request.getMessage());
+        return discordApi.sendFacilityBuilt(authHeader, request);
     }
 
     @POST
@@ -57,7 +57,7 @@ public class MauraBastionDiscordRoute {
     @Produces(MediaType.APPLICATION_JSON)
     public ApiResponse sendFacilityRankUp(@HeaderParam("Authorization") String authHeader,
                                           MauraBastionDiscordApi.DiscordMessageRequest request) {
-        return discordApi.sendFacilityRankUp(authHeader, request.getMessage());
+        return discordApi.sendFacilityRankUp(authHeader, request);
     }
 
     @POST
@@ -66,7 +66,7 @@ public class MauraBastionDiscordRoute {
     @Produces(MediaType.APPLICATION_JSON)
     public ApiResponse sendBranchUpgradePurchased(@HeaderParam("Authorization") String authHeader,
                                                   MauraBastionDiscordApi.DiscordMessageRequest request) {
-        return discordApi.sendBranchUpgradePurchased(authHeader, request.getMessage());
+        return discordApi.sendBranchUpgradePurchased(authHeader, request);
     }
 
     @POST
@@ -75,7 +75,7 @@ public class MauraBastionDiscordRoute {
     @Produces(MediaType.APPLICATION_JSON)
     public ApiResponse sendFacilityRemoved(@HeaderParam("Authorization") String authHeader,
                                            MauraBastionDiscordApi.DiscordMessageRequest request) {
-        return discordApi.sendFacilityRemoved(authHeader, request.getMessage());
+        return discordApi.sendFacilityRemoved(authHeader, request);
     }
 
     @POST
@@ -84,7 +84,7 @@ public class MauraBastionDiscordRoute {
     @Produces(MediaType.APPLICATION_JSON)
     public ApiResponse sendHirelingHired(@HeaderParam("Authorization") String authHeader,
                                          MauraBastionDiscordApi.DiscordMessageRequest request) {
-        return discordApi.sendHirelingHired(authHeader, request.getMessage());
+        return discordApi.sendHirelingHired(authHeader, request);
     }
 
     @POST
@@ -93,6 +93,6 @@ public class MauraBastionDiscordRoute {
     @Produces(MediaType.APPLICATION_JSON)
     public ApiResponse sendDefenderAcquired(@HeaderParam("Authorization") String authHeader,
                                             MauraBastionDiscordApi.DiscordMessageRequest request) {
-        return discordApi.sendDefenderAcquired(authHeader, request.getMessage());
+        return discordApi.sendDefenderAcquired(authHeader, request);
     }
 }

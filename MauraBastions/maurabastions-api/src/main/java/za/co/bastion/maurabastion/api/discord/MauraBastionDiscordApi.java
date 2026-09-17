@@ -9,18 +9,19 @@ public interface MauraBastionDiscordApi {
     ApiResponse sendMessage(String authHeader, String message);
     ApiResponse sendIndividualBastionTurn(String authHeader, BastionTurnResult result);
     ApiResponse sendBastionCreated(String authHeader, String message);
-    ApiResponse sendFacilityBuilt(String authHeader, String message);
-    ApiResponse sendFacilityRankUp(String authHeader, String message);
-    ApiResponse sendBranchUpgradePurchased(String authHeader, String message);
-    ApiResponse sendFacilityRemoved(String authHeader, String message);
-    ApiResponse sendHirelingHired(String authHeader, String message);
-    ApiResponse sendDefenderAcquired(String authHeader, String message);
+    ApiResponse sendFacilityBuilt(String authHeader, DiscordMessageRequest request);
+    ApiResponse sendFacilityRankUp(String authHeader, DiscordMessageRequest request);
+    ApiResponse sendBranchUpgradePurchased(String authHeader, DiscordMessageRequest request);
+    ApiResponse sendFacilityRemoved(String authHeader, DiscordMessageRequest request);
+    ApiResponse sendHirelingHired(String authHeader, DiscordMessageRequest request);
+    ApiResponse sendDefenderAcquired(String authHeader, DiscordMessageRequest request);
 
     @Getter
     @Setter
     @Accessors(chain = true)
     class DiscordMessageRequest {
         private String message;
+        private String bastionId;
     }
 
     @Getter

@@ -11,6 +11,8 @@ import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.mock;
 
@@ -193,5 +195,104 @@ class DiscordWebhookSenderTest {
         DiscordWebhookPayload payload = captor.getValue();
         assertEquals("hello", payload.getContent());
         assertNull(payload.getEmbeds());
+    }
+
+    @Test
+    void createPost_returnsThreadId_andSendsThreadName() {
+        DiscordWebhookConnector connector = mock(DiscordWebhookConnector.class);
+        when(connector.sendAndWait(eq(true), any()))
+                .thenReturn(new DiscordWebhookMessage("m-1", new DiscordWebhookMessage.DiscordThread("t-1")));
+        ArgumentCaptor<DiscordWebhookPayload> captor = ArgumentCaptor.forClass(DiscordWebhookPayload.class);
+        sender = new DiscordWebhookSender() {
+            @Override
+            DiscordWebhookConnector connectorFor(DiscordWebhookSender.Channel channel, String url) {
+                return connector;
+            }
+        };
+
+        String threadId = sender.createPost(
+                DiscordWebhookSender.Channel.BASTION_CREATION, "Ravencrest", "🏰 founded");
+
+        assertEquals("t-1", threadId);
+        verify(connector).sendAndWait(eq(true), captor.capture());
+        assertEquals("Ravencrest", captor.getValue().getThreadName());
+        assertEquals(1, captor.getValue().getEmbeds().size());
+        assertEquals(0xE8B23A, captor.getValue().getEmbeds().get(0).getColor());
+    }
+
+    @Test
+    void createPost_whenDiscordErrors_throwsBackendException502() {
+        sender = new DiscordWebhookSender() {
+            @Override
+            DiscordWebhookConnector connectorFor(DiscordWebhookSender.Channel channel, String url) {
+                DiscordWebhookConnector mock = mock(DiscordWebhookConnector.class);
+                when(mock.sendAndWait(anyBoolean(), any()))
+                        .thenThrow(new WebApplicationException(Response.status(500).build()));
+                return mock;
+            }
+        };
+
+        BackendException e = assertThrows(BackendException.class, () -> sender.createPost(
+                DiscordWebhookSender.Channel.BASTION_CREATION, "Ravencrest", "🏰 founded"));
+
+        assertEquals(502, e.getBackendStatus());
+    }
+
+    @Test
+    void createPost_whenResponseMissingThread_throwsBackendException502() {
+        DiscordWebhookConnector connector = mock(DiscordWebhookConnector.class);
+        when(connector.sendAndWait(anyBoolean(), any()))
+                .thenReturn(new DiscordWebhookMessage("m-1", null));
+        sender = new DiscordWebhookSender() {
+            @Override
+            DiscordWebhookConnector connectorFor(DiscordWebhookSender.Channel channel, String url) {
+                return connector;
+            }
+        };
+
+        BackendException e = assertThrows(BackendException.class, () -> sender.createPost(
+                DiscordWebhookSender.Channel.BASTION_CREATION, "Ravencrest", "🏰 founded"));
+
+        assertEquals(502, e.getBackendStatus());
+        assertTrue(e.getBackendMessage().contains("thread"));
+    }
+
+    @Test
+    void sendToThread_passesThreadId() {
+        DiscordWebhookConnector connector = mock(DiscordWebhookConnector.class);
+        sender = new DiscordWebhookSender() {
+            @Override
+            DiscordWebhookConnector connectorFor(DiscordWebhookSender.Channel channel, String url) {
+                return connector;
+            }
+        };
+
+        sender.sendToThread(DiscordWebhookSender.Channel.BASTION_CREATION, "t-9", "hello thread");
+
+        verify(connector).sendToThread(eq("t-9"), any());
+    }
+
+    @Test
+    void sendToThread_whenDiscordErrors_doesNotThrow() {
+        sender = new DiscordWebhookSender() {
+            @Override
+            DiscordWebhookConnector connectorFor(DiscordWebhookSender.Channel channel, String url) {
+                DiscordWebhookConnector mock = mock(DiscordWebhookConnector.class);
+                doThrow(new WebApplicationException(Response.status(404).build()))
+                        .when(mock).sendToThread(any(), any());
+                return mock;
+            }
+        };
+
+        assertDoesNotThrow(() -> sender.sendToThread(
+                DiscordWebhookSender.Channel.BASTION_CREATION, "t-1", "hello"));
+    }
+
+    @Test
+    void sendToThread_whenUrlNotConfigured_doesNotThrow() throws Exception {
+        setField(sender, "bastionCreationUrl", "  ");
+
+        assertDoesNotThrow(() -> sender.sendToThread(
+                DiscordWebhookSender.Channel.BASTION_CREATION, "t-1", "hello"));
     }
 }
