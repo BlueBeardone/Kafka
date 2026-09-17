@@ -201,7 +201,7 @@ class DiscordWebhookSenderTest {
     void createPost_returnsThreadId_andSendsThreadName() {
         DiscordWebhookConnector connector = mock(DiscordWebhookConnector.class);
         when(connector.sendAndWait(eq(true), any()))
-                .thenReturn(new DiscordWebhookMessage("m-1", new DiscordWebhookMessage.DiscordThread("t-1")));
+                .thenReturn(new DiscordWebhookMessage("m-1", new DiscordWebhookMessage.DiscordThread("t-1"), null));
         ArgumentCaptor<DiscordWebhookPayload> captor = ArgumentCaptor.forClass(DiscordWebhookPayload.class);
         sender = new DiscordWebhookSender() {
             @Override
@@ -239,10 +239,28 @@ class DiscordWebhookSenderTest {
     }
 
     @Test
+    void createPost_withoutThreadObject_returnsChannelIdAsThreadId() {
+        DiscordWebhookConnector connector = mock(DiscordWebhookConnector.class);
+        when(connector.sendAndWait(anyBoolean(), any()))
+                .thenReturn(new DiscordWebhookMessage("m-1", null, "1550097095992549507"));
+        sender = new DiscordWebhookSender() {
+            @Override
+            DiscordWebhookConnector connectorFor(DiscordWebhookSender.Channel channel, String url) {
+                return connector;
+            }
+        };
+
+        String threadId = sender.createPost(
+                DiscordWebhookSender.Channel.BASTION_CREATION, "Ravencrest", "🏰 founded");
+
+        assertEquals("1550097095992549507", threadId);
+    }
+
+    @Test
     void createPost_whenResponseMissingThread_throwsBackendException502() {
         DiscordWebhookConnector connector = mock(DiscordWebhookConnector.class);
         when(connector.sendAndWait(anyBoolean(), any()))
-                .thenReturn(new DiscordWebhookMessage("m-1", null));
+                .thenReturn(new DiscordWebhookMessage("m-1", null, null));
         sender = new DiscordWebhookSender() {
             @Override
             DiscordWebhookConnector connectorFor(DiscordWebhookSender.Channel channel, String url) {

@@ -88,10 +88,11 @@ public class DiscordWebhookSender {
         try {
             DiscordWebhookPayload payload = embedPayload(channel, content).setThreadName(threadName);
             DiscordWebhookMessage message = connectorFor(channel, urlFor(channel)).sendAndWait(true, payload);
-            if (message == null || message.thread() == null || message.thread().id() == null) {
+            String threadId = threadIdOf(message);
+            if (threadId == null) {
                 throw new BackendException(502, "Discord webhook error: response missing thread id");
             }
-            return message.thread().id();
+            return threadId;
         } catch (BackendException e) {
             throw e;
         } catch (WebApplicationException e) {
@@ -99,6 +100,17 @@ public class DiscordWebhookSender {
         } catch (RuntimeException e) {
             throw new BackendException(502, "Discord webhook error: " + e.getMessage());
         }
+    }
+
+    private String threadIdOf(DiscordWebhookMessage message) {
+        if (message == null) {
+            return null;
+        }
+        if (message.thread() != null && message.thread().id() != null && !message.thread().id().isBlank()) {
+            return message.thread().id();
+        }
+        String channelId = message.channelId();
+        return channelId == null || channelId.isBlank() ? null : channelId;
     }
 
     public void sendToThread(Channel channel, String threadId, String content) {
