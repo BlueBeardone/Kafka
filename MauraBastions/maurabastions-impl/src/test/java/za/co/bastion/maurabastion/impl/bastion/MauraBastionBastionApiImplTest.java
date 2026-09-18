@@ -432,4 +432,57 @@ class MauraBastionBastionApiImplTest {
 
         verify(fischlBastionConnector).delete(anyString(), eq("b-1"));
     }
+
+    @Test
+    void updateBastion_withThreadId_editsForumPostWithUpdatedForm() throws Exception {
+        MauraBastionBastionApi.Bastion bastion = new MauraBastionBastionApi.Bastion()
+                .setName("Ravencrest").setDescription("The keep has grown.");
+
+        when(fischlBastionConnector.update(anyString(), eq("b-1"), any(FischlBastion.class)))
+                .thenAnswer(invocation -> {
+                    FischlBastion fb = invocation.getArgument(2);
+                    return fb.setId("b-1").setDiscordThreadId("t-1");
+                });
+
+        ApiResponse response = bastionApi.updateBastion("Bearer token", "b-1", bastion);
+
+        assertTrue(response.isSuccess());
+        verify(webhookSender).editPost(eq(DiscordWebhookSender.Channel.BASTION_CREATION),
+                eq("t-1"), contains("The keep has grown."));
+    }
+
+    @Test
+    void updateBastion_withoutThreadId_skipsForumEdit() throws Exception {
+        MauraBastionBastionApi.Bastion bastion = new MauraBastionBastionApi.Bastion()
+                .setName("Test Bastion").setDescription("A test bastion");
+
+        when(fischlBastionConnector.update(anyString(), eq("b-1"), any(FischlBastion.class)))
+                .thenAnswer(invocation -> {
+                    FischlBastion fb = invocation.getArgument(2);
+                    return fb.setId("b-1");
+                });
+
+        ApiResponse response = bastionApi.updateBastion("Bearer token", "b-1", bastion);
+
+        assertTrue(response.isSuccess());
+        verify(webhookSender, never()).editPost(any(), anyString(), anyString());
+    }
+
+    @Test
+    void updateBastion_whenForumEditFails_stillReturnsSuccess() throws Exception {
+        MauraBastionBastionApi.Bastion bastion = new MauraBastionBastionApi.Bastion()
+                .setName("Test Bastion").setDescription("A test bastion");
+
+        when(fischlBastionConnector.update(anyString(), eq("b-1"), any(FischlBastion.class)))
+                .thenAnswer(invocation -> {
+                    FischlBastion fb = invocation.getArgument(2);
+                    return fb.setId("b-1").setDiscordThreadId("t-1");
+                });
+        doThrow(new BackendException(502, "Discord webhook error: HTTP 404"))
+                .when(webhookSender).editPost(any(), anyString(), anyString());
+
+        ApiResponse response = bastionApi.updateBastion("Bearer token", "b-1", bastion);
+
+        assertTrue(response.isSuccess());
+    }
 }

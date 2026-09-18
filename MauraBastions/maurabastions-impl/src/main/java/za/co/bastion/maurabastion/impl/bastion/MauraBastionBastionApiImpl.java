@@ -122,9 +122,23 @@ public class MauraBastionBastionApiImpl implements MauraBastionBastionApi {
         validateBastion(bastion);
         try {
             FischlBastion result = fischlBastionConnector.update(authHeader, id, toFischlBastion(bastion));
+            tryRefreshForumPost(result);
             return ApiResponse.success("Bastion updated", toBastion(result));
         } catch (FischlBastionException e) {
             throw new BackendException(e.getStatus(), "Bastion backend error: " + e.getMessage());
+        }
+    }
+
+    private void tryRefreshForumPost(FischlBastion result) {
+        String threadId = result == null ? null : result.getDiscordThreadId();
+        if (threadId == null || threadId.isBlank()) {
+            return;
+        }
+        try {
+            String form = BastionCreationMessageBuilder.build(toBastion(result));
+            webhookSender.editPost(DiscordWebhookSender.Channel.BASTION_CREATION, threadId, form);
+        } catch (RuntimeException ignored) {
+            // best effort: a missing/deleted thread must never fail the update
         }
     }
 
