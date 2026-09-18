@@ -15,8 +15,9 @@ public class MauraBastionFacilitiesRoute {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse createFacility(MauraBastionFacilitiesApi.Facility facility) {
-        return facilitiesApi.createFacility(facility);
+    public ApiResponse createFacility(@HeaderParam("Authorization") String authHeader,
+                                      MauraBastionFacilitiesApi.Facility facility) {
+        return facilitiesApi.createFacility(authHeader, facility);
     }
 
     @GET
@@ -36,14 +37,15 @@ public class MauraBastionFacilitiesRoute {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse updateFacility(@PathParam("id") String id, MauraBastionFacilitiesApi.Facility facility) {
-        return facilitiesApi.updateFacility(id, facility);
+    public ApiResponse updateFacility(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id,
+                                      MauraBastionFacilitiesApi.Facility facility) {
+        return facilitiesApi.updateFacility(authHeader, id, facility);
     }
 
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse deleteFacility(@PathParam("id") String id) {
-        return facilitiesApi.deleteFacility(id);
+    public ApiResponse deleteFacility(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id) {
+        return facilitiesApi.deleteFacility(authHeader, id);
     }
 }

@@ -12,10 +12,14 @@ import za.co.bastion.common.dto.FacilityTable;
 import za.co.bastion.common.dto.Rank;
 import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
+import za.co.bastion.fischl.FischlBastion;
+import za.co.bastion.fischl.FischlBastionException;
 import za.co.bastion.fischl.FischlFacility;
 import za.co.bastion.fischl.FischlFacilityException;
+import za.co.bastion.fischl.bastion.FischlBastionConnector;
 import za.co.bastion.fischl.facilities.FischlFacilitiesConnector;
 import za.co.bastion.maurabastion.api.facilities.MauraBastionFacilitiesApi;
+import za.co.bastion.maurabastion.impl.discord.DiscordWebhookSender;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -30,6 +34,12 @@ class MauraBastionFacilitiesApiImplTest {
     @Mock
     FischlFacilitiesConnector fischlFacilitiesConnector;
 
+    @Mock
+    FischlBastionConnector fischlBastionConnector;
+
+    @Mock
+    DiscordWebhookSender webhookSender;
+
     @Captor
     ArgumentCaptor<FischlFacility> fischlCaptor;
 
@@ -38,9 +48,15 @@ class MauraBastionFacilitiesApiImplTest {
     @BeforeEach
     void setUp() throws Exception {
         facilitiesApi = new MauraBastionFacilitiesApiImpl();
-        Field field = MauraBastionFacilitiesApiImpl.class.getDeclaredField("fischlFacilitiesConnector");
+        inject("fischlFacilitiesConnector", fischlFacilitiesConnector);
+        inject("fischlBastionConnector", fischlBastionConnector);
+        inject("webhookSender", webhookSender);
+    }
+
+    private void inject(String name, Object value) throws Exception {
+        Field field = MauraBastionFacilitiesApiImpl.class.getDeclaredField(name);
         field.setAccessible(true);
-        field.set(facilitiesApi, fischlFacilitiesConnector);
+        field.set(facilitiesApi, value);
     }
 
     @Test
@@ -56,7 +72,7 @@ class MauraBastionFacilitiesApiImplTest {
         when(fischlFacilitiesConnector.create(any(FischlFacility.class)))
                 .thenReturn(new FischlFacility().setId("f-1").setName("Barracks").setDescription("A barracks"));
 
-        ApiResponse response = facilitiesApi.createFacility(facility);
+        ApiResponse response = facilitiesApi.createFacility("Bearer token", facility);
         assertTrue(response.isSuccess());
     }
 
@@ -73,7 +89,7 @@ class MauraBastionFacilitiesApiImplTest {
         when(fischlFacilitiesConnector.create(fischlCaptor.capture()))
                 .thenReturn(new FischlFacility());
 
-        facilitiesApi.createFacility(facility);
+        facilitiesApi.createFacility("Bearer token", facility);
 
         FischlFacility captured = fischlCaptor.getValue();
         assertEquals("f-1", captured.getId());
@@ -104,7 +120,7 @@ class MauraBastionFacilitiesApiImplTest {
         MauraBastionFacilitiesApi.Facility input = new MauraBastionFacilitiesApi.Facility()
                 .setId("f-1").setName("Barracks").setDescription("A barracks").setRank(Rank.a);
 
-        ApiResponse response = facilitiesApi.createFacility(input);
+        ApiResponse response = facilitiesApi.createFacility("Bearer token", input);
         assertTrue(response.isSuccess());
 
         MauraBastionFacilitiesApi.Facility result = (MauraBastionFacilitiesApi.Facility) response.getData();
@@ -126,7 +142,7 @@ class MauraBastionFacilitiesApiImplTest {
         MauraBastionFacilitiesApi.Facility facility = new MauraBastionFacilitiesApi.Facility()
                 .setId("f-1").setName("").setDescription("desc").setRank(Rank.a);
 
-        assertThrows(InvalidRequestException.class, () -> facilitiesApi.createFacility(facility));
+        assertThrows(InvalidRequestException.class, () -> facilitiesApi.createFacility("Bearer token", facility));
     }
 
     @Test
@@ -134,7 +150,7 @@ class MauraBastionFacilitiesApiImplTest {
         MauraBastionFacilitiesApi.Facility facility = new MauraBastionFacilitiesApi.Facility()
                 .setId("f-1").setName(null).setDescription("desc").setRank(Rank.a);
 
-        assertThrows(InvalidRequestException.class, () -> facilitiesApi.createFacility(facility));
+        assertThrows(InvalidRequestException.class, () -> facilitiesApi.createFacility("Bearer token", facility));
     }
 
     @Test
@@ -142,7 +158,7 @@ class MauraBastionFacilitiesApiImplTest {
         MauraBastionFacilitiesApi.Facility facility = new MauraBastionFacilitiesApi.Facility()
                 .setId("f-1").setName("Name").setDescription("").setRank(Rank.a);
 
-        assertThrows(InvalidRequestException.class, () -> facilitiesApi.createFacility(facility));
+        assertThrows(InvalidRequestException.class, () -> facilitiesApi.createFacility("Bearer token", facility));
     }
 
     @Test
@@ -150,7 +166,7 @@ class MauraBastionFacilitiesApiImplTest {
         MauraBastionFacilitiesApi.Facility facility = new MauraBastionFacilitiesApi.Facility()
                 .setId("f-1").setName("Name").setDescription(null).setRank(Rank.a);
 
-        assertThrows(InvalidRequestException.class, () -> facilitiesApi.createFacility(facility));
+        assertThrows(InvalidRequestException.class, () -> facilitiesApi.createFacility("Bearer token", facility));
     }
 
     @Test
@@ -158,7 +174,7 @@ class MauraBastionFacilitiesApiImplTest {
         MauraBastionFacilitiesApi.Facility facility = new MauraBastionFacilitiesApi.Facility()
                 .setId("f-1").setName("Name").setDescription("desc").setRank(null);
 
-        assertThrows(InvalidRequestException.class, () -> facilitiesApi.createFacility(facility));
+        assertThrows(InvalidRequestException.class, () -> facilitiesApi.createFacility("Bearer token", facility));
     }
 
     @Test
@@ -167,7 +183,7 @@ class MauraBastionFacilitiesApiImplTest {
                 .setId("f-1").setName("Name").setDescription("desc").setRank(Rank.a)
                 .setMinimumRequiredHirelings(-1);
 
-        assertThrows(InvalidRequestException.class, () -> facilitiesApi.createFacility(facility));
+        assertThrows(InvalidRequestException.class, () -> facilitiesApi.createFacility("Bearer token", facility));
     }
 
     @Test
@@ -178,7 +194,7 @@ class MauraBastionFacilitiesApiImplTest {
         when(fischlFacilitiesConnector.create(any(FischlFacility.class)))
                 .thenReturn(new FischlFacility().setId("f-2"));
 
-        ApiResponse response = facilitiesApi.createFacility(facility);
+        ApiResponse response = facilitiesApi.createFacility("Bearer token", facility);
         assertTrue(response.isSuccess());
     }
 
@@ -190,7 +206,7 @@ class MauraBastionFacilitiesApiImplTest {
         when(fischlFacilitiesConnector.create(fischlCaptor.capture()))
                 .thenReturn(new FischlFacility());
 
-        facilitiesApi.createFacility(facility);
+        facilitiesApi.createFacility("Bearer token", facility);
 
         assertEquals("b", fischlCaptor.getValue().getRank());
     }
@@ -206,7 +222,7 @@ class MauraBastionFacilitiesApiImplTest {
         MauraBastionFacilitiesApi.Facility input = new MauraBastionFacilitiesApi.Facility()
                 .setId("f-1").setName("Test").setDescription("desc").setRank(Rank.a);
 
-        ApiResponse response = facilitiesApi.createFacility(input);
+        ApiResponse response = facilitiesApi.createFacility("Bearer token", input);
         MauraBastionFacilitiesApi.Facility result = (MauraBastionFacilitiesApi.Facility) response.getData();
 
         assertEquals(Rank.c, result.getRank());
@@ -220,7 +236,7 @@ class MauraBastionFacilitiesApiImplTest {
         when(fischlFacilitiesConnector.create(any(FischlFacility.class)))
                 .thenReturn(new FischlFacility());
 
-        assertDoesNotThrow(() -> facilitiesApi.createFacility(facility));
+        assertDoesNotThrow(() -> facilitiesApi.createFacility("Bearer token", facility));
     }
 
     @Test
@@ -234,7 +250,7 @@ class MauraBastionFacilitiesApiImplTest {
         MauraBastionFacilitiesApi.Facility input = new MauraBastionFacilitiesApi.Facility()
                 .setId("f-1").setName("Test").setDescription("desc").setRank(Rank.a);
 
-        ApiResponse response = facilitiesApi.createFacility(input);
+        ApiResponse response = facilitiesApi.createFacility("Bearer token", input);
         MauraBastionFacilitiesApi.Facility result = (MauraBastionFacilitiesApi.Facility) response.getData();
 
         assertNull(result.getRank());
@@ -257,7 +273,7 @@ class MauraBastionFacilitiesApiImplTest {
         when(fischlFacilitiesConnector.create(any(FischlFacility.class)))
                 .thenThrow(new FischlFacilityException().setStatus(404).setMessage("Not found"));
 
-        BackendException ex = assertThrows(BackendException.class, () -> facilitiesApi.createFacility(facility));
+        BackendException ex = assertThrows(BackendException.class, () -> facilitiesApi.createFacility("Bearer token", facility));
         assertEquals(404, ex.getBackendStatus());
     }
 
@@ -265,7 +281,108 @@ class MauraBastionFacilitiesApiImplTest {
     void deleteFacility_returnsSuccess() throws Exception {
         doNothing().when(fischlFacilitiesConnector).delete("f-1");
 
-        ApiResponse response = facilitiesApi.deleteFacility("f-1");
+        ApiResponse response = facilitiesApi.deleteFacility("Bearer token", "f-1");
         assertTrue(response.isSuccess());
+    }
+
+    @Test
+    void createFacility_withThreadId_refreshesForumPost() throws Exception {
+        MauraBastionFacilitiesApi.Facility facility = new MauraBastionFacilitiesApi.Facility()
+                .setName("Barracks").setDescription("A barracks").setRank(Rank.a).setBastionId("b-1");
+
+        when(fischlFacilitiesConnector.create(any(FischlFacility.class)))
+                .thenReturn(new FischlFacility().setId("f-1"));
+        when(fischlBastionConnector.read("Bearer token", "b-1"))
+                .thenReturn(new FischlBastion().setId("b-1").setName("Ravencrest")
+                        .setDescription("desc").setDiscordThreadId("t-1")
+                        .setFacilities(List.of(new FischlFacility().setName("Barracks"))));
+
+        ApiResponse response = facilitiesApi.createFacility("Bearer token", facility);
+
+        assertTrue(response.isSuccess());
+        verify(webhookSender).editPost(eq(DiscordWebhookSender.Channel.BASTION_CREATION),
+                eq("t-1"), contains("Barracks"));
+    }
+
+    @Test
+    void createFacility_withoutThreadId_skipsForumEdit() throws Exception {
+        MauraBastionFacilitiesApi.Facility facility = new MauraBastionFacilitiesApi.Facility()
+                .setName("Barracks").setDescription("A barracks").setRank(Rank.a).setBastionId("b-1");
+
+        when(fischlFacilitiesConnector.create(any(FischlFacility.class)))
+                .thenReturn(new FischlFacility().setId("f-1"));
+        when(fischlBastionConnector.read("Bearer token", "b-1"))
+                .thenReturn(new FischlBastion().setId("b-1"));
+
+        ApiResponse response = facilitiesApi.createFacility("Bearer token", facility);
+
+        assertTrue(response.isSuccess());
+        verify(webhookSender, never()).editPost(any(), anyString(), anyString());
+    }
+
+    @Test
+    void createFacility_whenBastionReadFails_stillReturnsSuccess() throws Exception {
+        MauraBastionFacilitiesApi.Facility facility = new MauraBastionFacilitiesApi.Facility()
+                .setName("Barracks").setDescription("A barracks").setRank(Rank.a).setBastionId("b-1");
+
+        when(fischlFacilitiesConnector.create(any(FischlFacility.class)))
+                .thenReturn(new FischlFacility().setId("f-1"));
+        when(fischlBastionConnector.read("Bearer token", "b-1"))
+                .thenThrow(new FischlBastionException().setStatus(500).setMessage("boom"));
+
+        ApiResponse response = facilitiesApi.createFacility("Bearer token", facility);
+
+        assertTrue(response.isSuccess());
+        verify(webhookSender, never()).editPost(any(), anyString(), anyString());
+    }
+
+    @Test
+    void createFacility_whenForumEditFails_stillReturnsSuccess() throws Exception {
+        MauraBastionFacilitiesApi.Facility facility = new MauraBastionFacilitiesApi.Facility()
+                .setName("Barracks").setDescription("A barracks").setRank(Rank.a).setBastionId("b-1");
+
+        when(fischlFacilitiesConnector.create(any(FischlFacility.class)))
+                .thenReturn(new FischlFacility().setId("f-1"));
+        when(fischlBastionConnector.read("Bearer token", "b-1"))
+                .thenReturn(new FischlBastion().setId("b-1").setDiscordThreadId("t-1"));
+        doThrow(new BackendException(502, "Discord webhook error: HTTP 404"))
+                .when(webhookSender).editPost(any(), anyString(), anyString());
+
+        ApiResponse response = facilitiesApi.createFacility("Bearer token", facility);
+
+        assertTrue(response.isSuccess());
+    }
+
+    @Test
+    void updateFacility_withThreadId_refreshesForumPost() throws Exception {
+        MauraBastionFacilitiesApi.Facility facility = new MauraBastionFacilitiesApi.Facility()
+                .setName("Barracks").setDescription("Upgraded barracks").setRank(Rank.b).setBastionId("b-1");
+
+        when(fischlFacilitiesConnector.update(eq("f-1"), any(FischlFacility.class)))
+                .thenReturn(new FischlFacility().setId("f-1"));
+        when(fischlBastionConnector.read("Bearer token", "b-1"))
+                .thenReturn(new FischlBastion().setId("b-1").setDiscordThreadId("t-1")
+                        .setFacilities(List.of(new FischlFacility().setName("Barracks").setRank("b"))));
+
+        ApiResponse response = facilitiesApi.updateFacility("Bearer token", "f-1", facility);
+
+        assertTrue(response.isSuccess());
+        verify(webhookSender).editPost(eq(DiscordWebhookSender.Channel.BASTION_CREATION),
+                eq("t-1"), contains("Barracks"));
+    }
+
+    @Test
+    void deleteFacility_withThreadId_refreshesForumPost() throws Exception {
+        when(fischlFacilitiesConnector.read("f-1"))
+                .thenReturn(new FischlFacility().setId("f-1").setBastionId("b-1"));
+        doNothing().when(fischlFacilitiesConnector).delete("f-1");
+        when(fischlBastionConnector.read("Bearer token", "b-1"))
+                .thenReturn(new FischlBastion().setId("b-1").setDiscordThreadId("t-1"));
+
+        ApiResponse response = facilitiesApi.deleteFacility("Bearer token", "f-1");
+
+        assertTrue(response.isSuccess());
+        verify(webhookSender).editPost(eq(DiscordWebhookSender.Channel.BASTION_CREATION),
+                eq("t-1"), anyString());
     }
 }

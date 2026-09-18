@@ -8,11 +8,11 @@ import za.co.bastion.common.dto.FacilityTable;
 import za.co.bastion.common.dto.Rank;
 
 public interface MauraBastionFacilitiesApi {
-    ApiResponse createFacility(Facility facility);
+    ApiResponse createFacility(String authHeader, Facility facility);
     ApiResponse getFacility(String id);
     ApiResponse getAllFacilities();
-    ApiResponse updateFacility(String id, Facility facility);
-    ApiResponse deleteFacility(String id);
+    ApiResponse updateFacility(String authHeader, String id, Facility facility);
+    ApiResponse deleteFacility(String authHeader, String id);
 
     @Getter
     @Setter

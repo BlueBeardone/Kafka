@@ -8,8 +8,12 @@ import za.co.bastion.common.dto.Rank;
 import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
 import za.co.bastion.fischl.*;
+import za.co.bastion.fischl.bastion.FischlBastionConnector;
 import za.co.bastion.fischl.facilities.FischlFacilitiesConnector;
 import za.co.bastion.maurabastion.api.facilities.MauraBastionFacilitiesApi;
+import za.co.bastion.maurabastion.impl.bastion.BastionCreationMessageBuilder;
+import za.co.bastion.maurabastion.impl.bastion.BastionMapper;
+import za.co.bastion.maurabastion.impl.discord.DiscordWebhookSender;
 
 import java.util.List;
 
@@ -20,11 +24,19 @@ public class MauraBastionFacilitiesApiImpl implements MauraBastionFacilitiesApi 
     @RestClient
     FischlFacilitiesConnector fischlFacilitiesConnector;
 
+    @Inject
+    @RestClient
+    FischlBastionConnector fischlBastionConnector;
+
+    @Inject
+    DiscordWebhookSender webhookSender;
+
     @Override
-    public ApiResponse createFacility(Facility facility) {
+    public ApiResponse createFacility(String authHeader, Facility facility) {
         validateFacility(facility);
         try {
             FischlFacility result = fischlFacilitiesConnector.create(toFischlFacility(facility));
+            tryRefreshForumPost(authHeader, facility.getBastionId());
             return ApiResponse.success("Facility created", toFacility(result));
         } catch (FischlFacilityException e) {
             throw new BackendException(e.getStatus(), "Facility backend error: " + e.getMessage());
@@ -56,13 +68,14 @@ public class MauraBastionFacilitiesApiImpl implements MauraBastionFacilitiesApi 
     }
 
     @Override
-    public ApiResponse updateFacility(String id, Facility facility) {
+    public ApiResponse updateFacility(String authHeader, String id, Facility facility) {
         if (id == null || id.isBlank()) {
             throw new InvalidRequestException("id is required");
         }
         validateFacility(facility);
         try {
             FischlFacility result = fischlFacilitiesConnector.update(id, toFischlFacility(facility));
+            tryRefreshForumPost(authHeader, facility.getBastionId());
             return ApiResponse.success("Facility updated", toFacility(result));
         } catch (FischlFacilityException e) {
             throw new BackendException(e.getStatus(), "Facility backend error: " + e.getMessage());
@@ -70,15 +83,42 @@ public class MauraBastionFacilitiesApiImpl implements MauraBastionFacilitiesApi 
     }
 
     @Override
-    public ApiResponse deleteFacility(String id) {
+    public ApiResponse deleteFacility(String authHeader, String id) {
         if (id == null || id.isBlank()) {
             throw new InvalidRequestException("id is required");
         }
+        String bastionId = null;
+        try {
+            FischlFacility existing = fischlFacilitiesConnector.read(id);
+            bastionId = existing == null ? null : existing.getBastionId();
+        } catch (FischlFacilityException ignored) {
+            // best effort: without the facility we cannot locate its bastion
+        }
         try {
             fischlFacilitiesConnector.delete(id);
+            tryRefreshForumPost(authHeader, bastionId);
             return ApiResponse.success("Facility deleted", null);
         } catch (FischlFacilityException e) {
             throw new BackendException(e.getStatus(), "Facility backend error: " + e.getMessage());
+        }
+    }
+
+    private void tryRefreshForumPost(String authHeader, String bastionId) {
+        if (bastionId == null || bastionId.isBlank()) {
+            return;
+        }
+        try {
+            FischlBastion bastion = fischlBastionConnector.read(authHeader, bastionId);
+            String threadId = bastion == null ? null : bastion.getDiscordThreadId();
+            if (threadId == null || threadId.isBlank()) {
+                return;
+            }
+            String form = BastionCreationMessageBuilder.build(BastionMapper.toBastion(bastion));
+            webhookSender.editPost(DiscordWebhookSender.Channel.BASTION_CREATION, threadId, form);
+        } catch (FischlBastionException ignored) {
+            // best effort: a missing/deleted thread must never fail the facility change
+        } catch (RuntimeException ignored) {
+            // best effort: a missing/deleted thread must never fail the facility change
         }
     }
 
