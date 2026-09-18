@@ -125,7 +125,7 @@ public class DiscordWebhookSender {
     public void editPost(Channel channel, String messageId, String content) {
         try {
             DiscordWebhookPayload payload = embedPayload(channel, content);
-            connectorFor(channel, urlFor(channel)).edit(messageId, payload);
+            connectorFor(channel, urlFor(channel)).edit(messageId, messageId, payload);
         } catch (BackendException e) {
             throw e;
         } catch (WebApplicationException e) {

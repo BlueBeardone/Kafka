@@ -23,5 +23,6 @@ public interface DiscordWebhookConnector {
 
     @PATCH
     @Path("messages/{messageId}")
-    void edit(@PathParam("messageId") String messageId, DiscordWebhookPayload payload);
+    void edit(@PathParam("messageId") String messageId, @QueryParam("thread_id") String threadId,
+              DiscordWebhookPayload payload);
 }

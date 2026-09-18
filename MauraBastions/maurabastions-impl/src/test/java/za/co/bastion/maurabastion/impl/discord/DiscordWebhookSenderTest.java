@@ -315,7 +315,7 @@ class DiscordWebhookSenderTest {
     }
 
     @Test
-    void editPost_sendsPatchWithMessageId() {
+    void editPost_sendsPatchWithMessageIdAndThreadId() {
         DiscordWebhookConnector connector = mock(DiscordWebhookConnector.class);
         ArgumentCaptor<DiscordWebhookPayload> captor = ArgumentCaptor.forClass(DiscordWebhookPayload.class);
         sender = new DiscordWebhookSender() {
@@ -327,7 +327,7 @@ class DiscordWebhookSenderTest {
 
         sender.editPost(DiscordWebhookSender.Channel.BASTION_CREATION, "t-1", "updated form");
 
-        verify(connector).edit(eq("t-1"), captor.capture());
+        verify(connector).edit(eq("t-1"), eq("t-1"), captor.capture());
         assertEquals(1, captor.getValue().getEmbeds().size());
         assertEquals(0xE8B23A, captor.getValue().getEmbeds().get(0).getColor());
     }
@@ -339,7 +339,7 @@ class DiscordWebhookSenderTest {
             DiscordWebhookConnector connectorFor(DiscordWebhookSender.Channel channel, String url) {
                 DiscordWebhookConnector mock = mock(DiscordWebhookConnector.class);
                 doThrow(new WebApplicationException(Response.status(404).build()))
-                        .when(mock).edit(any(), any());
+                        .when(mock).edit(any(), any(), any());
                 return mock;
             }
         };
