@@ -6,10 +6,16 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import za.co.bastion.common.dto.ApiResponse;
 import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
+import za.co.bastion.fischl.FischlBastion;
+import za.co.bastion.fischl.FischlBastionException;
 import za.co.bastion.fischl.FischlDefender;
 import za.co.bastion.fischl.FischlDefenderException;
+import za.co.bastion.fischl.bastion.FischlBastionConnector;
 import za.co.bastion.fischl.defender.FischlDefenderConnector;
 import za.co.bastion.maurabastion.api.defender.MauraBastionDefenderApi;
+import za.co.bastion.maurabastion.impl.bastion.BastionCreationMessageBuilder;
+import za.co.bastion.maurabastion.impl.bastion.BastionMapper;
+import za.co.bastion.maurabastion.impl.discord.DiscordWebhookSender;
 
 import java.util.List;
 
@@ -20,11 +26,19 @@ public class MauraBastionDefenderApiImpl implements MauraBastionDefenderApi {
     @RestClient
     FischlDefenderConnector fischlDefenderConnector;
 
+    @Inject
+    @RestClient
+    FischlBastionConnector fischlBastionConnector;
+
+    @Inject
+    DiscordWebhookSender webhookSender;
+
     @Override
-    public ApiResponse createDefender(Defender defender) {
+    public ApiResponse createDefender(String authHeader, Defender defender) {
         validateDefender(defender);
         try {
             FischlDefender result = fischlDefenderConnector.create(toFischlDefender(defender));
+            tryRefreshForumPost(authHeader, defender.getBastionId());
             return ApiResponse.success("Defender created", toDefender(result));
         } catch (FischlDefenderException e) {
             throw new BackendException(e.getStatus(), "Defender backend error: " + e.getMessage());
@@ -56,13 +70,14 @@ public class MauraBastionDefenderApiImpl implements MauraBastionDefenderApi {
     }
 
     @Override
-    public ApiResponse updateDefender(String id, Defender defender) {
+    public ApiResponse updateDefender(String authHeader, String id, Defender defender) {
         if (id == null || id.isBlank()) {
             throw new InvalidRequestException("id is required");
         }
         validateDefender(defender);
         try {
             FischlDefender result = fischlDefenderConnector.update(id, toFischlDefender(defender));
+            tryRefreshForumPost(authHeader, defender.getBastionId());
             return ApiResponse.success("Defender updated", toDefender(result));
         } catch (FischlDefenderException e) {
             throw new BackendException(e.getStatus(), "Defender backend error: " + e.getMessage());
@@ -70,15 +85,42 @@ public class MauraBastionDefenderApiImpl implements MauraBastionDefenderApi {
     }
 
     @Override
-    public ApiResponse deleteDefender(String id) {
+    public ApiResponse deleteDefender(String authHeader, String id) {
         if (id == null || id.isBlank()) {
             throw new InvalidRequestException("id is required");
         }
+        String bastionId = null;
+        try {
+            FischlDefender existing = fischlDefenderConnector.read(id);
+            bastionId = existing == null ? null : existing.getBastionId();
+        } catch (FischlDefenderException ignored) {
+            // best effort: without the defender we cannot locate its bastion
+        }
         try {
             fischlDefenderConnector.delete(id);
+            tryRefreshForumPost(authHeader, bastionId);
             return ApiResponse.success("Defender deleted", null);
         } catch (FischlDefenderException e) {
             throw new BackendException(e.getStatus(), "Defender backend error: " + e.getMessage());
+        }
+    }
+
+    private void tryRefreshForumPost(String authHeader, String bastionId) {
+        if (bastionId == null || bastionId.isBlank()) {
+            return;
+        }
+        try {
+            FischlBastion bastion = fischlBastionConnector.read(authHeader, bastionId);
+            String threadId = bastion == null ? null : bastion.getDiscordThreadId();
+            if (threadId == null || threadId.isBlank()) {
+                return;
+            }
+            String form = BastionCreationMessageBuilder.build(BastionMapper.toBastion(bastion));
+            webhookSender.editPost(DiscordWebhookSender.Channel.BASTION_CREATION, threadId, form);
+        } catch (FischlBastionException ignored) {
+            // best effort: a missing/deleted thread must never fail the defender change
+        } catch (RuntimeException ignored) {
+            // best effort: a missing/deleted thread must never fail the defender change
         }
     }
 

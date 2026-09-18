@@ -6,11 +6,11 @@ import lombok.experimental.Accessors;
 import za.co.bastion.common.dto.ApiResponse;
 
 public interface MauraBastionDefenderApi {
-    ApiResponse createDefender(Defender defender);
+    ApiResponse createDefender(String authHeader, Defender defender);
     ApiResponse getDefender(String id);
     ApiResponse getAllDefenders();
-    ApiResponse updateDefender(String id, Defender defender);
-    ApiResponse deleteDefender(String id);
+    ApiResponse updateDefender(String authHeader, String id, Defender defender);
+    ApiResponse deleteDefender(String authHeader, String id);
 
     @Getter
     @Setter

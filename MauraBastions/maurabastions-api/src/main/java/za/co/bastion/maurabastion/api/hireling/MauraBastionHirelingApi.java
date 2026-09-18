@@ -6,11 +6,11 @@ import lombok.experimental.Accessors;
 import za.co.bastion.common.dto.ApiResponse;
 
 public interface MauraBastionHirelingApi {
-    ApiResponse createHireling(Hireling hireling);
+    ApiResponse createHireling(String authHeader, Hireling hireling);
     ApiResponse getHireling(String id);
     ApiResponse getAllHirelings();
-    ApiResponse updateHireling(String id, Hireling hireling);
-    ApiResponse deleteHireling(String id);
+    ApiResponse updateHireling(String authHeader, String id, Hireling hireling);
+    ApiResponse deleteHireling(String authHeader, String id);
 
     @Getter
     @Setter

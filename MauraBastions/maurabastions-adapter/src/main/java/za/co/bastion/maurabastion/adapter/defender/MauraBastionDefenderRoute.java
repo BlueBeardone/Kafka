@@ -15,8 +15,9 @@ public class MauraBastionDefenderRoute {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse createDefender(MauraBastionDefenderApi.Defender defender) {
-        return defenderApi.createDefender(defender);
+    public ApiResponse createDefender(@HeaderParam("Authorization") String authHeader,
+                                      MauraBastionDefenderApi.Defender defender) {
+        return defenderApi.createDefender(authHeader, defender);
     }
 
     @GET
@@ -36,14 +37,15 @@ public class MauraBastionDefenderRoute {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse updateDefender(@PathParam("id") String id, MauraBastionDefenderApi.Defender defender) {
-        return defenderApi.updateDefender(id, defender);
+    public ApiResponse updateDefender(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id,
+                                      MauraBastionDefenderApi.Defender defender) {
+        return defenderApi.updateDefender(authHeader, id, defender);
     }
 
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse deleteDefender(@PathParam("id") String id) {
-        return defenderApi.deleteDefender(id);
+    public ApiResponse deleteDefender(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id) {
+        return defenderApi.deleteDefender(authHeader, id);
     }
 }

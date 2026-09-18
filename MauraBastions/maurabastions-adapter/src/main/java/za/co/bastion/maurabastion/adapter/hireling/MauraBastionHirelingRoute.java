@@ -15,8 +15,9 @@ public class MauraBastionHirelingRoute {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse createHireling(MauraBastionHirelingApi.Hireling hireling) {
-        return hirelingApi.createHireling(hireling);
+    public ApiResponse createHireling(@HeaderParam("Authorization") String authHeader,
+                                      MauraBastionHirelingApi.Hireling hireling) {
+        return hirelingApi.createHireling(authHeader, hireling);
     }
 
     @GET
@@ -36,14 +37,15 @@ public class MauraBastionHirelingRoute {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse updateHireling(@PathParam("id") String id, MauraBastionHirelingApi.Hireling hireling) {
-        return hirelingApi.updateHireling(id, hireling);
+    public ApiResponse updateHireling(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id,
+                                      MauraBastionHirelingApi.Hireling hireling) {
+        return hirelingApi.updateHireling(authHeader, id, hireling);
     }
 
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse deleteHireling(@PathParam("id") String id) {
-        return hirelingApi.deleteHireling(id);
+    public ApiResponse deleteHireling(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id) {
+        return hirelingApi.deleteHireling(authHeader, id);
     }
 }

@@ -10,10 +10,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.bastion.common.dto.ApiResponse;
 import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
+import za.co.bastion.fischl.FischlBastion;
+import za.co.bastion.fischl.FischlBastionException;
 import za.co.bastion.fischl.FischlHireling;
 import za.co.bastion.fischl.FischlHirelingException;
+import za.co.bastion.fischl.bastion.FischlBastionConnector;
 import za.co.bastion.fischl.hireling.FischlHirelingConnector;
 import za.co.bastion.maurabastion.api.hireling.MauraBastionHirelingApi;
+import za.co.bastion.maurabastion.impl.discord.DiscordWebhookSender;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -28,6 +32,12 @@ class MauraBastionHirelingApiImplTest {
     @Mock
     FischlHirelingConnector fischlHirelingConnector;
 
+    @Mock
+    FischlBastionConnector fischlBastionConnector;
+
+    @Mock
+    DiscordWebhookSender webhookSender;
+
     @Captor
     ArgumentCaptor<FischlHireling> fischlCaptor;
 
@@ -36,9 +46,15 @@ class MauraBastionHirelingApiImplTest {
     @BeforeEach
     void setUp() throws Exception {
         hirelingApi = new MauraBastionHirelingApiImpl();
-        Field field = MauraBastionHirelingApiImpl.class.getDeclaredField("fischlHirelingConnector");
+        inject("fischlHirelingConnector", fischlHirelingConnector);
+        inject("fischlBastionConnector", fischlBastionConnector);
+        inject("webhookSender", webhookSender);
+    }
+
+    private void inject(String name, Object value) throws Exception {
+        Field field = MauraBastionHirelingApiImpl.class.getDeclaredField(name);
         field.setAccessible(true);
-        field.set(hirelingApi, fischlHirelingConnector);
+        field.set(hirelingApi, value);
     }
 
     @Test
@@ -49,7 +65,7 @@ class MauraBastionHirelingApiImplTest {
         when(fischlHirelingConnector.create(any(FischlHireling.class)))
                 .thenReturn(new FischlHireling().setId("h-1").setName("Guard"));
 
-        ApiResponse response = hirelingApi.createHireling(hireling);
+        ApiResponse response = hirelingApi.createHireling("Bearer token", hireling);
         assertTrue(response.isSuccess());
     }
 
@@ -63,7 +79,7 @@ class MauraBastionHirelingApiImplTest {
         when(fischlHirelingConnector.create(fischlCaptor.capture()))
                 .thenReturn(new FischlHireling());
 
-        hirelingApi.createHireling(hireling);
+        hirelingApi.createHireling("Bearer token", hireling);
 
         FischlHireling captured = fischlCaptor.getValue();
         assertEquals("h-1", captured.getId());
@@ -89,7 +105,7 @@ class MauraBastionHirelingApiImplTest {
         MauraBastionHirelingApi.Hireling input = new MauraBastionHirelingApi.Hireling()
                 .setId("h-1").setName("Archer").setBastionId("b-1");
 
-        ApiResponse response = hirelingApi.createHireling(input);
+        ApiResponse response = hirelingApi.createHireling("Bearer token", input);
         assertTrue(response.isSuccess());
 
         MauraBastionHirelingApi.Hireling result = (MauraBastionHirelingApi.Hireling) response.getData();
@@ -108,7 +124,7 @@ class MauraBastionHirelingApiImplTest {
         MauraBastionHirelingApi.Hireling hireling = new MauraBastionHirelingApi.Hireling()
                 .setId("h-1").setName(null).setBastionId("b-1");
 
-        assertThrows(InvalidRequestException.class, () -> hirelingApi.createHireling(hireling));
+        assertThrows(InvalidRequestException.class, () -> hirelingApi.createHireling("Bearer token", hireling));
     }
 
     @Test
@@ -116,7 +132,7 @@ class MauraBastionHirelingApiImplTest {
         MauraBastionHirelingApi.Hireling hireling = new MauraBastionHirelingApi.Hireling()
                 .setId("h-1").setName("").setBastionId("b-1");
 
-        assertThrows(InvalidRequestException.class, () -> hirelingApi.createHireling(hireling));
+        assertThrows(InvalidRequestException.class, () -> hirelingApi.createHireling("Bearer token", hireling));
     }
 
     @Test
@@ -124,7 +140,7 @@ class MauraBastionHirelingApiImplTest {
         MauraBastionHirelingApi.Hireling hireling = new MauraBastionHirelingApi.Hireling()
                 .setId("h-1").setName("Guard").setBastionId(null);
 
-        assertThrows(InvalidRequestException.class, () -> hirelingApi.createHireling(hireling));
+        assertThrows(InvalidRequestException.class, () -> hirelingApi.createHireling("Bearer token", hireling));
     }
 
     @Test
@@ -135,7 +151,7 @@ class MauraBastionHirelingApiImplTest {
         when(fischlHirelingConnector.create(fischlCaptor.capture()))
                 .thenReturn(new FischlHireling().setId("h-1").setName("Guard"));
 
-        ApiResponse response = hirelingApi.createHireling(hireling);
+        ApiResponse response = hirelingApi.createHireling("Bearer token", hireling);
         assertTrue(response.isSuccess());
         assertEquals("", fischlCaptor.getValue().getBastionId());
     }
@@ -148,7 +164,7 @@ class MauraBastionHirelingApiImplTest {
         when(fischlHirelingConnector.create(any(FischlHireling.class)))
                 .thenReturn(new FischlHireling().setId("h-2"));
 
-        ApiResponse response = hirelingApi.createHireling(hireling);
+        ApiResponse response = hirelingApi.createHireling("Bearer token", hireling);
         assertTrue(response.isSuccess());
     }
 
@@ -188,7 +204,7 @@ class MauraBastionHirelingApiImplTest {
         when(fischlHirelingConnector.update(eq("h-1"), any(FischlHireling.class)))
                 .thenReturn(new FischlHireling().setId("h-1").setName("Updated"));
 
-        ApiResponse response = hirelingApi.updateHireling("h-1", hireling);
+        ApiResponse response = hirelingApi.updateHireling("Bearer token", "h-1", hireling);
         assertTrue(response.isSuccess());
     }
 
@@ -197,7 +213,7 @@ class MauraBastionHirelingApiImplTest {
         MauraBastionHirelingApi.Hireling hireling = new MauraBastionHirelingApi.Hireling()
                 .setName("Guard").setBastionId("b-1");
 
-        assertThrows(InvalidRequestException.class, () -> hirelingApi.updateHireling(null, hireling));
+        assertThrows(InvalidRequestException.class, () -> hirelingApi.updateHireling("Bearer token", null, hireling));
     }
 
     @Test
@@ -208,7 +224,7 @@ class MauraBastionHirelingApiImplTest {
         when(fischlHirelingConnector.create(any(FischlHireling.class)))
                 .thenThrow(new FischlHirelingException().setStatus(401).setMessage("Unauthorized"));
 
-        BackendException ex = assertThrows(BackendException.class, () -> hirelingApi.createHireling(hireling));
+        BackendException ex = assertThrows(BackendException.class, () -> hirelingApi.createHireling("Bearer token", hireling));
         assertEquals(401, ex.getBackendStatus());
     }
 
@@ -216,12 +232,112 @@ class MauraBastionHirelingApiImplTest {
     void deleteHireling_returnsSuccess() throws Exception {
         doNothing().when(fischlHirelingConnector).delete("h-1");
 
-        ApiResponse response = hirelingApi.deleteHireling("h-1");
+        ApiResponse response = hirelingApi.deleteHireling("Bearer token", "h-1");
         assertTrue(response.isSuccess());
     }
 
     @Test
     void deleteHireling_nullId_throwsException() {
-        assertThrows(InvalidRequestException.class, () -> hirelingApi.deleteHireling(null));
+        assertThrows(InvalidRequestException.class, () -> hirelingApi.deleteHireling("Bearer token", null));
+    }
+
+    @Test
+    void createHireling_withThreadId_refreshesForumPost() throws Exception {
+        MauraBastionHirelingApi.Hireling hireling = new MauraBastionHirelingApi.Hireling()
+                .setName("Smith").setBastionId("b-1");
+
+        when(fischlHirelingConnector.create(any(FischlHireling.class)))
+                .thenReturn(new FischlHireling().setId("h-1"));
+        when(fischlBastionConnector.read("Bearer token", "b-1"))
+                .thenReturn(new FischlBastion().setId("b-1").setDiscordThreadId("t-1")
+                        .setHirelings(List.of(new FischlHireling().setName("Smith"))));
+
+        ApiResponse response = hirelingApi.createHireling("Bearer token", hireling);
+
+        assertTrue(response.isSuccess());
+        verify(webhookSender).editPost(eq(DiscordWebhookSender.Channel.BASTION_CREATION),
+                eq("t-1"), contains("Hirelings:** 1"));
+    }
+
+    @Test
+    void createHireling_withoutThreadId_skipsForumEdit() throws Exception {
+        MauraBastionHirelingApi.Hireling hireling = new MauraBastionHirelingApi.Hireling()
+                .setName("Smith").setBastionId("b-1");
+
+        when(fischlHirelingConnector.create(any(FischlHireling.class)))
+                .thenReturn(new FischlHireling().setId("h-1"));
+        when(fischlBastionConnector.read("Bearer token", "b-1"))
+                .thenReturn(new FischlBastion().setId("b-1"));
+
+        ApiResponse response = hirelingApi.createHireling("Bearer token", hireling);
+
+        assertTrue(response.isSuccess());
+        verify(webhookSender, never()).editPost(any(), anyString(), anyString());
+    }
+
+    @Test
+    void createHireling_whenBastionReadFails_stillReturnsSuccess() throws Exception {
+        MauraBastionHirelingApi.Hireling hireling = new MauraBastionHirelingApi.Hireling()
+                .setName("Smith").setBastionId("b-1");
+
+        when(fischlHirelingConnector.create(any(FischlHireling.class)))
+                .thenReturn(new FischlHireling().setId("h-1"));
+        when(fischlBastionConnector.read("Bearer token", "b-1"))
+                .thenThrow(new FischlBastionException().setStatus(500).setMessage("boom"));
+
+        ApiResponse response = hirelingApi.createHireling("Bearer token", hireling);
+
+        assertTrue(response.isSuccess());
+        verify(webhookSender, never()).editPost(any(), anyString(), anyString());
+    }
+
+    @Test
+    void createHireling_whenForumEditFails_stillReturnsSuccess() throws Exception {
+        MauraBastionHirelingApi.Hireling hireling = new MauraBastionHirelingApi.Hireling()
+                .setName("Smith").setBastionId("b-1");
+
+        when(fischlHirelingConnector.create(any(FischlHireling.class)))
+                .thenReturn(new FischlHireling().setId("h-1"));
+        when(fischlBastionConnector.read("Bearer token", "b-1"))
+                .thenReturn(new FischlBastion().setId("b-1").setDiscordThreadId("t-1"));
+        doThrow(new BackendException(502, "Discord webhook error: HTTP 404"))
+                .when(webhookSender).editPost(any(), anyString(), anyString());
+
+        ApiResponse response = hirelingApi.createHireling("Bearer token", hireling);
+
+        assertTrue(response.isSuccess());
+    }
+
+    @Test
+    void updateHireling_withThreadId_refreshesForumPost() throws Exception {
+        MauraBastionHirelingApi.Hireling hireling = new MauraBastionHirelingApi.Hireling()
+                .setName("Smith").setBastionId("b-1");
+
+        when(fischlHirelingConnector.update(eq("h-1"), any(FischlHireling.class)))
+                .thenReturn(new FischlHireling().setId("h-1"));
+        when(fischlBastionConnector.read("Bearer token", "b-1"))
+                .thenReturn(new FischlBastion().setId("b-1").setDiscordThreadId("t-1")
+                        .setHirelings(List.of(new FischlHireling().setName("Smith"))));
+
+        ApiResponse response = hirelingApi.updateHireling("Bearer token", "h-1", hireling);
+
+        assertTrue(response.isSuccess());
+        verify(webhookSender).editPost(eq(DiscordWebhookSender.Channel.BASTION_CREATION),
+                eq("t-1"), contains("Hirelings:** 1"));
+    }
+
+    @Test
+    void deleteHireling_withThreadId_refreshesForumPost() throws Exception {
+        when(fischlHirelingConnector.read("h-1"))
+                .thenReturn(new FischlHireling().setId("h-1").setBastionId("b-1"));
+        doNothing().when(fischlHirelingConnector).delete("h-1");
+        when(fischlBastionConnector.read("Bearer token", "b-1"))
+                .thenReturn(new FischlBastion().setId("b-1").setDiscordThreadId("t-1"));
+
+        ApiResponse response = hirelingApi.deleteHireling("Bearer token", "h-1");
+
+        assertTrue(response.isSuccess());
+        verify(webhookSender).editPost(eq(DiscordWebhookSender.Channel.BASTION_CREATION),
+                eq("t-1"), anyString());
     }
 }

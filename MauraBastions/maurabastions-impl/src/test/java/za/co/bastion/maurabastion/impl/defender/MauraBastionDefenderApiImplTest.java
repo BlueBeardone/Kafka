@@ -10,10 +10,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import za.co.bastion.common.dto.ApiResponse;
 import za.co.bastion.common.exception.BackendException;
 import za.co.bastion.common.exception.InvalidRequestException;
+import za.co.bastion.fischl.FischlBastion;
+import za.co.bastion.fischl.FischlBastionException;
 import za.co.bastion.fischl.FischlDefender;
 import za.co.bastion.fischl.FischlDefenderException;
+import za.co.bastion.fischl.bastion.FischlBastionConnector;
 import za.co.bastion.fischl.defender.FischlDefenderConnector;
 import za.co.bastion.maurabastion.api.defender.MauraBastionDefenderApi;
+import za.co.bastion.maurabastion.impl.discord.DiscordWebhookSender;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -28,6 +32,12 @@ class MauraBastionDefenderApiImplTest {
     @Mock
     FischlDefenderConnector fischlDefenderConnector;
 
+    @Mock
+    FischlBastionConnector fischlBastionConnector;
+
+    @Mock
+    DiscordWebhookSender webhookSender;
+
     @Captor
     ArgumentCaptor<FischlDefender> fischlCaptor;
 
@@ -36,9 +46,15 @@ class MauraBastionDefenderApiImplTest {
     @BeforeEach
     void setUp() throws Exception {
         defenderApi = new MauraBastionDefenderApiImpl();
-        Field field = MauraBastionDefenderApiImpl.class.getDeclaredField("fischlDefenderConnector");
+        inject("fischlDefenderConnector", fischlDefenderConnector);
+        inject("fischlBastionConnector", fischlBastionConnector);
+        inject("webhookSender", webhookSender);
+    }
+
+    private void inject(String name, Object value) throws Exception {
+        Field field = MauraBastionDefenderApiImpl.class.getDeclaredField(name);
         field.setAccessible(true);
-        field.set(defenderApi, fischlDefenderConnector);
+        field.set(defenderApi, value);
     }
 
     @Test
@@ -50,7 +66,7 @@ class MauraBastionDefenderApiImplTest {
         when(fischlDefenderConnector.create(any(FischlDefender.class)))
                 .thenReturn(new FischlDefender().setId("d-1").setName("Knight"));
 
-        ApiResponse response = defenderApi.createDefender(defender);
+        ApiResponse response = defenderApi.createDefender("Bearer token", defender);
         assertTrue(response.isSuccess());
     }
 
@@ -64,7 +80,7 @@ class MauraBastionDefenderApiImplTest {
         when(fischlDefenderConnector.create(fischlCaptor.capture()))
                 .thenReturn(new FischlDefender());
 
-        defenderApi.createDefender(defender);
+        defenderApi.createDefender("Bearer token", defender);
 
         FischlDefender captured = fischlCaptor.getValue();
         assertEquals("d-1", captured.getId());
@@ -89,7 +105,7 @@ class MauraBastionDefenderApiImplTest {
         MauraBastionDefenderApi.Defender input = new MauraBastionDefenderApi.Defender()
                 .setId("d-1").setName("Knight").setType("knight").setBastionId("b-1");
 
-        ApiResponse response = defenderApi.createDefender(input);
+        ApiResponse response = defenderApi.createDefender("Bearer token", input);
         assertTrue(response.isSuccess());
 
         MauraBastionDefenderApi.Defender result = (MauraBastionDefenderApi.Defender) response.getData();
@@ -107,7 +123,7 @@ class MauraBastionDefenderApiImplTest {
         MauraBastionDefenderApi.Defender defender = new MauraBastionDefenderApi.Defender()
                 .setId("d-1").setType(null).setBastionId("b-1");
 
-        assertThrows(InvalidRequestException.class, () -> defenderApi.createDefender(defender));
+        assertThrows(InvalidRequestException.class, () -> defenderApi.createDefender("Bearer token", defender));
     }
 
     @Test
@@ -115,7 +131,7 @@ class MauraBastionDefenderApiImplTest {
         MauraBastionDefenderApi.Defender defender = new MauraBastionDefenderApi.Defender()
                 .setId("d-1").setType("").setBastionId("b-1");
 
-        assertThrows(InvalidRequestException.class, () -> defenderApi.createDefender(defender));
+        assertThrows(InvalidRequestException.class, () -> defenderApi.createDefender("Bearer token", defender));
     }
 
     @Test
@@ -123,7 +139,7 @@ class MauraBastionDefenderApiImplTest {
         MauraBastionDefenderApi.Defender defender = new MauraBastionDefenderApi.Defender()
                 .setId("d-1").setType("knight").setBastionId(null);
 
-        assertThrows(InvalidRequestException.class, () -> defenderApi.createDefender(defender));
+        assertThrows(InvalidRequestException.class, () -> defenderApi.createDefender("Bearer token", defender));
     }
 
     @Test
@@ -131,7 +147,7 @@ class MauraBastionDefenderApiImplTest {
         MauraBastionDefenderApi.Defender defender = new MauraBastionDefenderApi.Defender()
                 .setId("d-1").setType("knight").setBastionId("");
 
-        assertThrows(InvalidRequestException.class, () -> defenderApi.createDefender(defender));
+        assertThrows(InvalidRequestException.class, () -> defenderApi.createDefender("Bearer token", defender));
     }
 
     @Test
@@ -142,7 +158,7 @@ class MauraBastionDefenderApiImplTest {
         when(fischlDefenderConnector.create(any(FischlDefender.class)))
                 .thenReturn(new FischlDefender().setId("d-2"));
 
-        ApiResponse response = defenderApi.createDefender(defender);
+        ApiResponse response = defenderApi.createDefender("Bearer token", defender);
         assertTrue(response.isSuccess());
     }
 
@@ -182,7 +198,7 @@ class MauraBastionDefenderApiImplTest {
         when(fischlDefenderConnector.update(eq("d-1"), any(FischlDefender.class)))
                 .thenReturn(new FischlDefender().setId("d-1").setName("Updated"));
 
-        ApiResponse response = defenderApi.updateDefender("d-1", defender);
+        ApiResponse response = defenderApi.updateDefender("Bearer token", "d-1", defender);
         assertTrue(response.isSuccess());
     }
 
@@ -191,7 +207,7 @@ class MauraBastionDefenderApiImplTest {
         MauraBastionDefenderApi.Defender defender = new MauraBastionDefenderApi.Defender()
                 .setType("knight").setBastionId("b-1");
 
-        assertThrows(InvalidRequestException.class, () -> defenderApi.updateDefender(null, defender));
+        assertThrows(InvalidRequestException.class, () -> defenderApi.updateDefender("Bearer token", null, defender));
     }
 
     @Test
@@ -202,7 +218,7 @@ class MauraBastionDefenderApiImplTest {
         when(fischlDefenderConnector.create(any(FischlDefender.class)))
                 .thenThrow(new FischlDefenderException().setStatus(403).setMessage("Forbidden"));
 
-        BackendException ex = assertThrows(BackendException.class, () -> defenderApi.createDefender(defender));
+        BackendException ex = assertThrows(BackendException.class, () -> defenderApi.createDefender("Bearer token", defender));
         assertEquals(403, ex.getBackendStatus());
     }
 
@@ -210,12 +226,112 @@ class MauraBastionDefenderApiImplTest {
     void deleteDefender_returnsSuccess() throws Exception {
         doNothing().when(fischlDefenderConnector).delete("d-1");
 
-        ApiResponse response = defenderApi.deleteDefender("d-1");
+        ApiResponse response = defenderApi.deleteDefender("Bearer token", "d-1");
         assertTrue(response.isSuccess());
     }
 
     @Test
     void deleteDefender_nullId_throwsException() {
-        assertThrows(InvalidRequestException.class, () -> defenderApi.deleteDefender(null));
+        assertThrows(InvalidRequestException.class, () -> defenderApi.deleteDefender("Bearer token", null));
+    }
+
+    @Test
+    void createDefender_withThreadId_refreshesForumPost() throws Exception {
+        MauraBastionDefenderApi.Defender defender = new MauraBastionDefenderApi.Defender()
+                .setType("Knight").setBastionId("b-1");
+
+        when(fischlDefenderConnector.create(any(FischlDefender.class)))
+                .thenReturn(new FischlDefender().setId("d-1"));
+        when(fischlBastionConnector.read("Bearer token", "b-1"))
+                .thenReturn(new FischlBastion().setId("b-1").setDiscordThreadId("t-1")
+                        .setDefenders(List.of(new FischlDefender().setName("Knight"))));
+
+        ApiResponse response = defenderApi.createDefender("Bearer token", defender);
+
+        assertTrue(response.isSuccess());
+        verify(webhookSender).editPost(eq(DiscordWebhookSender.Channel.BASTION_CREATION),
+                eq("t-1"), contains("Defenders:** 1"));
+    }
+
+    @Test
+    void createDefender_withoutThreadId_skipsForumEdit() throws Exception {
+        MauraBastionDefenderApi.Defender defender = new MauraBastionDefenderApi.Defender()
+                .setType("Knight").setBastionId("b-1");
+
+        when(fischlDefenderConnector.create(any(FischlDefender.class)))
+                .thenReturn(new FischlDefender().setId("d-1"));
+        when(fischlBastionConnector.read("Bearer token", "b-1"))
+                .thenReturn(new FischlBastion().setId("b-1"));
+
+        ApiResponse response = defenderApi.createDefender("Bearer token", defender);
+
+        assertTrue(response.isSuccess());
+        verify(webhookSender, never()).editPost(any(), anyString(), anyString());
+    }
+
+    @Test
+    void createDefender_whenBastionReadFails_stillReturnsSuccess() throws Exception {
+        MauraBastionDefenderApi.Defender defender = new MauraBastionDefenderApi.Defender()
+                .setType("Knight").setBastionId("b-1");
+
+        when(fischlDefenderConnector.create(any(FischlDefender.class)))
+                .thenReturn(new FischlDefender().setId("d-1"));
+        when(fischlBastionConnector.read("Bearer token", "b-1"))
+                .thenThrow(new FischlBastionException().setStatus(500).setMessage("boom"));
+
+        ApiResponse response = defenderApi.createDefender("Bearer token", defender);
+
+        assertTrue(response.isSuccess());
+        verify(webhookSender, never()).editPost(any(), anyString(), anyString());
+    }
+
+    @Test
+    void createDefender_whenForumEditFails_stillReturnsSuccess() throws Exception {
+        MauraBastionDefenderApi.Defender defender = new MauraBastionDefenderApi.Defender()
+                .setType("Knight").setBastionId("b-1");
+
+        when(fischlDefenderConnector.create(any(FischlDefender.class)))
+                .thenReturn(new FischlDefender().setId("d-1"));
+        when(fischlBastionConnector.read("Bearer token", "b-1"))
+                .thenReturn(new FischlBastion().setId("b-1").setDiscordThreadId("t-1"));
+        doThrow(new BackendException(502, "Discord webhook error: HTTP 404"))
+                .when(webhookSender).editPost(any(), anyString(), anyString());
+
+        ApiResponse response = defenderApi.createDefender("Bearer token", defender);
+
+        assertTrue(response.isSuccess());
+    }
+
+    @Test
+    void updateDefender_withThreadId_refreshesForumPost() throws Exception {
+        MauraBastionDefenderApi.Defender defender = new MauraBastionDefenderApi.Defender()
+                .setType("Knight").setBastionId("b-1");
+
+        when(fischlDefenderConnector.update(eq("d-1"), any(FischlDefender.class)))
+                .thenReturn(new FischlDefender().setId("d-1"));
+        when(fischlBastionConnector.read("Bearer token", "b-1"))
+                .thenReturn(new FischlBastion().setId("b-1").setDiscordThreadId("t-1")
+                        .setDefenders(List.of(new FischlDefender().setName("Knight"))));
+
+        ApiResponse response = defenderApi.updateDefender("Bearer token", "d-1", defender);
+
+        assertTrue(response.isSuccess());
+        verify(webhookSender).editPost(eq(DiscordWebhookSender.Channel.BASTION_CREATION),
+                eq("t-1"), contains("Defenders:** 1"));
+    }
+
+    @Test
+    void deleteDefender_withThreadId_refreshesForumPost() throws Exception {
+        when(fischlDefenderConnector.read("d-1"))
+                .thenReturn(new FischlDefender().setId("d-1").setBastionId("b-1"));
+        doNothing().when(fischlDefenderConnector).delete("d-1");
+        when(fischlBastionConnector.read("Bearer token", "b-1"))
+                .thenReturn(new FischlBastion().setId("b-1").setDiscordThreadId("t-1"));
+
+        ApiResponse response = defenderApi.deleteDefender("Bearer token", "d-1");
+
+        assertTrue(response.isSuccess());
+        verify(webhookSender).editPost(eq(DiscordWebhookSender.Channel.BASTION_CREATION),
+                eq("t-1"), anyString());
     }
 }
