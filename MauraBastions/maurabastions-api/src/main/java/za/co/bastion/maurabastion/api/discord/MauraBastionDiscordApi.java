@@ -52,5 +52,6 @@ public interface MauraBastionDiscordApi {
         private String name;
         private String description;
         private String rolledRow;
+        private String rewardSummary;
     }
 }
