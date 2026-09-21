@@ -30,6 +30,9 @@ public class BastionTurnMessageFormatter {
             if (event.getRolledRow() != null && !event.getRolledRow().isBlank()) {
                 sb.append("\nRolled: ").append(event.getRolledRow());
             }
+            if (event.getRewardSummary() != null && !event.getRewardSummary().isBlank()) {
+                sb.append("\n**Rewards:** ").append(event.getRewardSummary());
+            }
         }
 
         return sb.toString();

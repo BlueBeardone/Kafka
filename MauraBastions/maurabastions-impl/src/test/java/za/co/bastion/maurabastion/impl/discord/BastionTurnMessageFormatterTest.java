@@ -108,4 +108,30 @@ class BastionTurnMessageFormatterTest {
                 **Bastion: Duskhaven** (Steve)
                 Quest: Train hirelings""", formatter.format(result, user("Steve")));
     }
+
+    @Test
+    void format_withRewardSummary_appendsRewardsLine() {
+        MauraBastionDiscordApi.BastionTurnResult result = fullResult()
+                .setEvent(new MauraBastionDiscordApi.BastionTurnEventResult()
+                        .setName("Wandering Merchant")
+                        .setDescription("A merchant passes by.")
+                        .setRewardSummary("2 × Adamantine (Rank D), 320 GP"));
+
+        String message = formatter.format(result, user("Steve"));
+
+        assertTrue(message.contains("**Rewards:** 2 × Adamantine (Rank D), 320 GP"));
+    }
+
+    @Test
+    void format_withBlankRewardSummary_omitsRewardsLine() {
+        MauraBastionDiscordApi.BastionTurnResult result = fullResult()
+                .setEvent(new MauraBastionDiscordApi.BastionTurnEventResult()
+                        .setName("Wandering Merchant")
+                        .setDescription("A merchant passes by.")
+                        .setRewardSummary("   "));
+
+        String message = formatter.format(result, user("Steve"));
+
+        assertFalse(message.contains("Rewards:"));
+    }
 }
