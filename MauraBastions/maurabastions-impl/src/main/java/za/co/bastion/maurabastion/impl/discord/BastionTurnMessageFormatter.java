@@ -3,6 +3,8 @@ package za.co.bastion.maurabastion.impl.discord;
 import za.co.bastion.fischl.FischlUser;
 import za.co.bastion.maurabastion.api.discord.MauraBastionDiscordApi;
 
+import java.util.List;
+
 public class BastionTurnMessageFormatter {
 
     public String format(MauraBastionDiscordApi.BastionTurnResult result, FischlUser user) {
@@ -32,6 +34,21 @@ public class BastionTurnMessageFormatter {
             }
             if (event.getRewardSummary() != null && !event.getRewardSummary().isBlank()) {
                 sb.append("\n**Rewards:** ").append(event.getRewardSummary());
+            }
+        }
+
+        List<MauraBastionDiscordApi.BastionTurnFacilityResult> facilityResults = result.getFacilityResults();
+        if (facilityResults != null) {
+            List<String> lines = facilityResults.stream()
+                    .filter(r -> r != null && r.getName() != null
+                            && r.getRolledRow() != null && !r.getRolledRow().isBlank())
+                    .map(r -> "- " + r.getName() + ": " + r.getRolledRow())
+                    .toList();
+            if (!lines.isEmpty()) {
+                sb.append("\n\n**Facility results:**");
+                for (String line : lines) {
+                    sb.append("\n").append(line);
+                }
             }
         }
 

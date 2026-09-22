@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import za.co.bastion.fischl.FischlUser;
 import za.co.bastion.maurabastion.api.discord.MauraBastionDiscordApi;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -133,5 +135,57 @@ class BastionTurnMessageFormatterTest {
         String message = formatter.format(result, user("Steve"));
 
         assertFalse(message.contains("Rewards:"));
+    }
+
+    @Test
+    void format_withFacilityResults_listsEachRoll() {
+        MauraBastionDiscordApi.BastionTurnResult result = fullResult()
+                .setFacilityResults(List.of(
+                        new MauraBastionDiscordApi.BastionTurnFacilityResult()
+                                .setName("Kitchen")
+                                .setRolledRow("3 | Hearty meal | Everyone is fed"),
+                        new MauraBastionDiscordApi.BastionTurnFacilityResult()
+                                .setName("Training Yard")
+                                .setRolledRow("7 | Drills | Defenders train")));
+
+        String message = formatter.format(result, user("Steve"));
+
+        assertTrue(message.contains("**Facility results:**"));
+        assertTrue(message.contains("- Kitchen: 3 | Hearty meal | Everyone is fed"));
+        assertTrue(message.contains("- Training Yard: 7 | Drills | Defenders train"));
+    }
+
+    @Test
+    void format_withoutFacilityResults_omitsFacilityResultsSection() {
+        String message = formatter.format(fullResult(), user("Steve"));
+
+        assertFalse(message.contains("Facility results"));
+    }
+
+    @Test
+    void format_withNullRolledRow_skipsEntry() {
+        MauraBastionDiscordApi.BastionTurnResult result = fullResult()
+                .setFacilityResults(List.of(
+                        new MauraBastionDiscordApi.BastionTurnFacilityResult()
+                                .setName("Training Yard")
+                                .setRolledRow(null),
+                        new MauraBastionDiscordApi.BastionTurnFacilityResult()
+                                .setName("Kitchen")
+                                .setRolledRow("3 | Hearty meal")));
+
+        String message = formatter.format(result, user("Steve"));
+
+        assertFalse(message.contains("Training Yard"));
+        assertTrue(message.contains("- Kitchen: 3 | Hearty meal"));
+    }
+
+    @Test
+    void format_withEmptyFacilityResults_omitsFacilityResultsSection() {
+        MauraBastionDiscordApi.BastionTurnResult result = fullResult()
+                .setFacilityResults(List.of());
+
+        String message = formatter.format(result, user("Steve"));
+
+        assertFalse(message.contains("Facility results"));
     }
 }

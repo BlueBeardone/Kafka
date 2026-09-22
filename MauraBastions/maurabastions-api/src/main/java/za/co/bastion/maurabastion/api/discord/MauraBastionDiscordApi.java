@@ -5,6 +5,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import za.co.bastion.common.dto.ApiResponse;
 
+import java.util.List;
+
 public interface MauraBastionDiscordApi {
     ApiResponse sendMessage(String authHeader, String message);
     ApiResponse sendIndividualBastionTurn(String authHeader, BastionTurnResult result);
@@ -33,6 +35,7 @@ public interface MauraBastionDiscordApi {
         private String quest;
         private BastionTurnAdvancedFacility advancedFacility;
         private BastionTurnEventResult event;
+        private List<BastionTurnFacilityResult> facilityResults;
     }
 
     @Getter
@@ -53,5 +56,13 @@ public interface MauraBastionDiscordApi {
         private String description;
         private String rolledRow;
         private String rewardSummary;
+    }
+
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    class BastionTurnFacilityResult {
+        private String name;
+        private String rolledRow;
     }
 }
