@@ -56,6 +56,27 @@ public interface MauraBastionDiscordApi {
         private String description;
         private String rolledRow;
         private String rewardSummary;
+        private BastionTurnDispatchResult dispatch;
+    }
+
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    class BastionTurnDispatchResult {
+        private List<BastionTurnDispatchUnitResult> units;
+        private Integer bonus;
+        private Integer total;
+        private Integer dc;
+        private Boolean success;
+    }
+
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    class BastionTurnDispatchUnitResult {
+        private String name;
+        private List<Integer> rolls;
+        private Integer subtotal;
     }
 
     @Getter

@@ -35,6 +35,7 @@ public class BastionTurnMessageFormatter {
             if (event.getRewardSummary() != null && !event.getRewardSummary().isBlank()) {
                 sb.append("\n**Rewards:** ").append(event.getRewardSummary());
             }
+            appendDispatch(sb, event.getDispatch());
         }
 
         List<MauraBastionDiscordApi.BastionTurnFacilityResult> facilityResults = result.getFacilityResults();
@@ -53,5 +54,26 @@ public class BastionTurnMessageFormatter {
         }
 
         return sb.toString();
+    }
+
+    private void appendDispatch(StringBuilder sb, MauraBastionDiscordApi.BastionTurnDispatchResult dispatch) {
+        if (dispatch == null || dispatch.getUnits() == null || dispatch.getUnits().isEmpty()) {
+            return;
+        }
+        sb.append("\n\n**Dispatch:**");
+        for (MauraBastionDiscordApi.BastionTurnDispatchUnitResult unit : dispatch.getUnits()) {
+            if (unit == null || unit.getName() == null) {
+                continue;
+            }
+            String rolls = unit.getRolls() == null ? ""
+                    : unit.getRolls().stream().map(String::valueOf).collect(java.util.stream.Collectors.joining(", "));
+            sb.append("\n• ").append(unit.getName()).append(": ").append(unit.getSubtotal());
+            if (!rolls.isEmpty()) {
+                sb.append(" (").append(rolls).append(")");
+            }
+        }
+        String verdict = Boolean.TRUE.equals(dispatch.getSuccess()) ? "MISSION HELD" : "MISSION LOST";
+        sb.append("\n• Total ").append(dispatch.getTotal()).append(" vs DC ").append(dispatch.getDc())
+                .append(" — ").append(verdict);
     }
 }

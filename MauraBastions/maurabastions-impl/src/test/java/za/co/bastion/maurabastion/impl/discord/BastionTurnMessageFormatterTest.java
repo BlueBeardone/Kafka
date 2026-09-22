@@ -188,4 +188,71 @@ class BastionTurnMessageFormatterTest {
 
         assertFalse(message.contains("Facility results"));
     }
+
+    @Test
+    void format_withDispatch_showsUnitsTotalAndVerdict() {
+        MauraBastionDiscordApi.BastionTurnResult result = fullResult()
+                .setEvent(new MauraBastionDiscordApi.BastionTurnEventResult()
+                        .setName("Wolf Cull")
+                        .setDescription("Wolves.")
+                        .setDispatch(new MauraBastionDiscordApi.BastionTurnDispatchResult()
+                                .setUnits(List.of(
+                                        new MauraBastionDiscordApi.BastionTurnDispatchUnitResult()
+                                                .setName("Aldric")
+                                                .setRolls(List.of(4, 3))
+                                                .setSubtotal(7),
+                                        new MauraBastionDiscordApi.BastionTurnDispatchUnitResult()
+                                                .setName("Marta").setRolls(List.of(2)).setSubtotal(2)))
+                                .setBonus(0)
+                                .setTotal(9)
+                                .setDc(10)
+                                .setSuccess(false)));
+
+        String message = formatter.format(result, user("Steve"));
+
+        assertTrue(message.contains("**Dispatch:**"));
+        assertTrue(message.contains("• Aldric: 7 (4, 3)"));
+        assertTrue(message.contains("• Marta: 2 (2)"));
+        assertTrue(message.contains("• Total 9 vs DC 10 — MISSION LOST"));
+    }
+
+    @Test
+    void format_withSuccessfulDispatch_showsMissionHeld() {
+        MauraBastionDiscordApi.BastionTurnResult result = fullResult()
+                .setEvent(new MauraBastionDiscordApi.BastionTurnEventResult()
+                        .setName("Wolf Cull")
+                        .setDescription("Wolves.")
+                        .setDispatch(new MauraBastionDiscordApi.BastionTurnDispatchResult()
+                                .setUnits(List.of(new MauraBastionDiscordApi.BastionTurnDispatchUnitResult()
+                                        .setName("Aldric").setRolls(List.of(6)).setSubtotal(6)))
+                                .setBonus(1)
+                                .setTotal(7)
+                                .setDc(5)
+                                .setSuccess(true)));
+
+        String message = formatter.format(result, user("Steve"));
+
+        assertTrue(message.contains("• Total 7 vs DC 5 — MISSION HELD"));
+    }
+
+    @Test
+    void format_withoutDispatch_omitsDispatchSection() {
+        String message = formatter.format(fullResult(), user("Steve"));
+
+        assertFalse(message.contains("Dispatch:"));
+    }
+
+    @Test
+    void format_withEmptyDispatchUnits_omitsDispatchSection() {
+        MauraBastionDiscordApi.BastionTurnResult result = fullResult()
+                .setEvent(new MauraBastionDiscordApi.BastionTurnEventResult()
+                        .setName("Wolf Cull")
+                        .setDescription("Wolves.")
+                        .setDispatch(new MauraBastionDiscordApi.BastionTurnDispatchResult()
+                                .setUnits(List.of())));
+
+        String message = formatter.format(result, user("Steve"));
+
+        assertFalse(message.contains("Dispatch:"));
+    }
 }
