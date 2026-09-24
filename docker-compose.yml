@@ -2,6 +2,9 @@ services:
   kafka:
     build: .
     container_name: kafka
+    # Bounds total container memory. The native image runs comfortably under this;
+    # it also makes Dockerfile.jvm's -XX:MaxRAMPercentage=50 resolve to a sane heap.
+    mem_limit: 512m
     ports:
       - "8080:8080"
     environment:
