@@ -12,7 +12,7 @@ import za.co.bastion.common.dto.Rank;
 public interface MauraBastionBastionApi {
     ApiResponse createBastion(String authHeader, Bastion bastion);
     ApiResponse getBastion(String authHeader, String id);
-    ApiResponse getAllBastions(String authHeader, Boolean all);
+    ApiResponse getAllBastions(String authHeader);
     ApiResponse browseBastions(String authHeader, Integer page, Integer limit);
     ApiResponse updateBastion(String authHeader, String id, Bastion bastion);
     ApiResponse deleteBastion(String authHeader, String id);

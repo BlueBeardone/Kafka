@@ -38,16 +38,17 @@ public class TsaritsaIdentityRoute {
     @GET
     @Path("/users/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse getUser(@PathParam("id") String id) {
-        return identityApi.getUser(id);
+    public ApiResponse getUser(@PathParam("id") String id, @HeaderParam("Authorization") String authHeader) {
+        return identityApi.getUser(id, authHeader);
     }
 
     @PUT
     @Path("/users/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse updateUser(@PathParam("id") String id, TsaritsaIdentityApi.User user) {
-        return identityApi.updateUser(id, user);
+    public ApiResponse updateUser(@PathParam("id") String id, @HeaderParam("Authorization") String authHeader,
+                                  TsaritsaIdentityApi.User user) {
+        return identityApi.updateUser(id, user, authHeader);
     }
 
     @POST

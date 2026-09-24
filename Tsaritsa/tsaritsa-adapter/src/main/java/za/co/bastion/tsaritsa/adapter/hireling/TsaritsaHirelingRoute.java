@@ -15,35 +15,37 @@ public class TsaritsaHirelingRoute {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse createHireling(TsaritsaHirelingApi.Hireling hireling) {
-        return hirelingApi.createHireling(hireling);
+    public ApiResponse createHireling(@HeaderParam("Authorization") String authHeader,
+                                      TsaritsaHirelingApi.Hireling hireling) {
+        return hirelingApi.createHireling(authHeader, hireling);
     }
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse getHireling(@PathParam("id") String id) {
-        return hirelingApi.getHireling(id);
+    public ApiResponse getHireling(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id) {
+        return hirelingApi.getHireling(authHeader, id);
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse getAllHirelings() {
-        return hirelingApi.getAllHirelings();
+    public ApiResponse getAllHirelings(@HeaderParam("Authorization") String authHeader) {
+        return hirelingApi.getAllHirelings(authHeader);
     }
 
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse updateHireling(@PathParam("id") String id, TsaritsaHirelingApi.Hireling hireling) {
-        return hirelingApi.updateHireling(id, hireling);
+    public ApiResponse updateHireling(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id,
+                                      TsaritsaHirelingApi.Hireling hireling) {
+        return hirelingApi.updateHireling(authHeader, id, hireling);
     }
 
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse deleteHireling(@PathParam("id") String id) {
-        return hirelingApi.deleteHireling(id);
+    public ApiResponse deleteHireling(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id) {
+        return hirelingApi.deleteHireling(authHeader, id);
     }
 }

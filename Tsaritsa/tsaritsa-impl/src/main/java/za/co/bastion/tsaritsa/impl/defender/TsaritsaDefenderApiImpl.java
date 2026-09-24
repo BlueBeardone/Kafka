@@ -21,10 +21,10 @@ public class TsaritsaDefenderApiImpl implements TsaritsaDefenderApi {
     FischlDefenderConnector fischlDefenderConnector;
 
     @Override
-    public ApiResponse createDefender(Defender defender) {
+    public ApiResponse createDefender(String authHeader, Defender defender) {
         validateDefender(defender);
         try {
-            FischlDefender result = fischlDefenderConnector.create(toFischlDefender(defender));
+            FischlDefender result = fischlDefenderConnector.create(authHeader, toFischlDefender(defender));
             return ApiResponse.success("Defender created", toDefender(result));
         } catch (FischlDefenderException e) {
             throw new BackendException(e.getStatus(), "Defender backend error: " + e.getMessage());
@@ -32,12 +32,12 @@ public class TsaritsaDefenderApiImpl implements TsaritsaDefenderApi {
     }
 
     @Override
-    public ApiResponse getDefender(String id) {
+    public ApiResponse getDefender(String authHeader, String id) {
         if (id == null || id.isBlank()) {
             throw new InvalidRequestException("id is required");
         }
         try {
-            FischlDefender result = fischlDefenderConnector.read(id);
+            FischlDefender result = fischlDefenderConnector.read(authHeader, id);
             return ApiResponse.success("Defender found", toDefender(result));
         } catch (FischlDefenderException e) {
             throw new BackendException(e.getStatus(), "Defender backend error: " + e.getMessage());
@@ -45,9 +45,9 @@ public class TsaritsaDefenderApiImpl implements TsaritsaDefenderApi {
     }
 
     @Override
-    public ApiResponse getAllDefenders() {
+    public ApiResponse getAllDefenders(String authHeader) {
         try {
-            List<FischlDefender> results = fischlDefenderConnector.readAll();
+            List<FischlDefender> results = fischlDefenderConnector.readAll(authHeader);
             List<Defender> defenders = results.stream().map(this::toDefender).toList();
             return ApiResponse.success("Defenders found", defenders);
         } catch (FischlDefenderException e) {
@@ -56,13 +56,13 @@ public class TsaritsaDefenderApiImpl implements TsaritsaDefenderApi {
     }
 
     @Override
-    public ApiResponse updateDefender(String id, Defender defender) {
+    public ApiResponse updateDefender(String authHeader, String id, Defender defender) {
         if (id == null || id.isBlank()) {
             throw new InvalidRequestException("id is required");
         }
         validateDefender(defender);
         try {
-            FischlDefender result = fischlDefenderConnector.update(id, toFischlDefender(defender));
+            FischlDefender result = fischlDefenderConnector.update(authHeader, id, toFischlDefender(defender));
             return ApiResponse.success("Defender updated", toDefender(result));
         } catch (FischlDefenderException e) {
             throw new BackendException(e.getStatus(), "Defender backend error: " + e.getMessage());
@@ -70,12 +70,12 @@ public class TsaritsaDefenderApiImpl implements TsaritsaDefenderApi {
     }
 
     @Override
-    public ApiResponse deleteDefender(String id) {
+    public ApiResponse deleteDefender(String authHeader, String id) {
         if (id == null || id.isBlank()) {
             throw new InvalidRequestException("id is required");
         }
         try {
-            fischlDefenderConnector.delete(id);
+            fischlDefenderConnector.delete(authHeader, id);
             return ApiResponse.success("Defender deleted", null);
         } catch (FischlDefenderException e) {
             throw new BackendException(e.getStatus(), "Defender backend error: " + e.getMessage());

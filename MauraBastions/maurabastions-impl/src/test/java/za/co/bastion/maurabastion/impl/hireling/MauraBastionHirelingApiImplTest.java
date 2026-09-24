@@ -62,7 +62,7 @@ class MauraBastionHirelingApiImplTest {
         MauraBastionHirelingApi.Hireling hireling = new MauraBastionHirelingApi.Hireling()
                 .setId("h-1").setName("Guard").setRole("guard").setBastionId("b-1");
 
-        when(fischlHirelingConnector.create(any(FischlHireling.class)))
+        when(fischlHirelingConnector.create(anyString(), any(FischlHireling.class)))
                 .thenReturn(new FischlHireling().setId("h-1").setName("Guard"));
 
         ApiResponse response = hirelingApi.createHireling("Bearer token", hireling);
@@ -76,7 +76,7 @@ class MauraBastionHirelingApiImplTest {
                 .setDescription("A skilled archer").setImgUrl("http://example.com/img.png")
                 .setBastionId("b-1").setFacilityId("f-1").setAcquisitionStory("Recruited");
 
-        when(fischlHirelingConnector.create(fischlCaptor.capture()))
+        when(fischlHirelingConnector.create(anyString(), fischlCaptor.capture()))
                 .thenReturn(new FischlHireling());
 
         hirelingApi.createHireling("Bearer token", hireling);
@@ -99,7 +99,7 @@ class MauraBastionHirelingApiImplTest {
                 .setDescription("A skilled archer").setImgUrl("http://example.com/img.png")
                 .setBastionId("b-1").setFacilityId("f-1").setAcquisitionStory("Recruited");
 
-        when(fischlHirelingConnector.create(any(FischlHireling.class)))
+        when(fischlHirelingConnector.create(anyString(), any(FischlHireling.class)))
                 .thenReturn(fischl);
 
         MauraBastionHirelingApi.Hireling input = new MauraBastionHirelingApi.Hireling()
@@ -148,7 +148,7 @@ class MauraBastionHirelingApiImplTest {
         MauraBastionHirelingApi.Hireling hireling = new MauraBastionHirelingApi.Hireling()
                 .setId("h-1").setName("Guard").setBastionId("");
 
-        when(fischlHirelingConnector.create(fischlCaptor.capture()))
+        when(fischlHirelingConnector.create(anyString(), fischlCaptor.capture()))
                 .thenReturn(new FischlHireling().setId("h-1").setName("Guard"));
 
         ApiResponse response = hirelingApi.createHireling("Bearer token", hireling);
@@ -161,7 +161,7 @@ class MauraBastionHirelingApiImplTest {
         MauraBastionHirelingApi.Hireling hireling = new MauraBastionHirelingApi.Hireling()
                 .setId("h-2").setName("Guard").setBastionId("b-1");
 
-        when(fischlHirelingConnector.create(any(FischlHireling.class)))
+        when(fischlHirelingConnector.create(anyString(), any(FischlHireling.class)))
                 .thenReturn(new FischlHireling().setId("h-2"));
 
         ApiResponse response = hirelingApi.createHireling("Bearer token", hireling);
@@ -170,29 +170,29 @@ class MauraBastionHirelingApiImplTest {
 
     @Test
     void getHireling_returnsSuccess() throws Exception {
-        when(fischlHirelingConnector.read("h-1"))
+        when(fischlHirelingConnector.read(anyString(), eq("h-1")))
                 .thenReturn(new FischlHireling().setId("h-1").setName("Guard"));
 
-        ApiResponse response = hirelingApi.getHireling("h-1");
+        ApiResponse response = hirelingApi.getHireling("Bearer token", "h-1");
         assertTrue(response.isSuccess());
     }
 
     @Test
     void getHireling_nullId_throwsException() {
-        assertThrows(InvalidRequestException.class, () -> hirelingApi.getHireling(null));
+        assertThrows(InvalidRequestException.class, () -> hirelingApi.getHireling("Bearer token", null));
     }
 
     @Test
     void getHireling_blankId_throwsException() {
-        assertThrows(InvalidRequestException.class, () -> hirelingApi.getHireling(""));
+        assertThrows(InvalidRequestException.class, () -> hirelingApi.getHireling("Bearer token", ""));
     }
 
     @Test
     void getAllHirelings_returnsSuccess() throws Exception {
-        when(fischlHirelingConnector.readAll())
+        when(fischlHirelingConnector.readAll(anyString()))
                 .thenReturn(List.of(new FischlHireling().setId("h-1").setName("Guard")));
 
-        ApiResponse response = hirelingApi.getAllHirelings();
+        ApiResponse response = hirelingApi.getAllHirelings("Bearer token");
         assertTrue(response.isSuccess());
     }
 
@@ -201,7 +201,7 @@ class MauraBastionHirelingApiImplTest {
         MauraBastionHirelingApi.Hireling hireling = new MauraBastionHirelingApi.Hireling()
                 .setName("Updated").setBastionId("b-1");
 
-        when(fischlHirelingConnector.update(eq("h-1"), any(FischlHireling.class)))
+        when(fischlHirelingConnector.update(anyString(), eq("h-1"), any(FischlHireling.class)))
                 .thenReturn(new FischlHireling().setId("h-1").setName("Updated"));
 
         ApiResponse response = hirelingApi.updateHireling("Bearer token", "h-1", hireling);
@@ -221,7 +221,7 @@ class MauraBastionHirelingApiImplTest {
         MauraBastionHirelingApi.Hireling hireling = new MauraBastionHirelingApi.Hireling()
                 .setName("Guard").setBastionId("b-1");
 
-        when(fischlHirelingConnector.create(any(FischlHireling.class)))
+        when(fischlHirelingConnector.create(anyString(), any(FischlHireling.class)))
                 .thenThrow(new FischlHirelingException().setStatus(401).setMessage("Unauthorized"));
 
         BackendException ex = assertThrows(BackendException.class, () -> hirelingApi.createHireling("Bearer token", hireling));
@@ -230,7 +230,7 @@ class MauraBastionHirelingApiImplTest {
 
     @Test
     void deleteHireling_returnsSuccess() throws Exception {
-        doNothing().when(fischlHirelingConnector).delete("h-1");
+        doNothing().when(fischlHirelingConnector).delete(anyString(), eq("h-1"));
 
         ApiResponse response = hirelingApi.deleteHireling("Bearer token", "h-1");
         assertTrue(response.isSuccess());
@@ -246,7 +246,7 @@ class MauraBastionHirelingApiImplTest {
         MauraBastionHirelingApi.Hireling hireling = new MauraBastionHirelingApi.Hireling()
                 .setName("Smith").setBastionId("b-1");
 
-        when(fischlHirelingConnector.create(any(FischlHireling.class)))
+        when(fischlHirelingConnector.create(anyString(), any(FischlHireling.class)))
                 .thenReturn(new FischlHireling().setId("h-1"));
         when(fischlBastionConnector.read("Bearer token", "b-1"))
                 .thenReturn(new FischlBastion().setId("b-1").setDiscordThreadId("t-1")
@@ -264,7 +264,7 @@ class MauraBastionHirelingApiImplTest {
         MauraBastionHirelingApi.Hireling hireling = new MauraBastionHirelingApi.Hireling()
                 .setName("Smith").setBastionId("b-1");
 
-        when(fischlHirelingConnector.create(any(FischlHireling.class)))
+        when(fischlHirelingConnector.create(anyString(), any(FischlHireling.class)))
                 .thenReturn(new FischlHireling().setId("h-1"));
         when(fischlBastionConnector.read("Bearer token", "b-1"))
                 .thenReturn(new FischlBastion().setId("b-1"));
@@ -280,7 +280,7 @@ class MauraBastionHirelingApiImplTest {
         MauraBastionHirelingApi.Hireling hireling = new MauraBastionHirelingApi.Hireling()
                 .setName("Smith").setBastionId("b-1");
 
-        when(fischlHirelingConnector.create(any(FischlHireling.class)))
+        when(fischlHirelingConnector.create(anyString(), any(FischlHireling.class)))
                 .thenReturn(new FischlHireling().setId("h-1"));
         when(fischlBastionConnector.read("Bearer token", "b-1"))
                 .thenThrow(new FischlBastionException().setStatus(500).setMessage("boom"));
@@ -296,7 +296,7 @@ class MauraBastionHirelingApiImplTest {
         MauraBastionHirelingApi.Hireling hireling = new MauraBastionHirelingApi.Hireling()
                 .setName("Smith").setBastionId("b-1");
 
-        when(fischlHirelingConnector.create(any(FischlHireling.class)))
+        when(fischlHirelingConnector.create(anyString(), any(FischlHireling.class)))
                 .thenReturn(new FischlHireling().setId("h-1"));
         when(fischlBastionConnector.read("Bearer token", "b-1"))
                 .thenReturn(new FischlBastion().setId("b-1").setDiscordThreadId("t-1"));
@@ -313,7 +313,7 @@ class MauraBastionHirelingApiImplTest {
         MauraBastionHirelingApi.Hireling hireling = new MauraBastionHirelingApi.Hireling()
                 .setName("Smith").setBastionId("b-1");
 
-        when(fischlHirelingConnector.update(eq("h-1"), any(FischlHireling.class)))
+        when(fischlHirelingConnector.update(anyString(), eq("h-1"), any(FischlHireling.class)))
                 .thenReturn(new FischlHireling().setId("h-1"));
         when(fischlBastionConnector.read("Bearer token", "b-1"))
                 .thenReturn(new FischlBastion().setId("b-1").setDiscordThreadId("t-1")
@@ -328,9 +328,9 @@ class MauraBastionHirelingApiImplTest {
 
     @Test
     void deleteHireling_withThreadId_refreshesForumPost() throws Exception {
-        when(fischlHirelingConnector.read("h-1"))
+        when(fischlHirelingConnector.read(anyString(), eq("h-1")))
                 .thenReturn(new FischlHireling().setId("h-1").setBastionId("b-1"));
-        doNothing().when(fischlHirelingConnector).delete("h-1");
+        doNothing().when(fischlHirelingConnector).delete(anyString(), eq("h-1"));
         when(fischlBastionConnector.read("Bearer token", "b-1"))
                 .thenReturn(new FischlBastion().setId("b-1").setDiscordThreadId("t-1"));
 
@@ -339,5 +339,28 @@ class MauraBastionHirelingApiImplTest {
         assertTrue(response.isSuccess());
         verify(webhookSender).editPost(eq(DiscordWebhookSender.Channel.BASTION_CREATION),
                 eq("t-1"), anyString());
+    }
+
+    @Test
+    void createHireling_forwardsAuthHeaderToConnector() throws Exception {
+        MauraBastionHirelingApi.Hireling hireling = new MauraBastionHirelingApi.Hireling()
+                .setName("Guard").setBastionId("b-1");
+
+        when(fischlHirelingConnector.create(eq("Bearer token"), any(FischlHireling.class)))
+                .thenReturn(new FischlHireling().setId("h-1"));
+
+        hirelingApi.createHireling("Bearer token", hireling);
+
+        verify(fischlHirelingConnector).create(eq("Bearer token"), any(FischlHireling.class));
+    }
+
+    @Test
+    void getHireling_forwardsAuthHeaderToConnector() throws Exception {
+        when(fischlHirelingConnector.read(eq("Bearer token"), eq("h-1")))
+                .thenReturn(new FischlHireling().setId("h-1"));
+
+        hirelingApi.getHireling("Bearer token", "h-1");
+
+        verify(fischlHirelingConnector).read("Bearer token", "h-1");
     }
 }

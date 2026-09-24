@@ -146,7 +146,7 @@ class MauraBastionBastionApiImplTest {
         when(fischlBastionConnector.readAll(anyString(), isNull()))
                 .thenReturn(List.of(fischlBastion));
 
-        ApiResponse response = bastionApi.getAllBastions("Bearer token", null);
+        ApiResponse response = bastionApi.getAllBastions("Bearer token");
         assertTrue(response.isSuccess());
 
         ArgumentCaptor<String> authCaptor = ArgumentCaptor.forClass(String.class);
@@ -178,14 +178,14 @@ class MauraBastionBastionApiImplTest {
     }
 
     @Test
-    void getAllBastions_withAllTrue_forwardsAllFlag() throws Exception {
-        when(fischlBastionConnector.readAll(anyString(), eq(Boolean.TRUE)))
+    void getAllBastions_forwardsAuthHeaderToConnector() throws Exception {
+        when(fischlBastionConnector.readAll(anyString(), isNull()))
                 .thenReturn(List.of());
 
-        ApiResponse response = bastionApi.getAllBastions("Bearer token", Boolean.TRUE);
+        ApiResponse response = bastionApi.getAllBastions("Bearer token");
         assertTrue(response.isSuccess());
 
-        verify(fischlBastionConnector).readAll("Bearer token", Boolean.TRUE);
+        verify(fischlBastionConnector).readAll(eq("Bearer token"), isNull());
     }
 
     @Test

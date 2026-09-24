@@ -23,29 +23,29 @@ public interface FischlFacilitiesConnector {
     @Path("/facilities")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    FischlFacility create(FischlFacility facility) throws FischlFacilityException;
+    FischlFacility create(@HeaderParam("Authorization") String authHeader, FischlFacility facility) throws FischlFacilityException;
 
     @GET
     @Path("/facilities/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    FischlFacility read(@PathParam("id") String id) throws FischlFacilityException;
+    FischlFacility read(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id) throws FischlFacilityException;
 
     @GET
     @Path("/facilities")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    List<FischlFacility> readAll() throws FischlFacilityException;
+    List<FischlFacility> readAll(@HeaderParam("Authorization") String authHeader) throws FischlFacilityException;
 
     @PUT
     @Path("/facilities/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    FischlFacility update(@PathParam("id") String id, FischlFacility facility) throws FischlFacilityException;
+    FischlFacility update(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id, FischlFacility facility) throws FischlFacilityException;
 
     @DELETE
     @Path("/facilities/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    void delete(@PathParam("id") String id) throws FischlFacilityException;
+    void delete(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id) throws FischlFacilityException;
 }

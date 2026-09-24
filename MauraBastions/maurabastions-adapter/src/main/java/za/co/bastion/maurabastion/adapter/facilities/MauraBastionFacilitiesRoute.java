@@ -23,14 +23,14 @@ public class MauraBastionFacilitiesRoute {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse getFacility(@PathParam("id") String id) {
-        return facilitiesApi.getFacility(id);
+    public ApiResponse getFacility(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id) {
+        return facilitiesApi.getFacility(authHeader, id);
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse getAllFacilities() {
-        return facilitiesApi.getAllFacilities();
+    public ApiResponse getAllFacilities(@HeaderParam("Authorization") String authHeader) {
+        return facilitiesApi.getAllFacilities(authHeader);
     }
 
     @PUT

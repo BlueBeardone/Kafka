@@ -7,8 +7,8 @@ import za.co.bastion.common.dto.ApiResponse;
 
 public interface MauraBastionDefenderApi {
     ApiResponse createDefender(String authHeader, Defender defender);
-    ApiResponse getDefender(String id);
-    ApiResponse getAllDefenders();
+    ApiResponse getDefender(String authHeader, String id);
+    ApiResponse getAllDefenders(String authHeader);
     ApiResponse updateDefender(String authHeader, String id, Defender defender);
     ApiResponse deleteDefender(String authHeader, String id);
 

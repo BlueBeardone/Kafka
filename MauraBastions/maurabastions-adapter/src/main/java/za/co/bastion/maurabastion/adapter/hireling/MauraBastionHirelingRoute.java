@@ -23,14 +23,14 @@ public class MauraBastionHirelingRoute {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse getHireling(@PathParam("id") String id) {
-        return hirelingApi.getHireling(id);
+    public ApiResponse getHireling(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id) {
+        return hirelingApi.getHireling(authHeader, id);
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse getAllHirelings() {
-        return hirelingApi.getAllHirelings();
+    public ApiResponse getAllHirelings(@HeaderParam("Authorization") String authHeader) {
+        return hirelingApi.getAllHirelings(authHeader);
     }
 
     @PUT

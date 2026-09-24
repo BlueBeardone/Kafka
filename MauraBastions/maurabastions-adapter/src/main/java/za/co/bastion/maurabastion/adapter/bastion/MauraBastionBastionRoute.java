@@ -28,8 +28,8 @@ public class MauraBastionBastionRoute {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse getAllBastions(@HeaderParam("Authorization") String authHeader, @QueryParam("all") Boolean all) {
-        return bastionApi.getAllBastions(authHeader, all);
+    public ApiResponse getAllBastions(@HeaderParam("Authorization") String authHeader) {
+        return bastionApi.getAllBastions(authHeader);
     }
 
     @GET

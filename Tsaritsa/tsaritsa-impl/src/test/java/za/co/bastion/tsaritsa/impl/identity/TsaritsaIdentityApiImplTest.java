@@ -159,4 +159,33 @@ class TsaritsaIdentityApiImplTest {
         assertEquals("Maura Bastion", result.getName());
         assertEquals(List.of("admin"), result.getAllowedRoles());
     }
+
+    @Test
+    void getUser_forwardsAuthHeaderToConnector() throws Exception {
+        when(fischlIdentityConnector.read(eq("u-1"), anyString()))
+                .thenReturn(new FischlUser().setId("u-1").setDisplayName("Alice"));
+
+        ApiResponse response = identityApi.getUser("u-1", "Bearer t");
+        assertTrue(response.isSuccess());
+        TsaritsaIdentityApi.User result = (TsaritsaIdentityApi.User) response.getData();
+        assertEquals("u-1", result.getId());
+        assertEquals("Alice", result.getDisplayName());
+        verify(fischlIdentityConnector).read("u-1", "Bearer t");
+    }
+
+    @Test
+    void getUser_blankId_throwsException() {
+        assertThrows(InvalidRequestException.class, () -> identityApi.getUser("", "Bearer t"));
+    }
+
+    @Test
+    void updateUser_forwardsAuthHeaderToConnector() throws Exception {
+        when(fischlIdentityConnector.update(eq("u-1"), anyString(), any(FischlUser.class)))
+                .thenReturn(new FischlUser().setId("u-1").setDisplayName("Alice"));
+
+        ApiResponse response = identityApi.updateUser("u-1",
+                new TsaritsaIdentityApi.User().setDisplayName("Alice"), "Bearer t");
+        assertTrue(response.isSuccess());
+        verify(fischlIdentityConnector).update(eq("u-1"), eq("Bearer t"), any(FischlUser.class));
+    }
 }

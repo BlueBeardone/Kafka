@@ -6,11 +6,11 @@ import lombok.experimental.Accessors;
 import za.co.bastion.common.dto.ApiResponse;
 
 public interface TsaritsaDefenderApi {
-    ApiResponse createDefender(Defender defender);
-    ApiResponse getDefender(String id);
-    ApiResponse getAllDefenders();
-    ApiResponse updateDefender(String id, Defender defender);
-    ApiResponse deleteDefender(String id);
+    ApiResponse createDefender(String authHeader, Defender defender);
+    ApiResponse getDefender(String authHeader, String id);
+    ApiResponse getAllDefenders(String authHeader);
+    ApiResponse updateDefender(String authHeader, String id, Defender defender);
+    ApiResponse deleteDefender(String authHeader, String id);
 
     @Getter
     @Setter

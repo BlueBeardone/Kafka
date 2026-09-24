@@ -10,8 +10,8 @@ public interface TsaritsaIdentityApi {
     ApiResponse registerUser(RegisterRequest request);
     ApiResponse loginUser(LoginRequest request);
     ApiResponse getMe(String authHeader);
-    ApiResponse getUser(String id);
-    ApiResponse updateUser(String id, User user);
+    ApiResponse getUser(String id, String authHeader);
+    ApiResponse updateUser(String id, User user, String authHeader);
     ApiResponse addRole(String id, String authHeader, AssignRoleRequest request);
     ApiResponse removeRole(String id, String name, String authHeader);
 

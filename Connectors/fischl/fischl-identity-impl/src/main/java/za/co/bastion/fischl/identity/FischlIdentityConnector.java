@@ -44,13 +44,13 @@ public interface FischlIdentityConnector {
     @Path("/users/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    FischlUser read(@PathParam("id") String id) throws FischlIdentityException;
+    FischlUser read(@PathParam("id") String id, @HeaderParam("Authorization") String authHeader) throws FischlIdentityException;
 
     @PATCH
     @Path("/users/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    FischlUser update(@PathParam("id") String id, FischlUser user) throws FischlIdentityException;
+    FischlUser update(@PathParam("id") String id, @HeaderParam("Authorization") String authHeader, FischlUser user) throws FischlIdentityException;
 
     @POST
     @Path("/users/{id}/roles")

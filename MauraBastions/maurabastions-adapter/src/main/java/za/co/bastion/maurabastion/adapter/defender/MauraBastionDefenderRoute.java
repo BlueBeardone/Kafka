@@ -23,14 +23,14 @@ public class MauraBastionDefenderRoute {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse getDefender(@PathParam("id") String id) {
-        return defenderApi.getDefender(id);
+    public ApiResponse getDefender(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id) {
+        return defenderApi.getDefender(authHeader, id);
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse getAllDefenders() {
-        return defenderApi.getAllDefenders();
+    public ApiResponse getAllDefenders(@HeaderParam("Authorization") String authHeader) {
+        return defenderApi.getAllDefenders(authHeader);
     }
 
     @PUT

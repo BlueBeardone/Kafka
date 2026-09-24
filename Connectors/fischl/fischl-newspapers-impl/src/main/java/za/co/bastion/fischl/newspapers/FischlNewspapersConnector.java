@@ -31,17 +31,17 @@ public interface FischlNewspapersConnector {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    FischlArticle read(@PathParam("id") String id) throws FischlNewspaperException;
+    FischlArticle read(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id) throws FischlNewspaperException;
 
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    FischlArticle update(@PathParam("id") String id, FischlArticle article) throws FischlNewspaperException;
+    FischlArticle update(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id, FischlArticle article) throws FischlNewspaperException;
 
     @DELETE
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    void delete(@PathParam("id") String id) throws FischlNewspaperException;
+    void delete(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id) throws FischlNewspaperException;
 }

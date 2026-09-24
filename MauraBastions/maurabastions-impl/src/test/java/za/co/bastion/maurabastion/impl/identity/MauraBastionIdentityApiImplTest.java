@@ -149,10 +149,10 @@ class MauraBastionIdentityApiImplTest {
 
     @Test
     void getUser_withValidId_returnsSuccess() throws Exception {
-        when(fischlIdentityConnector.read("user-1"))
+        when(fischlIdentityConnector.read(eq("user-1"), anyString()))
                 .thenReturn(new FischlUser().setId("user-1").setDisplayName("Test User"));
 
-        ApiResponse response = identityApi.getUser("user-1");
+        ApiResponse response = identityApi.getUser("user-1", "Bearer token");
         assertTrue(response.isSuccess());
     }
 
@@ -161,10 +161,10 @@ class MauraBastionIdentityApiImplTest {
         MauraBastionIdentityApi.User user = new MauraBastionIdentityApi.User()
                 .setId("user-1").setDisplayName("Updated User");
 
-        when(fischlIdentityConnector.update(eq("user-1"), any(FischlUser.class)))
+        when(fischlIdentityConnector.update(eq("user-1"), anyString(), any(FischlUser.class)))
                 .thenReturn(new FischlUser().setId("user-1").setDisplayName("Updated User"));
 
-        ApiResponse response = identityApi.updateUser("user-1", user);
+        ApiResponse response = identityApi.updateUser("user-1", user, "Bearer token");
         assertTrue(response.isSuccess());
     }
 
@@ -226,5 +226,28 @@ class MauraBastionIdentityApiImplTest {
 
         BackendException ex = assertThrows(BackendException.class, () -> identityApi.registerUser(request));
         assertEquals(409, ex.getBackendStatus());
+    }
+
+    @Test
+    void getUser_forwardsAuthHeaderToConnector() throws Exception {
+        when(fischlIdentityConnector.read(eq("user-1"), eq("Bearer token")))
+                .thenReturn(new FischlUser().setId("user-1"));
+
+        identityApi.getUser("user-1", "Bearer token");
+
+        verify(fischlIdentityConnector).read("user-1", "Bearer token");
+    }
+
+    @Test
+    void updateUser_forwardsAuthHeaderToConnector() throws Exception {
+        MauraBastionIdentityApi.User user = new MauraBastionIdentityApi.User()
+                .setId("user-1").setDisplayName("Updated User");
+
+        when(fischlIdentityConnector.update(eq("user-1"), eq("Bearer token"), any(FischlUser.class)))
+                .thenReturn(new FischlUser().setId("user-1"));
+
+        identityApi.updateUser("user-1", user, "Bearer token");
+
+        verify(fischlIdentityConnector).update(eq("user-1"), eq("Bearer token"), any(FischlUser.class));
     }
 }

@@ -37,7 +37,7 @@ public class MauraBastionHirelingApiImpl implements MauraBastionHirelingApi {
     public ApiResponse createHireling(String authHeader, Hireling hireling) {
         validateHireling(hireling);
         try {
-            FischlHireling result = fischlHirelingConnector.create(toFischlHireling(hireling));
+            FischlHireling result = fischlHirelingConnector.create(authHeader, toFischlHireling(hireling));
             tryRefreshForumPost(authHeader, hireling.getBastionId());
             return ApiResponse.success("Hireling created", toHireling(result));
         } catch (FischlHirelingException e) {
@@ -46,12 +46,12 @@ public class MauraBastionHirelingApiImpl implements MauraBastionHirelingApi {
     }
 
     @Override
-    public ApiResponse getHireling(String id) {
+    public ApiResponse getHireling(String authHeader, String id) {
         if (id == null || id.isBlank()) {
             throw new InvalidRequestException("id is required");
         }
         try {
-            FischlHireling result = fischlHirelingConnector.read(id);
+            FischlHireling result = fischlHirelingConnector.read(authHeader, id);
             return ApiResponse.success("Hireling found", toHireling(result));
         } catch (FischlHirelingException e) {
             throw new BackendException(e.getStatus(), "Hireling backend error: " + e.getMessage());
@@ -59,9 +59,9 @@ public class MauraBastionHirelingApiImpl implements MauraBastionHirelingApi {
     }
 
     @Override
-    public ApiResponse getAllHirelings() {
+    public ApiResponse getAllHirelings(String authHeader) {
         try {
-            List<FischlHireling> results = fischlHirelingConnector.readAll();
+            List<FischlHireling> results = fischlHirelingConnector.readAll(authHeader);
             List<Hireling> hirelings = results.stream().map(this::toHireling).toList();
             return ApiResponse.success("Hirelings found", hirelings);
         } catch (FischlHirelingException e) {
@@ -76,7 +76,7 @@ public class MauraBastionHirelingApiImpl implements MauraBastionHirelingApi {
         }
         validateHireling(hireling);
         try {
-            FischlHireling result = fischlHirelingConnector.update(id, toFischlHireling(hireling));
+            FischlHireling result = fischlHirelingConnector.update(authHeader, id, toFischlHireling(hireling));
             tryRefreshForumPost(authHeader, hireling.getBastionId());
             return ApiResponse.success("Hireling updated", toHireling(result));
         } catch (FischlHirelingException e) {
@@ -91,13 +91,13 @@ public class MauraBastionHirelingApiImpl implements MauraBastionHirelingApi {
         }
         String bastionId = null;
         try {
-            FischlHireling existing = fischlHirelingConnector.read(id);
+            FischlHireling existing = fischlHirelingConnector.read(authHeader, id);
             bastionId = existing == null ? null : existing.getBastionId();
         } catch (FischlHirelingException ignored) {
             // best effort: without the hireling we cannot locate its bastion
         }
         try {
-            fischlHirelingConnector.delete(id);
+            fischlHirelingConnector.delete(authHeader, id);
             tryRefreshForumPost(authHeader, bastionId);
             return ApiResponse.success("Hireling deleted", null);
         } catch (FischlHirelingException e) {

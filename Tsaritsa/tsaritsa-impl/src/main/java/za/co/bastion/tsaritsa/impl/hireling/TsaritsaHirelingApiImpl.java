@@ -21,10 +21,10 @@ public class TsaritsaHirelingApiImpl implements TsaritsaHirelingApi {
     FischlHirelingConnector fischlHirelingConnector;
 
     @Override
-    public ApiResponse createHireling(Hireling hireling) {
+    public ApiResponse createHireling(String authHeader, Hireling hireling) {
         validateHireling(hireling);
         try {
-            FischlHireling result = fischlHirelingConnector.create(toFischlHireling(hireling));
+            FischlHireling result = fischlHirelingConnector.create(authHeader, toFischlHireling(hireling));
             return ApiResponse.success("Hireling created", toHireling(result));
         } catch (FischlHirelingException e) {
             throw new BackendException(e.getStatus(), "Hireling backend error: " + e.getMessage());
@@ -32,12 +32,12 @@ public class TsaritsaHirelingApiImpl implements TsaritsaHirelingApi {
     }
 
     @Override
-    public ApiResponse getHireling(String id) {
+    public ApiResponse getHireling(String authHeader, String id) {
         if (id == null || id.isBlank()) {
             throw new InvalidRequestException("id is required");
         }
         try {
-            FischlHireling result = fischlHirelingConnector.read(id);
+            FischlHireling result = fischlHirelingConnector.read(authHeader, id);
             return ApiResponse.success("Hireling found", toHireling(result));
         } catch (FischlHirelingException e) {
             throw new BackendException(e.getStatus(), "Hireling backend error: " + e.getMessage());
@@ -45,9 +45,9 @@ public class TsaritsaHirelingApiImpl implements TsaritsaHirelingApi {
     }
 
     @Override
-    public ApiResponse getAllHirelings() {
+    public ApiResponse getAllHirelings(String authHeader) {
         try {
-            List<FischlHireling> results = fischlHirelingConnector.readAll();
+            List<FischlHireling> results = fischlHirelingConnector.readAll(authHeader);
             List<Hireling> hirelings = results.stream().map(this::toHireling).toList();
             return ApiResponse.success("Hirelings found", hirelings);
         } catch (FischlHirelingException e) {
@@ -56,13 +56,13 @@ public class TsaritsaHirelingApiImpl implements TsaritsaHirelingApi {
     }
 
     @Override
-    public ApiResponse updateHireling(String id, Hireling hireling) {
+    public ApiResponse updateHireling(String authHeader, String id, Hireling hireling) {
         if (id == null || id.isBlank()) {
             throw new InvalidRequestException("id is required");
         }
         validateHireling(hireling);
         try {
-            FischlHireling result = fischlHirelingConnector.update(id, toFischlHireling(hireling));
+            FischlHireling result = fischlHirelingConnector.update(authHeader, id, toFischlHireling(hireling));
             return ApiResponse.success("Hireling updated", toHireling(result));
         } catch (FischlHirelingException e) {
             throw new BackendException(e.getStatus(), "Hireling backend error: " + e.getMessage());
@@ -70,12 +70,12 @@ public class TsaritsaHirelingApiImpl implements TsaritsaHirelingApi {
     }
 
     @Override
-    public ApiResponse deleteHireling(String id) {
+    public ApiResponse deleteHireling(String authHeader, String id) {
         if (id == null || id.isBlank()) {
             throw new InvalidRequestException("id is required");
         }
         try {
-            fischlHirelingConnector.delete(id);
+            fischlHirelingConnector.delete(authHeader, id);
             return ApiResponse.success("Hireling deleted", null);
         } catch (FischlHirelingException e) {
             throw new BackendException(e.getStatus(), "Hireling backend error: " + e.getMessage());

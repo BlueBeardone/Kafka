@@ -15,35 +15,37 @@ public class TsaritsaFacilitiesRoute {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse createFacility(TsaritsaFacilitiesApi.Facility facility) {
-        return facilitiesApi.createFacility(facility);
+    public ApiResponse createFacility(@HeaderParam("Authorization") String authHeader,
+                                      TsaritsaFacilitiesApi.Facility facility) {
+        return facilitiesApi.createFacility(authHeader, facility);
     }
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse getFacility(@PathParam("id") String id) {
-        return facilitiesApi.getFacility(id);
+    public ApiResponse getFacility(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id) {
+        return facilitiesApi.getFacility(authHeader, id);
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse getAllFacilities() {
-        return facilitiesApi.getAllFacilities();
+    public ApiResponse getAllFacilities(@HeaderParam("Authorization") String authHeader) {
+        return facilitiesApi.getAllFacilities(authHeader);
     }
 
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse updateFacility(@PathParam("id") String id, TsaritsaFacilitiesApi.Facility facility) {
-        return facilitiesApi.updateFacility(id, facility);
+    public ApiResponse updateFacility(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id,
+                                      TsaritsaFacilitiesApi.Facility facility) {
+        return facilitiesApi.updateFacility(authHeader, id, facility);
     }
 
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ApiResponse deleteFacility(@PathParam("id") String id) {
-        return facilitiesApi.deleteFacility(id);
+    public ApiResponse deleteFacility(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id) {
+        return facilitiesApi.deleteFacility(authHeader, id);
     }
 }

@@ -35,7 +35,7 @@ public class MauraBastionFacilitiesApiImpl implements MauraBastionFacilitiesApi 
     public ApiResponse createFacility(String authHeader, Facility facility) {
         validateFacility(facility);
         try {
-            FischlFacility result = fischlFacilitiesConnector.create(toFischlFacility(facility));
+            FischlFacility result = fischlFacilitiesConnector.create(authHeader, toFischlFacility(facility));
             tryRefreshForumPost(authHeader, facility.getBastionId());
             return ApiResponse.success("Facility created", toFacility(result));
         } catch (FischlFacilityException e) {
@@ -44,12 +44,12 @@ public class MauraBastionFacilitiesApiImpl implements MauraBastionFacilitiesApi 
     }
 
     @Override
-    public ApiResponse getFacility(String id) {
+    public ApiResponse getFacility(String authHeader, String id) {
         if (id == null || id.isBlank()) {
             throw new InvalidRequestException("id is required");
         }
         try {
-            FischlFacility result = fischlFacilitiesConnector.read(id);
+            FischlFacility result = fischlFacilitiesConnector.read(authHeader, id);
             return ApiResponse.success("Facility found", toFacility(result));
         } catch (FischlFacilityException e) {
             throw new BackendException(e.getStatus(), "Facility backend error: " + e.getMessage());
@@ -57,9 +57,9 @@ public class MauraBastionFacilitiesApiImpl implements MauraBastionFacilitiesApi 
     }
 
     @Override
-    public ApiResponse getAllFacilities() {
+    public ApiResponse getAllFacilities(String authHeader) {
         try {
-            List<FischlFacility> results = fischlFacilitiesConnector.readAll();
+            List<FischlFacility> results = fischlFacilitiesConnector.readAll(authHeader);
             List<Facility> facilities = results.stream().map(this::toFacility).toList();
             return ApiResponse.success("Facilities found", facilities);
         } catch (FischlFacilityException e) {
@@ -74,7 +74,7 @@ public class MauraBastionFacilitiesApiImpl implements MauraBastionFacilitiesApi 
         }
         validateFacility(facility);
         try {
-            FischlFacility result = fischlFacilitiesConnector.update(id, toFischlFacility(facility));
+            FischlFacility result = fischlFacilitiesConnector.update(authHeader, id, toFischlFacility(facility));
             tryRefreshForumPost(authHeader, facility.getBastionId());
             return ApiResponse.success("Facility updated", toFacility(result));
         } catch (FischlFacilityException e) {
@@ -89,13 +89,13 @@ public class MauraBastionFacilitiesApiImpl implements MauraBastionFacilitiesApi 
         }
         String bastionId = null;
         try {
-            FischlFacility existing = fischlFacilitiesConnector.read(id);
+            FischlFacility existing = fischlFacilitiesConnector.read(authHeader, id);
             bastionId = existing == null ? null : existing.getBastionId();
         } catch (FischlFacilityException ignored) {
             // best effort: without the facility we cannot locate its bastion
         }
         try {
-            fischlFacilitiesConnector.delete(id);
+            fischlFacilitiesConnector.delete(authHeader, id);
             tryRefreshForumPost(authHeader, bastionId);
             return ApiResponse.success("Facility deleted", null);
         } catch (FischlFacilityException e) {

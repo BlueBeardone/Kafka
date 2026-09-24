@@ -21,29 +21,29 @@ public interface FischlHirelingConnector {
     @Path("/hirelings")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    FischlHireling create(FischlHireling hireling) throws FischlHirelingException;
+    FischlHireling create(@HeaderParam("Authorization") String authHeader, FischlHireling hireling) throws FischlHirelingException;
 
     @GET
     @Path("/hirelings/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    FischlHireling read(@PathParam("id") String id) throws FischlHirelingException;
+    FischlHireling read(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id) throws FischlHirelingException;
 
     @GET
     @Path("/hirelings")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    List<FischlHireling> readAll() throws FischlHirelingException;
+    List<FischlHireling> readAll(@HeaderParam("Authorization") String authHeader) throws FischlHirelingException;
 
     @PUT
     @Path("/hirelings/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    FischlHireling update(@PathParam("id") String id, FischlHireling hireling) throws FischlHirelingException;
+    FischlHireling update(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id, FischlHireling hireling) throws FischlHirelingException;
 
     @DELETE
     @Path("/hirelings/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    void delete(@PathParam("id") String id) throws FischlHirelingException;
+    void delete(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id) throws FischlHirelingException;
 }

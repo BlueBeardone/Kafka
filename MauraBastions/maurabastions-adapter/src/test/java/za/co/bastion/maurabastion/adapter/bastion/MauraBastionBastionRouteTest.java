@@ -55,4 +55,17 @@ class MauraBastionBastionRouteTest {
         assertSame(expected, response);
         verify(bastionApi).browseBastions("Bearer token", null, null);
     }
+
+    @Test
+    void getAllBastions_forwardsAuthorizationHeader() {
+        ApiResponse expected = ApiResponse.success("ok", null);
+
+        when(bastionApi.getAllBastions("Bearer token")).thenReturn(expected);
+
+        ApiResponse response = route.getAllBastions("Bearer token");
+
+        assertSame(expected, response);
+        verify(bastionApi).getAllBastions("Bearer token");
+        verify(bastionApi, times(1)).getAllBastions(any());
+    }
 }

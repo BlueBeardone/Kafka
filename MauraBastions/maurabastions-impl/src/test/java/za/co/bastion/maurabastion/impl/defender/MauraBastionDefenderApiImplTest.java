@@ -63,7 +63,7 @@ class MauraBastionDefenderApiImplTest {
                 .setId("d-1").setName("Knight").setDescription("A brave knight")
                 .setType("knight").setBastionId("b-1");
 
-        when(fischlDefenderConnector.create(any(FischlDefender.class)))
+        when(fischlDefenderConnector.create(anyString(), any(FischlDefender.class)))
                 .thenReturn(new FischlDefender().setId("d-1").setName("Knight"));
 
         ApiResponse response = defenderApi.createDefender("Bearer token", defender);
@@ -77,7 +77,7 @@ class MauraBastionDefenderApiImplTest {
                 .setImgUrl("http://example.com/img.png").setType("beast")
                 .setBastionId("b-1").setAcquisitionStory("Found in the wild");
 
-        when(fischlDefenderConnector.create(fischlCaptor.capture()))
+        when(fischlDefenderConnector.create(anyString(), fischlCaptor.capture()))
                 .thenReturn(new FischlDefender());
 
         defenderApi.createDefender("Bearer token", defender);
@@ -99,7 +99,7 @@ class MauraBastionDefenderApiImplTest {
                 .setImgUrl("http://example.com/img.png").setType("knight")
                 .setBastionId("b-1").setAcquisitionStory("Hired");
 
-        when(fischlDefenderConnector.create(any(FischlDefender.class)))
+        when(fischlDefenderConnector.create(anyString(), any(FischlDefender.class)))
                 .thenReturn(fischl);
 
         MauraBastionDefenderApi.Defender input = new MauraBastionDefenderApi.Defender()
@@ -155,7 +155,7 @@ class MauraBastionDefenderApiImplTest {
         MauraBastionDefenderApi.Defender defender = new MauraBastionDefenderApi.Defender()
                 .setId("d-2").setName("Guard").setType("bastion_defender").setBastionId("b-1");
 
-        when(fischlDefenderConnector.create(any(FischlDefender.class)))
+        when(fischlDefenderConnector.create(anyString(), any(FischlDefender.class)))
                 .thenReturn(new FischlDefender().setId("d-2"));
 
         ApiResponse response = defenderApi.createDefender("Bearer token", defender);
@@ -164,29 +164,29 @@ class MauraBastionDefenderApiImplTest {
 
     @Test
     void getDefender_returnsSuccess() throws Exception {
-        when(fischlDefenderConnector.read("d-1"))
+        when(fischlDefenderConnector.read(anyString(), eq("d-1")))
                 .thenReturn(new FischlDefender().setId("d-1").setName("Knight"));
 
-        ApiResponse response = defenderApi.getDefender("d-1");
+        ApiResponse response = defenderApi.getDefender("Bearer token", "d-1");
         assertTrue(response.isSuccess());
     }
 
     @Test
     void getDefender_nullId_throwsException() {
-        assertThrows(InvalidRequestException.class, () -> defenderApi.getDefender(null));
+        assertThrows(InvalidRequestException.class, () -> defenderApi.getDefender("Bearer token", null));
     }
 
     @Test
     void getDefender_blankId_throwsException() {
-        assertThrows(InvalidRequestException.class, () -> defenderApi.getDefender(""));
+        assertThrows(InvalidRequestException.class, () -> defenderApi.getDefender("Bearer token", ""));
     }
 
     @Test
     void getAllDefenders_returnsSuccess() throws Exception {
-        when(fischlDefenderConnector.readAll())
+        when(fischlDefenderConnector.readAll(anyString()))
                 .thenReturn(List.of(new FischlDefender().setId("d-1").setName("Knight")));
 
-        ApiResponse response = defenderApi.getAllDefenders();
+        ApiResponse response = defenderApi.getAllDefenders("Bearer token");
         assertTrue(response.isSuccess());
     }
 
@@ -195,7 +195,7 @@ class MauraBastionDefenderApiImplTest {
         MauraBastionDefenderApi.Defender defender = new MauraBastionDefenderApi.Defender()
                 .setName("Updated").setType("beast").setBastionId("b-1");
 
-        when(fischlDefenderConnector.update(eq("d-1"), any(FischlDefender.class)))
+        when(fischlDefenderConnector.update(anyString(), eq("d-1"), any(FischlDefender.class)))
                 .thenReturn(new FischlDefender().setId("d-1").setName("Updated"));
 
         ApiResponse response = defenderApi.updateDefender("Bearer token", "d-1", defender);
@@ -215,7 +215,7 @@ class MauraBastionDefenderApiImplTest {
         MauraBastionDefenderApi.Defender defender = new MauraBastionDefenderApi.Defender()
                 .setType("knight").setBastionId("b-1");
 
-        when(fischlDefenderConnector.create(any(FischlDefender.class)))
+        when(fischlDefenderConnector.create(anyString(), any(FischlDefender.class)))
                 .thenThrow(new FischlDefenderException().setStatus(403).setMessage("Forbidden"));
 
         BackendException ex = assertThrows(BackendException.class, () -> defenderApi.createDefender("Bearer token", defender));
@@ -224,7 +224,7 @@ class MauraBastionDefenderApiImplTest {
 
     @Test
     void deleteDefender_returnsSuccess() throws Exception {
-        doNothing().when(fischlDefenderConnector).delete("d-1");
+        doNothing().when(fischlDefenderConnector).delete(anyString(), eq("d-1"));
 
         ApiResponse response = defenderApi.deleteDefender("Bearer token", "d-1");
         assertTrue(response.isSuccess());
@@ -240,7 +240,7 @@ class MauraBastionDefenderApiImplTest {
         MauraBastionDefenderApi.Defender defender = new MauraBastionDefenderApi.Defender()
                 .setType("Knight").setBastionId("b-1");
 
-        when(fischlDefenderConnector.create(any(FischlDefender.class)))
+        when(fischlDefenderConnector.create(anyString(), any(FischlDefender.class)))
                 .thenReturn(new FischlDefender().setId("d-1"));
         when(fischlBastionConnector.read("Bearer token", "b-1"))
                 .thenReturn(new FischlBastion().setId("b-1").setDiscordThreadId("t-1")
@@ -258,7 +258,7 @@ class MauraBastionDefenderApiImplTest {
         MauraBastionDefenderApi.Defender defender = new MauraBastionDefenderApi.Defender()
                 .setType("Knight").setBastionId("b-1");
 
-        when(fischlDefenderConnector.create(any(FischlDefender.class)))
+        when(fischlDefenderConnector.create(anyString(), any(FischlDefender.class)))
                 .thenReturn(new FischlDefender().setId("d-1"));
         when(fischlBastionConnector.read("Bearer token", "b-1"))
                 .thenReturn(new FischlBastion().setId("b-1"));
@@ -274,7 +274,7 @@ class MauraBastionDefenderApiImplTest {
         MauraBastionDefenderApi.Defender defender = new MauraBastionDefenderApi.Defender()
                 .setType("Knight").setBastionId("b-1");
 
-        when(fischlDefenderConnector.create(any(FischlDefender.class)))
+        when(fischlDefenderConnector.create(anyString(), any(FischlDefender.class)))
                 .thenReturn(new FischlDefender().setId("d-1"));
         when(fischlBastionConnector.read("Bearer token", "b-1"))
                 .thenThrow(new FischlBastionException().setStatus(500).setMessage("boom"));
@@ -290,7 +290,7 @@ class MauraBastionDefenderApiImplTest {
         MauraBastionDefenderApi.Defender defender = new MauraBastionDefenderApi.Defender()
                 .setType("Knight").setBastionId("b-1");
 
-        when(fischlDefenderConnector.create(any(FischlDefender.class)))
+        when(fischlDefenderConnector.create(anyString(), any(FischlDefender.class)))
                 .thenReturn(new FischlDefender().setId("d-1"));
         when(fischlBastionConnector.read("Bearer token", "b-1"))
                 .thenReturn(new FischlBastion().setId("b-1").setDiscordThreadId("t-1"));
@@ -307,7 +307,7 @@ class MauraBastionDefenderApiImplTest {
         MauraBastionDefenderApi.Defender defender = new MauraBastionDefenderApi.Defender()
                 .setType("Knight").setBastionId("b-1");
 
-        when(fischlDefenderConnector.update(eq("d-1"), any(FischlDefender.class)))
+        when(fischlDefenderConnector.update(anyString(), eq("d-1"), any(FischlDefender.class)))
                 .thenReturn(new FischlDefender().setId("d-1"));
         when(fischlBastionConnector.read("Bearer token", "b-1"))
                 .thenReturn(new FischlBastion().setId("b-1").setDiscordThreadId("t-1")
@@ -322,9 +322,9 @@ class MauraBastionDefenderApiImplTest {
 
     @Test
     void deleteDefender_withThreadId_refreshesForumPost() throws Exception {
-        when(fischlDefenderConnector.read("d-1"))
+        when(fischlDefenderConnector.read(anyString(), eq("d-1")))
                 .thenReturn(new FischlDefender().setId("d-1").setBastionId("b-1"));
-        doNothing().when(fischlDefenderConnector).delete("d-1");
+        doNothing().when(fischlDefenderConnector).delete(anyString(), eq("d-1"));
         when(fischlBastionConnector.read("Bearer token", "b-1"))
                 .thenReturn(new FischlBastion().setId("b-1").setDiscordThreadId("t-1"));
 
@@ -333,5 +333,28 @@ class MauraBastionDefenderApiImplTest {
         assertTrue(response.isSuccess());
         verify(webhookSender).editPost(eq(DiscordWebhookSender.Channel.BASTION_CREATION),
                 eq("t-1"), anyString());
+    }
+
+    @Test
+    void createDefender_forwardsAuthHeaderToConnector() throws Exception {
+        MauraBastionDefenderApi.Defender defender = new MauraBastionDefenderApi.Defender()
+                .setType("knight").setBastionId("b-1");
+
+        when(fischlDefenderConnector.create(eq("Bearer token"), any(FischlDefender.class)))
+                .thenReturn(new FischlDefender().setId("d-1"));
+
+        defenderApi.createDefender("Bearer token", defender);
+
+        verify(fischlDefenderConnector).create(eq("Bearer token"), any(FischlDefender.class));
+    }
+
+    @Test
+    void getDefender_forwardsAuthHeaderToConnector() throws Exception {
+        when(fischlDefenderConnector.read(eq("Bearer token"), eq("d-1")))
+                .thenReturn(new FischlDefender().setId("d-1"));
+
+        defenderApi.getDefender("Bearer token", "d-1");
+
+        verify(fischlDefenderConnector).read("Bearer token", "d-1");
     }
 }

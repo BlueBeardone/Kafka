@@ -21,29 +21,29 @@ public interface FischlDefenderConnector {
     @Path("/defenders")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    FischlDefender create(FischlDefender defender) throws FischlDefenderException;
+    FischlDefender create(@HeaderParam("Authorization") String authHeader, FischlDefender defender) throws FischlDefenderException;
 
     @GET
     @Path("/defenders/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    FischlDefender read(@PathParam("id") String id) throws FischlDefenderException;
+    FischlDefender read(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id) throws FischlDefenderException;
 
     @GET
     @Path("/defenders")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    List<FischlDefender> readAll() throws FischlDefenderException;
+    List<FischlDefender> readAll(@HeaderParam("Authorization") String authHeader) throws FischlDefenderException;
 
     @PUT
     @Path("/defenders/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    FischlDefender update(@PathParam("id") String id, FischlDefender defender) throws FischlDefenderException;
+    FischlDefender update(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id, FischlDefender defender) throws FischlDefenderException;
 
     @DELETE
     @Path("/defenders/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    void delete(@PathParam("id") String id) throws FischlDefenderException;
+    void delete(@HeaderParam("Authorization") String authHeader, @PathParam("id") String id) throws FischlDefenderException;
 }

@@ -7,8 +7,8 @@ import za.co.bastion.common.dto.ApiResponse;
 
 public interface MauraBastionHirelingApi {
     ApiResponse createHireling(String authHeader, Hireling hireling);
-    ApiResponse getHireling(String id);
-    ApiResponse getAllHirelings();
+    ApiResponse getHireling(String authHeader, String id);
+    ApiResponse getAllHirelings(String authHeader);
     ApiResponse updateHireling(String authHeader, String id, Hireling hireling);
     ApiResponse deleteHireling(String authHeader, String id);
 

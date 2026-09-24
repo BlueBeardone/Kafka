@@ -13,9 +13,12 @@ import za.co.bastion.fischl.facilities.FischlFacilitiesConnector;
 import za.co.bastion.tsaritsa.api.facilities.TsaritsaFacilitiesApi;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,53 +42,98 @@ class TsaritsaFacilitiesApiImplTest {
         TsaritsaFacilitiesApi.Facility facility = new TsaritsaFacilitiesApi.Facility()
                 .setName("Barracks").setDescription("Trains defenders").setRank(Rank.b);
 
-        when(fischlFacilitiesConnector.create(any(FischlFacility.class)))
+        when(fischlFacilitiesConnector.create(anyString(), any(FischlFacility.class)))
                 .thenReturn(new FischlFacility().setId("f-1"));
 
-        ApiResponse response = facilitiesApi.createFacility(facility);
+        ApiResponse response = facilitiesApi.createFacility("Bearer token", facility);
         assertTrue(response.isSuccess());
+    }
+
+    @Test
+    void createFacility_forwardsAuthHeaderToConnector() throws Exception {
+        TsaritsaFacilitiesApi.Facility facility = new TsaritsaFacilitiesApi.Facility()
+                .setName("Barracks").setDescription("Trains defenders").setRank(Rank.b);
+
+        when(fischlFacilitiesConnector.create(eq("Bearer token"), any(FischlFacility.class)))
+                .thenReturn(new FischlFacility().setId("f-1"));
+
+        facilitiesApi.createFacility("Bearer token", facility);
+
+        verify(fischlFacilitiesConnector).create(eq("Bearer token"), any(FischlFacility.class));
     }
 
     @Test
     void createFacility_nullRank_throwsException() {
         assertThrows(InvalidRequestException.class, () ->
-                facilitiesApi.createFacility(new TsaritsaFacilitiesApi.Facility()
+                facilitiesApi.createFacility("Bearer token", new TsaritsaFacilitiesApi.Facility()
                         .setName("Barracks").setDescription("d")));
     }
 
     @Test
     void createFacility_negativeHirelings_throwsException() {
         assertThrows(InvalidRequestException.class, () ->
-                facilitiesApi.createFacility(new TsaritsaFacilitiesApi.Facility()
+                facilitiesApi.createFacility("Bearer token", new TsaritsaFacilitiesApi.Facility()
                         .setName("Barracks").setDescription("d").setRank(Rank.b)
                         .setMinimumRequiredHirelings(-1)));
     }
 
     @Test
     void getFacility_returnsSuccess() throws Exception {
-        when(fischlFacilitiesConnector.read("f-1"))
+        when(fischlFacilitiesConnector.read(anyString(), eq("f-1")))
                 .thenReturn(new FischlFacility().setId("f-1").setName("Barracks"));
 
-        ApiResponse response = facilitiesApi.getFacility("f-1");
+        ApiResponse response = facilitiesApi.getFacility("Bearer token", "f-1");
         assertTrue(response.isSuccess());
     }
 
     @Test
-    void updateFacility_returnsSuccess() throws Exception {
-        when(fischlFacilitiesConnector.update(eq("f-1"), any(FischlFacility.class)))
+    void getFacility_forwardsAuthHeaderToConnector() throws Exception {
+        when(fischlFacilitiesConnector.read(eq("Bearer token"), eq("f-1")))
                 .thenReturn(new FischlFacility().setId("f-1"));
 
-        ApiResponse response = facilitiesApi.updateFacility("f-1",
+        facilitiesApi.getFacility("Bearer token", "f-1");
+
+        verify(fischlFacilitiesConnector).read("Bearer token", "f-1");
+    }
+
+    @Test
+    void getAllFacilities_returnsSuccess() throws Exception {
+        when(fischlFacilitiesConnector.readAll(anyString()))
+                .thenReturn(List.of(new FischlFacility().setId("f-1").setName("Barracks")));
+
+        ApiResponse response = facilitiesApi.getAllFacilities("Bearer token");
+        assertTrue(response.isSuccess());
+
+        verify(fischlFacilitiesConnector).readAll("Bearer token");
+    }
+
+    @Test
+    void updateFacility_returnsSuccess() throws Exception {
+        when(fischlFacilitiesConnector.update(anyString(), eq("f-1"), any(FischlFacility.class)))
+                .thenReturn(new FischlFacility().setId("f-1"));
+
+        ApiResponse response = facilitiesApi.updateFacility("Bearer token", "f-1",
                 new TsaritsaFacilitiesApi.Facility().setName("Barracks").setDescription("d").setRank(Rank.b));
         assertTrue(response.isSuccess());
     }
 
     @Test
-    void deleteFacility_returnsSuccess() throws Exception {
-        doNothing().when(fischlFacilitiesConnector).delete("f-1");
+    void updateFacility_forwardsAuthHeaderToConnector() throws Exception {
+        when(fischlFacilitiesConnector.update(eq("Bearer token"), eq("f-1"), any(FischlFacility.class)))
+                .thenReturn(new FischlFacility().setId("f-1"));
 
-        ApiResponse response = facilitiesApi.deleteFacility("f-1");
+        facilitiesApi.updateFacility("Bearer token", "f-1",
+                new TsaritsaFacilitiesApi.Facility().setName("Barracks").setDescription("d").setRank(Rank.b));
+
+        verify(fischlFacilitiesConnector).update(eq("Bearer token"), eq("f-1"), any(FischlFacility.class));
+    }
+
+    @Test
+    void deleteFacility_returnsSuccess() throws Exception {
+        doNothing().when(fischlFacilitiesConnector).delete(anyString(), eq("f-1"));
+
+        ApiResponse response = facilitiesApi.deleteFacility("Bearer token", "f-1");
         assertTrue(response.isSuccess());
-        verify(fischlFacilitiesConnector).delete("f-1");
+        verify(fischlFacilitiesConnector).delete("Bearer token", "f-1");
     }
 }

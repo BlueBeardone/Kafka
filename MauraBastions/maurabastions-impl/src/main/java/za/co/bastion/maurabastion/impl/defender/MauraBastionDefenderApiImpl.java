@@ -37,7 +37,7 @@ public class MauraBastionDefenderApiImpl implements MauraBastionDefenderApi {
     public ApiResponse createDefender(String authHeader, Defender defender) {
         validateDefender(defender);
         try {
-            FischlDefender result = fischlDefenderConnector.create(toFischlDefender(defender));
+            FischlDefender result = fischlDefenderConnector.create(authHeader, toFischlDefender(defender));
             tryRefreshForumPost(authHeader, defender.getBastionId());
             return ApiResponse.success("Defender created", toDefender(result));
         } catch (FischlDefenderException e) {
@@ -46,12 +46,12 @@ public class MauraBastionDefenderApiImpl implements MauraBastionDefenderApi {
     }
 
     @Override
-    public ApiResponse getDefender(String id) {
+    public ApiResponse getDefender(String authHeader, String id) {
         if (id == null || id.isBlank()) {
             throw new InvalidRequestException("id is required");
         }
         try {
-            FischlDefender result = fischlDefenderConnector.read(id);
+            FischlDefender result = fischlDefenderConnector.read(authHeader, id);
             return ApiResponse.success("Defender found", toDefender(result));
         } catch (FischlDefenderException e) {
             throw new BackendException(e.getStatus(), "Defender backend error: " + e.getMessage());
@@ -59,9 +59,9 @@ public class MauraBastionDefenderApiImpl implements MauraBastionDefenderApi {
     }
 
     @Override
-    public ApiResponse getAllDefenders() {
+    public ApiResponse getAllDefenders(String authHeader) {
         try {
-            List<FischlDefender> results = fischlDefenderConnector.readAll();
+            List<FischlDefender> results = fischlDefenderConnector.readAll(authHeader);
             List<Defender> defenders = results.stream().map(this::toDefender).toList();
             return ApiResponse.success("Defenders found", defenders);
         } catch (FischlDefenderException e) {
@@ -76,7 +76,7 @@ public class MauraBastionDefenderApiImpl implements MauraBastionDefenderApi {
         }
         validateDefender(defender);
         try {
-            FischlDefender result = fischlDefenderConnector.update(id, toFischlDefender(defender));
+            FischlDefender result = fischlDefenderConnector.update(authHeader, id, toFischlDefender(defender));
             tryRefreshForumPost(authHeader, defender.getBastionId());
             return ApiResponse.success("Defender updated", toDefender(result));
         } catch (FischlDefenderException e) {
@@ -91,13 +91,13 @@ public class MauraBastionDefenderApiImpl implements MauraBastionDefenderApi {
         }
         String bastionId = null;
         try {
-            FischlDefender existing = fischlDefenderConnector.read(id);
+            FischlDefender existing = fischlDefenderConnector.read(authHeader, id);
             bastionId = existing == null ? null : existing.getBastionId();
         } catch (FischlDefenderException ignored) {
             // best effort: without the defender we cannot locate its bastion
         }
         try {
-            fischlDefenderConnector.delete(id);
+            fischlDefenderConnector.delete(authHeader, id);
             tryRefreshForumPost(authHeader, bastionId);
             return ApiResponse.success("Defender deleted", null);
         } catch (FischlDefenderException e) {

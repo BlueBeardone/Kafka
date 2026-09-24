@@ -93,12 +93,12 @@ public class MauraBastionIdentityApiImpl implements MauraBastionIdentityApi {
     }
 
     @Override
-    public ApiResponse getUser(String id) {
+    public ApiResponse getUser(String id, String authHeader) {
         if (id == null || id.isBlank()) {
             throw new InvalidRequestException("id is required");
         }
         try {
-            FischlUser result = fischlIdentityConnector.read(id);
+            FischlUser result = fischlIdentityConnector.read(id, authHeader);
             return ApiResponse.success("User found", toUser(result));
         } catch (FischlIdentityException e) {
             throw new BackendException(e.getStatus(), "Identity backend error: " + e.getMessage());
@@ -106,7 +106,7 @@ public class MauraBastionIdentityApiImpl implements MauraBastionIdentityApi {
     }
 
     @Override
-    public ApiResponse updateUser(String id, MauraBastionIdentityApi.User user) {
+    public ApiResponse updateUser(String id, MauraBastionIdentityApi.User user, String authHeader) {
         if (id == null || id.isBlank()) {
             throw new InvalidRequestException("id is required");
         }
@@ -116,7 +116,7 @@ public class MauraBastionIdentityApiImpl implements MauraBastionIdentityApi {
 
         try {
             FischlUser fischlUser = toFischlUser(user);
-            FischlUser result = fischlIdentityConnector.update(id, fischlUser);
+            FischlUser result = fischlIdentityConnector.update(id, authHeader, fischlUser);
             return ApiResponse.success("User updated", toUser(result));
         } catch (FischlIdentityException e) {
             throw new BackendException(e.getStatus(), "Identity backend error: " + e.getMessage());

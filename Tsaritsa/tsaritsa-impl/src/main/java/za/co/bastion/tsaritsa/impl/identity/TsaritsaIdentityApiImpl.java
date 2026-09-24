@@ -84,12 +84,12 @@ public class TsaritsaIdentityApiImpl implements TsaritsaIdentityApi {
     }
 
     @Override
-    public ApiResponse getUser(String id) {
+    public ApiResponse getUser(String id, String authHeader) {
         if (id == null || id.isBlank()) {
             throw new InvalidRequestException("id is required");
         }
         try {
-            FischlUser result = fischlIdentityConnector.read(id);
+            FischlUser result = fischlIdentityConnector.read(id, authHeader);
             return ApiResponse.success("User found", toUser(result));
         } catch (FischlIdentityException e) {
             throw new BackendException(e.getStatus(), "Identity backend error: " + e.getMessage());
@@ -97,7 +97,7 @@ public class TsaritsaIdentityApiImpl implements TsaritsaIdentityApi {
     }
 
     @Override
-    public ApiResponse updateUser(String id, User user) {
+    public ApiResponse updateUser(String id, User user, String authHeader) {
         if (id == null || id.isBlank()) {
             throw new InvalidRequestException("id is required");
         }
@@ -108,7 +108,7 @@ public class TsaritsaIdentityApiImpl implements TsaritsaIdentityApi {
             throw new InvalidRequestException("displayName is required");
         }
         try {
-            FischlUser result = fischlIdentityConnector.update(id, toFischlUser(user));
+            FischlUser result = fischlIdentityConnector.update(id, authHeader, toFischlUser(user));
             return ApiResponse.success("User updated", toUser(result));
         } catch (FischlIdentityException e) {
             throw new BackendException(e.getStatus(), "Identity backend error: " + e.getMessage());

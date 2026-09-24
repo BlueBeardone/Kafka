@@ -10,8 +10,8 @@ public interface MauraBastionIdentityApi {
     ApiResponse registerUser(RegisterRequest request);
     ApiResponse loginUser(LoginRequest request);
     ApiResponse getMe(String authHeader);
-    ApiResponse getUser(String id);
-    ApiResponse updateUser(String id, User user);
+    ApiResponse getUser(String id, String authHeader);
+    ApiResponse updateUser(String id, User user, String authHeader);
 
     ApiResponse listRoles(String authHeader);
     ApiResponse getRole(String name, String authHeader);
