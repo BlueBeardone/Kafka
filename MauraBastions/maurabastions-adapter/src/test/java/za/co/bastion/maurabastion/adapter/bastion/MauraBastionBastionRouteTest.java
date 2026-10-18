@@ -57,15 +57,27 @@ class MauraBastionBastionRouteTest {
     }
 
     @Test
-    void getAllBastions_forwardsAuthorizationHeader() {
+    void getAllBastions_forwardsAuthorizationHeaderAndAllFlag() {
         ApiResponse expected = ApiResponse.success("ok", null);
 
-        when(bastionApi.getAllBastions("Bearer token")).thenReturn(expected);
+        when(bastionApi.getAllBastions("Bearer token", true)).thenReturn(expected);
 
-        ApiResponse response = route.getAllBastions("Bearer token");
+        ApiResponse response = route.getAllBastions("Bearer token", true);
 
         assertSame(expected, response);
-        verify(bastionApi).getAllBastions("Bearer token");
-        verify(bastionApi, times(1)).getAllBastions(any());
+        verify(bastionApi).getAllBastions("Bearer token", true);
+        verify(bastionApi, times(1)).getAllBastions(any(), any());
+    }
+
+    @Test
+    void getAllBastions_withoutAllFlag_forwardsNull() {
+        ApiResponse expected = ApiResponse.success("ok", null);
+
+        when(bastionApi.getAllBastions("Bearer token", null)).thenReturn(expected);
+
+        ApiResponse response = route.getAllBastions("Bearer token", null);
+
+        assertSame(expected, response);
+        verify(bastionApi).getAllBastions("Bearer token", null);
     }
 }

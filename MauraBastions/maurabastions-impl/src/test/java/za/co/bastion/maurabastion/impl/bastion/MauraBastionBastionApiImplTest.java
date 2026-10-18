@@ -146,7 +146,7 @@ class MauraBastionBastionApiImplTest {
         when(fischlBastionConnector.readAll(anyString(), isNull()))
                 .thenReturn(List.of(fischlBastion));
 
-        ApiResponse response = bastionApi.getAllBastions("Bearer token");
+        ApiResponse response = bastionApi.getAllBastions("Bearer token", null);
         assertTrue(response.isSuccess());
 
         ArgumentCaptor<String> authCaptor = ArgumentCaptor.forClass(String.class);
@@ -182,7 +182,29 @@ class MauraBastionBastionApiImplTest {
         when(fischlBastionConnector.readAll(anyString(), isNull()))
                 .thenReturn(List.of());
 
-        ApiResponse response = bastionApi.getAllBastions("Bearer token");
+        ApiResponse response = bastionApi.getAllBastions("Bearer token", null);
+        assertTrue(response.isSuccess());
+
+        verify(fischlBastionConnector).readAll(eq("Bearer token"), isNull());
+    }
+
+    @Test
+    void getAllBastions_withAllFlag_forwardsTrueToConnector() throws Exception {
+        when(fischlBastionConnector.readAll(anyString(), eq(true)))
+                .thenReturn(List.of());
+
+        ApiResponse response = bastionApi.getAllBastions("Bearer token", true);
+        assertTrue(response.isSuccess());
+
+        verify(fischlBastionConnector).readAll(eq("Bearer token"), eq(true));
+    }
+
+    @Test
+    void getAllBastions_withoutAllFlag_forwardsNullToConnector() throws Exception {
+        when(fischlBastionConnector.readAll(anyString(), isNull()))
+                .thenReturn(List.of());
+
+        ApiResponse response = bastionApi.getAllBastions("Bearer token", null);
         assertTrue(response.isSuccess());
 
         verify(fischlBastionConnector).readAll(eq("Bearer token"), isNull());
